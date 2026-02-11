@@ -46,13 +46,13 @@ NEXT_PUBLIC_API_URL
 2. **Authentication → URL Configuration**
 3. **Site URL 설정**:
    ```
-   https://portfolio-frontend-green-eight.vercel.app
+   https://portfolio-front-ten-gamma.vercel.app
    ```
 
 4. **Redirect URLs 추가** (줄바꿈으로 구분):
    ```
-   https://portfolio-frontend-green-eight.vercel.app/auth/callback
-   https://portfolio-frontend-green-eight.vercel.app
+   https://portfolio-front-ten-gamma.vercel.app/auth/callback
+   https://portfolio-front-ten-gamma.vercel.app
    ```
 
 5. **Save** 클릭
@@ -76,8 +76,8 @@ CORS_ORIGINS=*
 FRONTEND_URL=http://localhost:5173
 
 # 변경:
-CORS_ORIGINS=https://portfolio-frontend-green-eight.vercel.app
-FRONTEND_URL=https://portfolio-frontend-green-eight.vercel.app
+CORS_ORIGINS=https://portfolio-front-ten-gamma.vercel.app
+FRONTEND_URL=https://portfolio-front-ten-gamma.vercel.app
 ```
 
 **저장 및 재시작**:
@@ -97,7 +97,7 @@ docker-compose logs -f app
 
 **2. 배포 완료 후 접속**:
    ```
-   https://portfolio-frontend-green-eight.vercel.app
+   https://portfolio-front-ten-gamma.vercel.app
    ```
 
 **3. 확인 사항**:
