@@ -1,65 +1,137 @@
-import Image from "next/image";
+'use client'
+
+import { useEffect, useState } from 'react'
+import { getProjects, type Project } from '@/lib/api/projects'
+import ProjectCard from '@/components/ProjectCard'
+import AuthButton from '@/components/AuthButton'
 
 export default function Home() {
+  const [projects, setProjects] = useState<Project[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchProjects() {
+      try {
+        setLoading(true)
+        setError(null)
+        const response = await getProjects({ limit: 6, sort_by: 'created_at', order: 'DESC' })
+        setProjects(response.data)
+      } catch (err: any) {
+        console.error('Failed to fetch projects:', err)
+        setError(err.message || 'Failed to load projects')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProjects()
+  }, [])
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Header */}
+      <header className="border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                Portfolio Backend Test
+              </h1>
+              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                백엔드 API 및 Supabase 연결 테스트
+              </p>
+            </div>
+            <AuthButton />
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </header>
+
+      {/* Main Content */}
+      <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        {/* Connection Status */}
+        <div className="mb-8 rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+          <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">
+            🔌 연결 상태
+          </h2>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-md bg-gray-50 p-4 dark:bg-gray-700">
+              <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Backend API
+              </div>
+              <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                {process.env.NEXT_PUBLIC_API_URL}
+              </div>
+              <div className="mt-2">
+                {loading ? (
+                  <span className="text-yellow-600">⏳ 연결 중...</span>
+                ) : error ? (
+                  <span className="text-red-600">❌ 연결 실패: {error}</span>
+                ) : (
+                  <span className="text-green-600">✅ 연결 성공</span>
+                )}
+              </div>
+            </div>
+            <div className="rounded-md bg-gray-50 p-4 dark:bg-gray-700">
+              <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Supabase Auth
+              </div>
+              <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                {process.env.NEXT_PUBLIC_SUPABASE_URL}
+              </div>
+              <div className="mt-2">
+                <span className="text-green-600">✅ 설정 완료</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Projects Section */}
+        <div>
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+              📁 Projects
+            </h2>
+            <span className="text-sm text-gray-500">
+              총 {projects.length}개
+            </span>
+          </div>
+
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-gray-500">
+                <div className="mb-2 h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
+                <p className="text-sm">Loading projects...</p>
+              </div>
+            </div>
+          ) : error ? (
+            <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center">
+              <p className="text-red-600">❌ {error}</p>
+              <p className="mt-2 text-sm text-red-500">
+                백엔드 서버가 실행 중인지 확인해주세요.
+              </p>
+            </div>
+          ) : projects.length === 0 ? (
+            <div className="rounded-lg border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
+              <p className="text-gray-500">프로젝트가 없습니다.</p>
+            </div>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {projects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
+            </div>
+          )}
         </div>
       </main>
+
+      {/* Footer */}
+      <footer className="border-t border-gray-200 bg-white py-8 dark:border-gray-700 dark:bg-gray-800">
+        <div className="mx-auto max-w-7xl px-4 text-center text-sm text-gray-500 sm:px-6 lg:px-8">
+          <p>포트폴리오 백엔드 연동 테스트 페이지</p>
+          <p className="mt-1">NestJS + Supabase + Redis</p>
+        </div>
+      </footer>
     </div>
-  );
+  )
 }
