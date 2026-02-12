@@ -47,78 +47,78 @@ async function proxyRequest(
   pathSegments: string[],
   method: string
 ) {
+  const path = pathSegments.join('/')
+  const searchParams = request.nextUrl.searchParams.toString()
+  const url = `${BACKEND_URL}/${path}${searchParams ? `?${searchParams}` : ''}`
+
+  console.log('=== PROXY START ===')
+  console.log('Method:', method)
+  console.log('URL:', url)
+  console.log('Origin:', request.headers.get('origin'))
+
   try {
-    const path = pathSegments.join('/')
-    const searchParams = request.nextUrl.searchParams.toString()
-    const url = `${BACKEND_URL}/${path}${searchParams ? `?${searchParams}` : ''}`
-
-    console.log(`[Proxy] ${method} ${url}`)
-
-    // 요청 헤더 복사 (모든 헤더 명시적 전달)
-    const headers: Record<string, string> = {}
-    
-    // Authorization 헤더 최우선 처리
+    // Authorization 헤더 추출
     const authHeader = request.headers.get('authorization')
+    console.log('Auth header:', authHeader ? authHeader.substring(0, 30) + '...' : 'NONE')
+
+    // 헤더 구성
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    }
+
     if (authHeader) {
       headers['Authorization'] = authHeader
-      console.log('[Proxy] ✅ Authorization:', authHeader.substring(0, 30) + '...')
-    } else {
-      console.log('[Proxy] ❌ Authorization 헤더 없음')
-    }
-    
-    // 나머지 헤더 복사 (Host 제외)
-    request.headers.forEach((value, key) => {
-      if (key.toLowerCase() !== 'host' && key.toLowerCase() !== 'authorization') {
-        headers[key] = value
-      }
-    })
-
-    // Content-Type 보장
-    if (!headers['Content-Type'] && !headers['content-type']) {
-      headers['Content-Type'] = 'application/json'
     }
 
-    // 요청 본문 읽기
-    let body: any = undefined
+    // 요청 본문
+    let body: string | undefined = undefined
     if (method !== 'GET' && method !== 'DELETE') {
-      try {
-        body = await request.text()
-        if (body) {
-          console.log('[Proxy] Body:', body.substring(0, 200))
-        }
-      } catch (err) {
-        console.log('[Proxy] No body')
-      }
+      body = await request.text()
+      console.log('Body length:', body?.length || 0)
     }
 
-    // 백엔드로 요청
+    console.log('Sending request to backend...')
+
+    // 백엔드 요청 (타임아웃 추가)
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 10000) // 10초 타임아웃
+
     const response = await fetch(url, {
       method,
       headers,
       body: body || undefined,
+      signal: controller.signal,
     })
 
-    console.log(`[Proxy] Response: ${response.status}`)
+    clearTimeout(timeoutId)
 
-    // 응답 본문 읽기
-    const responseBody = await response.text()
+    console.log('Backend response status:', response.status)
+    
+    const responseText = await response.text()
+    console.log('Response length:', responseText.length)
+    console.log('=== PROXY END ===')
 
-    // 응답 헤더 복사
-    const responseHeaders = new Headers()
-    response.headers.forEach((value, key) => {
-      responseHeaders.set(key, value)
-    })
-
-    return new NextResponse(responseBody, {
+    return new NextResponse(responseText, {
       status: response.status,
-      statusText: response.statusText,
-      headers: responseHeaders,
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
   } catch (error: any) {
-    console.error('[Proxy] Error:', error)
+    console.error('=== PROXY ERROR ===')
+    console.error('Error name:', error.name)
+    console.error('Error message:', error.message)
+    console.error('Error stack:', error.stack)
+    console.error('=== ERROR END ===')
+
     return NextResponse.json(
-      { error: 'Proxy error', message: error.message },
-      { status: 500 }
+      { 
+        error: 'Proxy failed',
+        message: error.message,
+        name: error.name,
+        url,
+      },
+      { status: 502 }
     )
   }
 }
