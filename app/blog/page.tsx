@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { getPosts, type Post } from '@/lib/api/posts'
 import PostCard from '@/components/PostCard'
 import Link from 'next/link'
+import { useAuth } from '@/hooks/useAuth'
 
 export default function BlogPage() {
   const [posts, setPosts] = useState<Post[]>([])
@@ -12,6 +13,7 @@ export default function BlogPage() {
   const [totalPages, setTotalPages] = useState(1)
   const [searchTerm, setSearchTerm] = useState('')
   const [searchInput, setSearchInput] = useState('')
+  const { isAdmin } = useAuth()
 
   useEffect(() => {
     loadPosts()
@@ -59,12 +61,22 @@ export default function BlogPage() {
                 개발 블로그 및 기술 포스팅
               </p>
             </div>
-            <Link
-              href="/"
-              className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-            >
-              홈으로
-            </Link>
+            <div className="flex gap-3">
+              {isAdmin && (
+                <Link
+                  href="/blog/new"
+                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                >
+                  + 포스트 작성
+                </Link>
+              )}
+              <Link
+                href="/"
+                className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+              >
+                홈으로
+              </Link>
+            </div>
           </div>
 
           {/* Search */}
@@ -108,8 +120,18 @@ export default function BlogPage() {
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
           </div>
         ) : posts.length === 0 ? (
-          <div className="py-12 text-center text-gray-500">
-            {searchTerm ? '검색 결과가 없습니다.' : '포스트가 없습니다.'}
+          <div className="py-12 text-center">
+            <p className="text-gray-500">
+              {searchTerm ? '검색 결과가 없습니다.' : '포스트가 없습니다.'}
+            </p>
+            {isAdmin && !searchTerm && (
+              <Link
+                href="/blog/new"
+                className="mt-4 inline-block rounded-lg bg-blue-600 px-6 py-3 text-sm font-medium text-white hover:bg-blue-700"
+              >
+                첫 포스트 작성하기
+              </Link>
+            )}
           </div>
         ) : (
           <>
