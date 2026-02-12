@@ -22,14 +22,14 @@ export default function Home() {
         setError(null)
         setConnectionTest({ status: 'checking' })
         
-        // ✅ sortBy, order 수정 (camelCase)
         const response = await getProjects({ 
           limit: 6, 
-          sortBy: 'created_at',  // ✅ camelCase
+          sortBy: 'created_at',
           order: 'DESC' 
         })
         
-        setProjects(response.data)
+        // ✅ response.items 사용
+        setProjects(response.items)
         setConnectionTest({ 
           status: 'success',
           message: `${response.total}개 프로젝트 로드 성공`
@@ -133,25 +133,9 @@ export default function Home() {
                 <div>Host: {typeof window !== 'undefined' ? window.location.host : 'SSR'}</div>
                 <div>API Base: {typeof window !== 'undefined' && window.location.protocol === 'https:' ? '/api' : 'http://158.180.75.205:3001'}</div>
                 <div>Environment: {process.env.NODE_ENV}</div>
-                <div>Vercel Rewrites: /api/:path* → http://158.180.75.205:3001/:path*</div>
               </div>
             </details>
           </div>
-
-          {/* Console Check Guide */}
-          {connectionTest.status === 'error' && (
-            <div className="mt-4 rounded-md bg-yellow-50 p-3 dark:bg-yellow-900/20">
-              <p className="text-sm font-medium text-yellow-900 dark:text-yellow-300">
-                💡 디버깅 방법
-              </p>
-              <ol className="mt-2 list-inside list-decimal space-y-1 text-xs text-yellow-800 dark:text-yellow-400">
-                <li>F12 키를 눌러 개발자 도구 열기</li>
-                <li>Console 탭 확인</li>
-                <li>[API Request] 및 [API Response Error] 로그 찾기</li>
-                <li>에러 메시지 전체 복사</li>
-              </ol>
-            </div>
-          )}
         </div>
 
         {/* Projects Section */}
@@ -179,22 +163,18 @@ export default function Home() {
               <div className="text-center">
                 <p className="text-lg font-medium text-red-600">❌ 연결 실패</p>
                 <p className="mt-2 text-sm text-red-500">{error}</p>
-                <div className="mt-4 text-left">
-                  <p className="text-xs font-medium text-red-700">가능한 원인:</p>
-                  <ul className="mt-2 list-inside list-disc space-y-1 text-xs text-red-600">
-                    <li>백엔드 서버가 중지됨 (http://158.180.75.205:3001)</li>
-                    <li>Vercel rewrites 설정 오류</li>
-                    <li>백엔드 CORS 설정 오류</li>
-                    <li>네트워크 연결 문제</li>
-                  </ul>
-                </div>
               </div>
             </div>
           ) : projects.length === 0 ? (
             <div className="rounded-lg border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
-              <p className="text-gray-500">✅ 백엔드 연결 성공!</p>
-              <p className="mt-2 text-sm text-gray-400">
-                프로젝트 데이터가 없습니다. 백엔드 DB에 프로젝트를 추가해주세요.
+              <p className="text-lg font-medium text-gray-900 dark:text-white">
+                ✅ 백엔드 연결 성공!
+              </p>
+              <p className="mt-2 text-sm text-gray-500">
+                프로젝트 데이터가 없습니다.
+              </p>
+              <p className="mt-1 text-xs text-gray-400">
+                백엔드 DB에 프로젝트를 추가하면 여기에 표시됩니다.
               </p>
             </div>
           ) : (

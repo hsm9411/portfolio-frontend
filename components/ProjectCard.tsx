@@ -9,10 +9,10 @@ interface ProjectCardProps {
 export default function ProjectCard({ project }: ProjectCardProps) {
   return (
     <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
-      {project.thumbnail_url && (
+      {project.thumbnailUrl && (
         <div className="aspect-video w-full overflow-hidden bg-gray-100">
           <img
-            src={project.thumbnail_url}
+            src={project.thumbnailUrl}
             alt={project.title}
             className="h-full w-full object-cover"
           />
@@ -47,7 +47,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         </p>
 
         <div className="mb-4 flex flex-wrap gap-2">
-          {project.tech_stack.slice(0, 5).map((tech) => (
+          {project.techStack.slice(0, 5).map((tech) => (
             <span
               key={tech}
               className="inline-flex rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700 dark:bg-gray-700 dark:text-gray-300"
@@ -55,9 +55,9 @@ export default function ProjectCard({ project }: ProjectCardProps) {
               {tech}
             </span>
           ))}
-          {project.tech_stack.length > 5 && (
+          {project.techStack.length > 5 && (
             <span className="inline-flex items-center text-xs text-gray-500">
-              +{project.tech_stack.length - 5}
+              +{project.techStack.length - 5}
             </span>
           )}
         </div>
@@ -65,14 +65,14 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         <div className="flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-700">
           <div className="flex gap-4 text-sm text-gray-500">
             <span className="flex items-center gap-1">
-              👁️ {project.view_count}
+              👁️ {project.viewCount}
             </span>
             <span className="flex items-center gap-1">
-              ❤️ {project.like_count}
+              ❤️ {project.likeCount}
             </span>
           </div>
           <span className="text-xs text-gray-400">
-            {formatDistanceToNow(new Date(project.created_at), {
+            {formatDistanceToNow(new Date(project.createdAt), {
               addSuffix: true,
               locale: ko,
             })}

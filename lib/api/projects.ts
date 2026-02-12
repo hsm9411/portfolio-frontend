@@ -5,17 +5,19 @@ export interface Project {
   title: string
   summary: string
   description: string
-  thumbnail_url?: string
-  demo_url?: string
-  github_url?: string
-  tech_stack: string[]
+  thumbnailUrl?: string      // ✅ camelCase
+  demoUrl?: string           // ✅ camelCase
+  githubUrl?: string         // ✅ camelCase
+  techStack: string[]        // ✅ camelCase
   tags: string[]
   status: 'in-progress' | 'completed' | 'archived'
-  view_count: number
-  like_count: number
-  author_nickname: string
-  created_at: string
-  updated_at: string
+  viewCount: number          // ✅ camelCase
+  likeCount: number          // ✅ camelCase
+  authorId: string           // ✅ camelCase
+  authorNickname: string     // ✅ camelCase
+  authorAvatarUrl?: string   // ✅ camelCase
+  createdAt: string          // ✅ camelCase
+  updatedAt: string          // ✅ camelCase
 }
 
 export interface GetProjectsParams {
@@ -23,16 +25,16 @@ export interface GetProjectsParams {
   limit?: number
   status?: string
   search?: string
-  sortBy?: 'created_at' | 'view_count' | 'like_count'  // ✅ camelCase
+  sortBy?: 'created_at' | 'view_count' | 'like_count'
   order?: 'ASC' | 'DESC'
 }
 
 export interface PaginatedProjects {
-  data: Project[]
+  items: Project[]           // ✅ items (not data!)
   total: number
   page: number
-  limit: number
-  total_pages: number
+  pageSize: number           // ✅ pageSize (not limit!)
+  totalPages: number         // ✅ totalPages (not total_pages!)
 }
 
 export async function getProjects(params?: GetProjectsParams): Promise<PaginatedProjects> {
