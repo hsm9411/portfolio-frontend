@@ -24,9 +24,24 @@ const api = axios.create({
   },
 })
 
-// 요청 인터셉터: 에러 로깅
+// 요청 인터셉터: JWT 토큰 추가
 api.interceptors.request.use(
-  (config) => {
+  async (config) => {
+    // Supabase 세션에서 JWT 가져오기
+    if (typeof window !== 'undefined') {
+      try {
+        const { createClient } = await import('@/lib/supabase/client')
+        const supabase = createClient()
+        const { data: { session } } = await supabase.auth.getSession()
+        
+        if (session?.access_token) {
+          config.headers.Authorization = `Bearer ${session.access_token}`
+        }
+      } catch (error) {
+        console.error('Failed to get session:', error)
+      }
+    }
+    
     console.log('[API Request]', config.method?.toUpperCase(), config.url)
     return config
   },

@@ -2,53 +2,36 @@
 
 import { useEffect, useState } from 'react'
 import { getProjects, type Project } from '@/lib/api/projects'
+import { getPosts, type Post } from '@/lib/api/posts'
 import ProjectCard from '@/components/ProjectCard'
+import PostCard from '@/components/PostCard'
 import AuthButton from '@/components/AuthButton'
+import Link from 'next/link'
 
 export default function Home() {
   const [projects, setProjects] = useState<Project[]>([])
+  const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [connectionTest, setConnectionTest] = useState<{
-    status: 'checking' | 'success' | 'error'
-    message?: string
-  }>({ status: 'checking' })
 
-  // Projects 불러오기 (동시에 연결 테스트)
   useEffect(() => {
-    async function fetchProjects() {
-      try {
-        setLoading(true)
-        setError(null)
-        setConnectionTest({ status: 'checking' })
-        
-        const response = await getProjects({ 
-          limit: 6, 
-          sortBy: 'created_at',
-          order: 'DESC' 
-        })
-        
-        // ✅ response.items 사용
-        setProjects(response.items)
-        setConnectionTest({ 
-          status: 'success',
-          message: `${response.total}개 프로젝트 로드 성공`
-        })
-      } catch (err: any) {
-        console.error('Failed to fetch projects:', err)
-        const errorMessage = err.response?.data?.message || err.message || 'Connection failed'
-        setError(errorMessage)
-        setConnectionTest({ 
-          status: 'error',
-          message: errorMessage 
-        })
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchProjects()
+    loadData()
   }, [])
+
+  const loadData = async () => {
+    try {
+      setLoading(true)
+      const [projectsRes, postsRes] = await Promise.all([
+        getProjects({ limit: 6, sortBy: 'created_at', order: 'DESC' }),
+        getPosts({ limit: 3 })
+      ])
+      setProjects(projectsRes.items)
+      setPosts(postsRes.items)
+    } catch (error) {
+      console.error('Failed to load data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -58,10 +41,10 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                Portfolio Backend Test
+                Portfolio
               </h1>
               <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                백엔드 API 및 Supabase 연결 테스트
+                개발자 포트폴리오 & 블로그
               </p>
             </div>
             <AuthButton />
@@ -69,129 +52,82 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main Content */}
+      {/* Main */}
       <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        {/* Connection Status */}
-        <div className="mb-8 rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-          <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">
-            🔌 연결 상태
-          </h2>
-          <div className="grid gap-4 md:grid-cols-2">
-            {/* Backend API */}
-            <div className="rounded-md bg-gray-50 p-4 dark:bg-gray-700">
-              <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Backend API
-              </div>
-              <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                {typeof window !== 'undefined' && window.location.protocol === 'https:'
-                  ? '/api (Vercel Proxy)'
-                  : 'http://158.180.75.205:3001'}
-              </div>
-              <div className="mt-2">
-                {connectionTest.status === 'checking' ? (
-                  <span className="text-yellow-600">⏳ 연결 중...</span>
-                ) : connectionTest.status === 'error' ? (
-                  <div>
-                    <span className="text-red-600">❌ 연결 실패</span>
-                    {connectionTest.message && (
-                      <p className="mt-1 text-xs text-red-500">{connectionTest.message}</p>
-                    )}
-                  </div>
-                ) : (
-                  <div>
-                    <span className="text-green-600">✅ 연결 성공</span>
-                    {connectionTest.message && (
-                      <p className="mt-1 text-xs text-green-600">{connectionTest.message}</p>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Supabase */}
-            <div className="rounded-md bg-gray-50 p-4 dark:bg-gray-700">
-              <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Supabase Auth
-              </div>
-              <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                {process.env.NEXT_PUBLIC_SUPABASE_URL}
-              </div>
-              <div className="mt-2">
-                <span className="text-green-600">✅ 설정 완료</span>
-              </div>
-            </div>
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
           </div>
-
-          {/* Debug Info */}
-          <div className="mt-4 rounded-md bg-blue-50 p-3 dark:bg-blue-900/20">
-            <details className="text-xs">
-              <summary className="cursor-pointer font-medium text-blue-900 dark:text-blue-300">
-                🔍 디버그 정보
-              </summary>
-              <div className="mt-2 space-y-1 text-blue-800 dark:text-blue-400">
-                <div>Protocol: {typeof window !== 'undefined' ? window.location.protocol : 'SSR'}</div>
-                <div>Host: {typeof window !== 'undefined' ? window.location.host : 'SSR'}</div>
-                <div>API Base: {typeof window !== 'undefined' && window.location.protocol === 'https:' ? '/api' : 'http://158.180.75.205:3001'}</div>
-                <div>Environment: {process.env.NODE_ENV}</div>
+        ) : (
+          <>
+            {/* Projects Section */}
+            <section className="mb-16">
+              <div className="mb-6 flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  📁 Recent Projects
+                </h2>
+                <Link
+                  href="/projects"
+                  className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                >
+                  전체보기 →
+                </Link>
               </div>
-            </details>
-          </div>
-        </div>
 
-        {/* Projects Section */}
-        <div>
-          <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              📁 Projects
-            </h2>
-            {!loading && connectionTest.status === 'success' && (
-              <span className="text-sm text-gray-500">
-                총 {projects.length}개
-              </span>
-            )}
-          </div>
+              {projects.length === 0 ? (
+                <div className="rounded-lg border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
+                  <p className="text-gray-500">프로젝트가 없습니다.</p>
+                </div>
+              ) : (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {projects.map((project) => (
+                    <Link key={project.id} href={`/projects/${project.id}`}>
+                      <ProjectCard project={project} />
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </section>
 
-          {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="text-center text-gray-500">
-                <div className="mx-auto mb-2 h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
-                <p className="text-sm">백엔드 연결 및 데이터 로딩 중...</p>
+            {/* Blog Section */}
+            <section>
+              <div className="mb-6 flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  📝 Recent Posts
+                </h2>
+                <Link
+                  href="/blog"
+                  className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                >
+                  전체보기 →
+                </Link>
               </div>
-            </div>
-          ) : error ? (
-            <div className="rounded-lg border border-red-200 bg-red-50 p-6">
-              <div className="text-center">
-                <p className="text-lg font-medium text-red-600">❌ 연결 실패</p>
-                <p className="mt-2 text-sm text-red-500">{error}</p>
-              </div>
-            </div>
-          ) : projects.length === 0 ? (
-            <div className="rounded-lg border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
-              <p className="text-lg font-medium text-gray-900 dark:text-white">
-                ✅ 백엔드 연결 성공!
-              </p>
-              <p className="mt-2 text-sm text-gray-500">
-                프로젝트 데이터가 없습니다.
-              </p>
-              <p className="mt-1 text-xs text-gray-400">
-                백엔드 DB에 프로젝트를 추가하면 여기에 표시됩니다.
-              </p>
-            </div>
-          ) : (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {projects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
-              ))}
-            </div>
-          )}
-        </div>
+
+              {posts.length === 0 ? (
+                <div className="rounded-lg border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
+                  <p className="text-gray-500">포스트가 없습니다.</p>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {posts.map((post) => (
+                    <Link key={post.id} href={`/blog/${post.slug}`}>
+                      <PostCard post={post} />
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </section>
+          </>
+        )}
       </main>
 
       {/* Footer */}
       <footer className="border-t border-gray-200 bg-white py-8 dark:border-gray-700 dark:bg-gray-800">
-        <div className="mx-auto max-w-7xl px-4 text-center text-sm text-gray-500 sm:px-6 lg:px-8">
-          <p>포트폴리오 백엔드 연동 테스트 페이지</p>
-          <p className="mt-1">NestJS + Supabase + Redis</p>
+        <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+          <p className="text-sm text-gray-500">포트폴리오 & 블로그</p>
+          <p className="mt-1 text-xs text-gray-400">
+            NestJS + Next.js + Supabase
+          </p>
         </div>
       </footer>
     </div>
