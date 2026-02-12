@@ -3,14 +3,17 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { getProject, type Project } from '@/lib/api/projects'
+import { useAuth } from '@/hooks/useAuth'
 import LikeButton from '@/components/LikeButton'
 import CommentSection from '@/components/CommentSection'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
+import api from '@/lib/api/client'
 
 export default function ProjectDetailPage() {
   const params = useParams()
   const router = useRouter()
+  const { isAdmin } = useAuth()
   const [project, setProject] = useState<Project | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -36,6 +39,21 @@ export default function ProjectDetailPage() {
     }
   }
 
+  const handleDelete = async () => {
+    if (!project) return
+    
+    if (!confirm('정말 삭제하시겠습니까?')) return
+
+    try {
+      await api.delete(`/projects/${project.id}`)
+      alert('프로젝트가 삭제되었습니다.')
+      router.push('/projects')
+    } catch (error: any) {
+      console.error('Failed to delete project:', error)
+      alert(error.response?.data?.message || '삭제에 실패했습니다.')
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -53,12 +71,31 @@ export default function ProjectDetailPage() {
       {/* Header */}
       <header className="border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
         <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
-          <button
-            onClick={() => router.back()}
-            className="mb-4 flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-          >
-            ← 뒤로가기
-          </button>
+          <div className="mb-4 flex items-center justify-between">
+            <button
+              onClick={() => router.back()}
+              className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+            >
+              ← 뒤로가기
+            </button>
+            
+            {isAdmin && (
+              <div className="flex gap-2">
+                <button
+                  onClick={() => router.push(`/projects/${project.id}/edit`)}
+                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                >
+                  수정
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                >
+                  삭제
+                </button>
+              </div>
+            )}
+          </div>
           
           <div className="mb-4 flex items-center gap-2">
             <span
