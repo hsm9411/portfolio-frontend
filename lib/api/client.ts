@@ -1,18 +1,11 @@
 import axios from 'axios'
 
-// 테스트용: 직접 백엔드 호출
-const USE_DIRECT = true
-
 const getBaseURL = () => {
   if (typeof window === 'undefined') {
     return '/api'
   }
   
-  // 테스트: 직접 백엔드 호출
-  if (USE_DIRECT) {
-    return 'http://158.180.75.205:3001'
-  }
-  
+  // Vercel 프록시 사용
   return '/api'
 }
 
@@ -34,8 +27,6 @@ api.interceptors.request.use(
         if (session?.access_token) {
           config.headers.Authorization = `Bearer ${session.access_token}`
           console.log('✅ JWT 토큰 추가됨:', session.access_token.substring(0, 20) + '...')
-          console.log('📍 Base URL:', config.baseURL)
-          console.log('📍 Full URL:', `${config.baseURL}${config.url}`)
         } else {
           console.warn('⚠️ JWT 토큰 없음 - 로그인 필요')
         }

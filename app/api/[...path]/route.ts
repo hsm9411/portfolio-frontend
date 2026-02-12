@@ -54,20 +54,28 @@ async function proxyRequest(
 
     console.log(`[Proxy] ${method} ${url}`)
 
-    // 요청 헤더 복사
+    // 요청 헤더 복사 (모든 헤더 명시적 전달)
     const headers: Record<string, string> = {}
+    
+    // Authorization 헤더 최우선 처리
+    const authHeader = request.headers.get('authorization')
+    if (authHeader) {
+      headers['Authorization'] = authHeader
+      console.log('[Proxy] ✅ Authorization:', authHeader.substring(0, 30) + '...')
+    } else {
+      console.log('[Proxy] ❌ Authorization 헤더 없음')
+    }
+    
+    // 나머지 헤더 복사 (Host 제외)
     request.headers.forEach((value, key) => {
-      // Host 헤더는 제외 (백엔드 도메인으로 자동 설정됨)
-      if (key.toLowerCase() !== 'host') {
+      if (key.toLowerCase() !== 'host' && key.toLowerCase() !== 'authorization') {
         headers[key] = value
       }
     })
 
-    // Authorization 헤더 특별 처리 (로그)
-    if (headers['authorization']) {
-      console.log('[Proxy] Authorization 헤더:', headers['authorization'].substring(0, 30) + '...')
-    } else {
-      console.log('[Proxy] Authorization 헤더 없음')
+    // Content-Type 보장
+    if (!headers['Content-Type'] && !headers['content-type']) {
+      headers['Content-Type'] = 'application/json'
     }
 
     // 요청 본문 읽기
