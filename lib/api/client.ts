@@ -1,20 +1,19 @@
 import axios from 'axios'
 
-// Vercel 배포 환경에서는 /api 프록시 사용
-// 로컬 환경에서는 직접 백엔드 호출
+// 테스트용: 직접 백엔드 호출
+const USE_DIRECT = true
+
 const getBaseURL = () => {
-  // 브라우저 환경에서만 실행
   if (typeof window === 'undefined') {
-    return '/api' // 서버 사이드는 항상 /api 사용
+    return '/api'
   }
   
-  // Vercel 배포 환경 (HTTPS)
-  if (window.location.protocol === 'https:') {
-    return '/api' // Vercel rewrites 프록시 사용
+  // 테스트: 직접 백엔드 호출
+  if (USE_DIRECT) {
+    return 'http://158.180.75.205:3001'
   }
   
-  // 로컬 개발 환경 (HTTP)
-  return process.env.NEXT_PUBLIC_API_URL || 'http://158.180.75.205:3001'
+  return '/api'
 }
 
 const api = axios.create({
@@ -24,10 +23,8 @@ const api = axios.create({
   },
 })
 
-// 요청 인터셉터: JWT 토큰 추가
 api.interceptors.request.use(
   async (config) => {
-    // Supabase 세션에서 JWT 가져오기
     if (typeof window !== 'undefined') {
       try {
         const { createClient } = await import('@/lib/supabase/client')
@@ -37,6 +34,8 @@ api.interceptors.request.use(
         if (session?.access_token) {
           config.headers.Authorization = `Bearer ${session.access_token}`
           console.log('✅ JWT 토큰 추가됨:', session.access_token.substring(0, 20) + '...')
+          console.log('📍 Base URL:', config.baseURL)
+          console.log('📍 Full URL:', `${config.baseURL}${config.url}`)
         } else {
           console.warn('⚠️ JWT 토큰 없음 - 로그인 필요')
         }
@@ -56,7 +55,6 @@ api.interceptors.request.use(
   }
 )
 
-// 응답 인터셉터: 에러 로깅
 api.interceptors.response.use(
   (response) => {
     console.log('[API Response]', response.status, response.config.url)
