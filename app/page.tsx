@@ -22,7 +22,12 @@ export default function Home() {
         setError(null)
         setConnectionTest({ status: 'checking' })
         
-        const response = await getProjects({ limit: 6, sort_by: 'created_at', order: 'DESC' })
+        // ✅ sortBy, order 수정 (camelCase)
+        const response = await getProjects({ 
+          limit: 6, 
+          sortBy: 'created_at',  // ✅ camelCase
+          order: 'DESC' 
+        })
         
         setProjects(response.data)
         setConnectionTest({ 

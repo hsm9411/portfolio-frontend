@@ -23,7 +23,7 @@ export interface GetProjectsParams {
   limit?: number
   status?: string
   search?: string
-  sort_by?: 'created_at' | 'view_count' | 'like_count'
+  sortBy?: 'created_at' | 'view_count' | 'like_count'  // ✅ camelCase
   order?: 'ASC' | 'DESC'
 }
 
