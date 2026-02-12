@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -12,6 +12,15 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const router = useRouter()
   const supabase = createClient()
+
+  // 이미 로그인되어 있으면 홈으로 리다이렉트
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        router.push('/')
+      }
+    })
+  }, [supabase.auth, router])
 
   // 로컬 로그인
   const handleLocalLogin = async (e: React.FormEvent) => {
@@ -32,10 +41,25 @@ export default function LoginPage() {
 
       if (error) throw error
 
+      console.log('✅ 로그인 성공:', data.user?.email)
+      
+      // 로그인 성공 알림
+      alert(`환영합니다, ${data.user?.user_metadata?.nickname || data.user?.email}님!`)
+      
+      // 홈으로 리다이렉트
       router.push('/')
+      router.refresh()
     } catch (err: any) {
-      console.error('Login failed:', err)
-      setError(err.message || '로그인에 실패했습니다.')
+      console.error('❌ 로그인 실패:', err)
+      
+      // 사용자 친화적 에러 메시지
+      if (err.message?.includes('Invalid login credentials')) {
+        setError('이메일 또는 비밀번호가 올바르지 않습니다.')
+      } else if (err.message?.includes('Email not confirmed')) {
+        setError('이메일 인증이 필요합니다. 메일함을 확인해주세요.')
+      } else {
+        setError(err.message || '로그인에 실패했습니다.')
+      }
     } finally {
       setLoading(false)
     }
@@ -89,7 +113,7 @@ export default function LoginPage() {
         {/* Error Message */}
         {error && (
           <div className="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-600 dark:bg-red-900/30 dark:text-red-400">
-            {error}
+            ❌ {error}
           </div>
         )}
 

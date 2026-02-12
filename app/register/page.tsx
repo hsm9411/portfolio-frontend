@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -14,6 +14,15 @@ export default function RegisterPage() {
   const [error, setError] = useState('')
   const router = useRouter()
   const supabase = createClient()
+
+  // 이미 로그인되어 있으면 홈으로 리다이렉트
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        router.push('/')
+      }
+    })
+  }, [supabase.auth, router])
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -51,12 +60,19 @@ export default function RegisterPage() {
 
       if (signUpError) throw signUpError
 
+      console.log('✅ 회원가입 성공:', data.user?.email)
+
       // 회원가입 성공
-      alert('회원가입이 완료되었습니다! 이메일 인증 후 로그인해주세요.')
+      alert(`회원가입이 완료되었습니다!\n\n이메일(${email})로 인증 링크가 발송되었습니다.\n인증 후 로그인해주세요.`)
       router.push('/login')
     } catch (err: any) {
-      console.error('Registration failed:', err)
-      setError(err.message || '회원가입에 실패했습니다.')
+      console.error('❌ 회원가입 실패:', err)
+      
+      if (err.message?.includes('already registered')) {
+        setError('이미 가입된 이메일입니다.')
+      } else {
+        setError(err.message || '회원가입에 실패했습니다.')
+      }
     } finally {
       setLoading(false)
     }
@@ -110,7 +126,7 @@ export default function RegisterPage() {
         {/* Error Message */}
         {error && (
           <div className="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-600 dark:bg-red-900/30 dark:text-red-400">
-            {error}
+            ❌ {error}
           </div>
         )}
 
