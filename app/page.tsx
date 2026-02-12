@@ -20,14 +20,26 @@ export default function Home() {
   const loadData = async () => {
     try {
       setLoading(true)
-      const [projectsRes, postsRes] = await Promise.all([
-        getProjects({ limit: 6, sortBy: 'created_at', order: 'DESC' }),
-        getPosts({ limit: 3 })
-      ])
-      setProjects(projectsRes.items)
-      setPosts(postsRes.items)
-    } catch (error) {
-      console.error('Failed to load data:', error)
+      
+      // Projects와 Posts를 개별적으로 로드 (하나 실패해도 다른 건 표시)
+      const projectsPromise = getProjects({ limit: 6, sortBy: 'created_at', order: 'DESC' })
+        .then(res => res.items)
+        .catch(err => {
+          console.error('Failed to load projects:', err)
+          return []
+        })
+      
+      const postsPromise = getPosts({ limit: 3 })
+        .then(res => res.items)
+        .catch(err => {
+          console.error('Failed to load posts:', err)
+          return []
+        })
+
+      const [projectsData, postsData] = await Promise.all([projectsPromise, postsPromise])
+      
+      setProjects(projectsData)
+      setPosts(postsData)
     } finally {
       setLoading(false)
     }
@@ -77,6 +89,9 @@ export default function Home() {
               {projects.length === 0 ? (
                 <div className="rounded-lg border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
                   <p className="text-gray-500">프로젝트가 없습니다.</p>
+                  <p className="mt-2 text-sm text-gray-400">
+                    백엔드 DB에 프로젝트를 추가해주세요.
+                  </p>
                 </div>
               ) : (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -106,6 +121,9 @@ export default function Home() {
               {posts.length === 0 ? (
                 <div className="rounded-lg border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
                   <p className="text-gray-500">포스트가 없습니다.</p>
+                  <p className="mt-2 text-sm text-gray-400">
+                    백엔드 DB에 포스트를 추가해주세요.
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-6">
