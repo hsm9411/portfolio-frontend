@@ -10,14 +10,19 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
-  // 이미 로그인되어 있으면 홈으로 리다이렉트
+  // 로그인 상태 확인
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        router.push('/')
+        setIsLoggedIn(true)
+        // 3초 후 자동 리다이렉트
+        setTimeout(() => {
+          router.push('/')
+        }, 3000)
       }
     })
   }, [supabase.auth, router])
@@ -44,7 +49,8 @@ export default function LoginPage() {
       console.log('✅ 로그인 성공:', data.user?.email)
       
       // 로그인 성공 알림
-      alert(`환영합니다, ${data.user?.user_metadata?.nickname || data.user?.email}님!`)
+      const nickname = data.user?.user_metadata?.nickname || data.user?.email
+      alert(`환영합니다, ${nickname}님!`)
       
       // 홈으로 리다이렉트
       router.push('/')
@@ -67,34 +73,87 @@ export default function LoginPage() {
 
   // Google 로그인
   const handleGoogleLogin = async () => {
+    setError('')
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      console.log('🔵 Google OAuth 시작...')
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
         },
       })
-      if (error) throw error
+
+      console.log('Google OAuth 응답:', { data, error })
+
+      if (error) {
+        console.error('❌ Google OAuth 에러:', error)
+        throw error
+      }
+
+      // OAuth는 리다이렉트되므로 여기까지 오지 않음
     } catch (err: any) {
       console.error('Google login failed:', err)
-      setError(err.message || 'Google 로그인에 실패했습니다.')
+      
+      // 상세 에러 표시
+      if (err.message?.includes('provider is not enabled')) {
+        setError(`Google 로그인이 활성화되지 않았습니다.\n\nSupabase Dashboard에서 Google Provider를 활성화해주세요.\n(OAUTH_SETUP.md 참고)`)
+      } else {
+        setError(`Google 로그인 실패: ${err.message}`)
+      }
     }
   }
 
   // GitHub 로그인
   const handleGitHubLogin = async () => {
+    setError('')
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      console.log('🔵 GitHub OAuth 시작...')
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'github',
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
         },
       })
-      if (error) throw error
+
+      console.log('GitHub OAuth 응답:', { data, error })
+
+      if (error) {
+        console.error('❌ GitHub OAuth 에러:', error)
+        throw error
+      }
     } catch (err: any) {
       console.error('GitHub login failed:', err)
-      setError(err.message || 'GitHub 로그인에 실패했습니다.')
+      
+      // 상세 에러 표시
+      if (err.message?.includes('provider is not enabled')) {
+        setError(`GitHub 로그인이 활성화되지 않았습니다.\n\nSupabase Dashboard에서 GitHub Provider를 활성화해주세요.\n(OAUTH_SETUP.md 참고)`)
+      } else {
+        setError(`GitHub 로그인 실패: ${err.message}`)
+      }
     }
+  }
+
+  // 이미 로그인되어 있는 경우
+  if (isLoggedIn) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 dark:bg-gray-900">
+        <div className="text-center">
+          <div className="mb-4 text-6xl">✅</div>
+          <h1 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">
+            이미 로그인되어 있습니다
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            잠시 후 홈으로 이동합니다...
+          </p>
+          <Link
+            href="/"
+            className="mt-4 inline-block text-blue-600 hover:text-blue-700"
+          >
+            지금 이동하기 →
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -113,7 +172,7 @@ export default function LoginPage() {
         {/* Error Message */}
         {error && (
           <div className="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-600 dark:bg-red-900/30 dark:text-red-400">
-            ❌ {error}
+            <div className="whitespace-pre-line">❌ {error}</div>
           </div>
         )}
 
@@ -231,6 +290,16 @@ export default function LoginPage() {
             className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
           >
             ← 홈으로 돌아가기
+          </Link>
+        </div>
+
+        {/* Debug Link */}
+        <div className="mt-4 text-center">
+          <Link
+            href="/debug"
+            className="text-xs text-gray-400 hover:text-gray-600"
+          >
+            🔍 디버그 페이지
           </Link>
         </div>
       </div>
