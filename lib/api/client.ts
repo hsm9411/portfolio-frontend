@@ -36,13 +36,18 @@ api.interceptors.request.use(
         
         if (session?.access_token) {
           config.headers.Authorization = `Bearer ${session.access_token}`
+          console.log('✅ JWT 토큰 추가됨:', session.access_token.substring(0, 20) + '...')
+        } else {
+          console.warn('⚠️ JWT 토큰 없음 - 로그인 필요')
         }
       } catch (error) {
-        console.error('Failed to get session:', error)
+        console.error('❌ 세션 가져오기 실패:', error)
       }
     }
     
-    console.log('[API Request]', config.method?.toUpperCase(), config.url)
+    console.log('[API Request]', config.method?.toUpperCase(), config.url, {
+      hasAuth: !!config.headers.Authorization
+    })
     return config
   },
   (error) => {
@@ -63,6 +68,7 @@ api.interceptors.response.use(
       status: error.response?.status,
       message: error.message,
       data: error.response?.data,
+      hasAuth: !!error.config?.headers?.Authorization
     })
     return Promise.reject(error)
   }
