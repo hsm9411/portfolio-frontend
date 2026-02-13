@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
+import { createClient } from '@/lib/supabase/client'
 import api from '@/lib/api/client'
 import ReactMarkdown from 'react-markdown'
 
@@ -12,6 +13,8 @@ export default function NewPostPage() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [preview, setPreview] = useState(false)
+  const [authChecked, setAuthChecked] = useState(false)
+  const supabase = createClient()
 
   const [formData, setFormData] = useState({
     title: '',
@@ -20,12 +23,41 @@ export default function NewPostPage() {
     tags: ''
   })
 
+  // 인증 및 관리자 권한 체크
   useEffect(() => {
-    if (!loading && !isAdmin) {
-      alert('관리자만 접근할 수 있습니다.')
-      router.push('/blog')
+    const checkAuthAndAdmin = async () => {
+      if (loading) return // 로딩 중이면 대기
+      
+      try {
+        // 세션 재확인
+        const { data: { session }, error } = await supabase.auth.getSession()
+        
+        if (error || !session) {
+          console.log('⚠️ 세션 없음, 로그인 페이지로 이동')
+          alert('로그인이 필요합니다.')
+          router.push('/login')
+          return
+        }
+
+        // 관리자 권한 확인
+        if (!isAdmin) {
+          console.log('❌ 관리자 권한 없음:', session.user.email)
+          alert('관리자만 접근할 수 있습니다.')
+          router.push('/blog')
+          return
+        }
+
+        console.log('✅ 인증 및 권한 확인 완료')
+        setAuthChecked(true)
+      } catch (err) {
+        console.error('인증 체크 에러:', err)
+        alert('인증 확인 중 오류가 발생했습니다.')
+        router.push('/login')
+      }
     }
-  }, [loading, isAdmin, router])
+
+    checkAuthAndAdmin()
+  }, [loading, isAdmin, router, supabase.auth])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -58,16 +90,16 @@ export default function NewPostPage() {
     }
   }
 
-  if (loading) {
+  // 로딩 중이거나 인증 체크가 완료되지 않았으면 로딩 표시
+  if (loading || !authChecked) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
+        <div className="text-center">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">권한 확인 중...</p>
+        </div>
       </div>
     )
-  }
-
-  if (!isAdmin) {
-    return null
   }
 
   return (
