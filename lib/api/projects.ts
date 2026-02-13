@@ -1,48 +1,57 @@
 import api from './client'
+import type {
+  Project,
+  GetProjectsRequest,
+  PaginatedResponse,
+  CreateProjectRequest,
+  UpdateProjectRequest,
+} from '@/lib/types/api'
 
-export interface Project {
-  id: string
-  title: string
-  summary: string
-  description: string
-  thumbnailUrl?: string      // ✅ camelCase
-  demoUrl?: string           // ✅ camelCase
-  githubUrl?: string         // ✅ camelCase
-  techStack: string[]        // ✅ camelCase
-  tags: string[]
-  status: 'in-progress' | 'completed' | 'archived'
-  viewCount: number          // ✅ camelCase
-  likeCount: number          // ✅ camelCase
-  authorId: string           // ✅ camelCase
-  authorNickname: string     // ✅ camelCase
-  authorAvatarUrl?: string   // ✅ camelCase
-  createdAt: string          // ✅ camelCase
-  updatedAt: string          // ✅ camelCase
-}
+// ============================================
+// Projects API
+// ============================================
 
-export interface GetProjectsParams {
-  page?: number
-  limit?: number
-  status?: string
-  search?: string
-  sortBy?: 'created_at' | 'view_count' | 'like_count'
-  order?: 'ASC' | 'DESC'
-}
-
-export interface PaginatedProjects {
-  items: Project[]           // ✅ items (not data!)
-  total: number
-  page: number
-  pageSize: number           // ✅ pageSize (not limit!)
-  totalPages: number         // ✅ totalPages (not total_pages!)
-}
-
-export async function getProjects(params?: GetProjectsParams): Promise<PaginatedProjects> {
-  const response = await api.get('/projects', { params })
+/**
+ * 프로젝트 목록 조회
+ */
+export async function getProjects(
+  params?: GetProjectsRequest
+): Promise<PaginatedResponse<Project>> {
+  const response = await api.get<PaginatedResponse<Project>>('/projects', { params })
   return response.data
 }
 
+/**
+ * 프로젝트 상세 조회 (조회수 자동 증가)
+ */
 export async function getProject(id: string): Promise<Project> {
-  const response = await api.get(`/projects/${id}`)
+  const response = await api.get<Project>(`/projects/${id}`)
+  return response.data
+}
+
+/**
+ * 프로젝트 생성 (관리자만)
+ */
+export async function createProject(data: CreateProjectRequest): Promise<Project> {
+  const response = await api.post<Project>('/projects', data)
+  return response.data
+}
+
+/**
+ * 프로젝트 수정 (작성자/관리자)
+ */
+export async function updateProject(
+  id: string,
+  data: UpdateProjectRequest
+): Promise<Project> {
+  const response = await api.patch<Project>(`/projects/${id}`, data)
+  return response.data
+}
+
+/**
+ * 프로젝트 삭제 (작성자/관리자)
+ */
+export async function deleteProject(id: string): Promise<{ message: string }> {
+  const response = await api.delete<{ message: string }>(`/projects/${id}`)
   return response.data
 }

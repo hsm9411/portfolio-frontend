@@ -1,68 +1,57 @@
 import api from './client'
+import type {
+  Post,
+  GetPostsRequest,
+  PaginatedResponse,
+  CreatePostRequest,
+  UpdatePostRequest,
+} from '@/lib/types/api'
 
-export interface Post {
-  id: string
-  slug: string
-  title: string
-  content: string
-  summary: string
-  tags: string[]
-  readTimeMinutes: number
-  viewCount: number
-  likeCount: number
-  authorId: string
-  authorNickname: string
-  authorAvatarUrl?: string
-  createdAt: string
-  updatedAt: string
-}
+// ============================================
+// Posts API
+// ============================================
 
-export interface GetPostsParams {
-  page?: number
-  limit?: number
-  search?: string
-  tags?: string[]
-}
-
-export interface PaginatedPosts {
-  items: Post[]
-  total: number
-  page: number
-  pageSize: number
-  totalPages: number
-}
-
-export async function getPosts(params?: GetPostsParams): Promise<PaginatedPosts> {
-  const response = await api.get('/posts', { params })
+/**
+ * 포스트 목록 조회
+ */
+export async function getPosts(
+  params?: GetPostsRequest
+): Promise<PaginatedResponse<Post>> {
+  const response = await api.get<PaginatedResponse<Post>>('/posts', { params })
   return response.data
 }
 
+/**
+ * Slug로 포스트 조회 (조회수 자동 증가)
+ */
 export async function getPostBySlug(slug: string): Promise<Post> {
-  const response = await api.get(`/posts/${slug}`)
+  const response = await api.get<Post>(`/posts/${slug}`)
   return response.data
 }
 
-export async function createPost(data: {
-  title: string
-  content: string
-  summary: string
-  tags: string[]
-}): Promise<Post> {
-  const response = await api.post('/posts', data)
+/**
+ * 포스트 생성 (로그인 필수)
+ */
+export async function createPost(data: CreatePostRequest): Promise<Post> {
+  const response = await api.post<Post>('/posts', data)
   return response.data
 }
 
-export async function updatePost(id: string, data: Partial<{
-  title: string
-  content: string
-  summary: string
-  tags: string[]
-}>): Promise<Post> {
-  const response = await api.put(`/posts/${id}`, data)
+/**
+ * 포스트 수정 (작성자만)
+ */
+export async function updatePost(
+  id: string,
+  data: UpdatePostRequest
+): Promise<Post> {
+  const response = await api.put<Post>(`/posts/${id}`, data)
   return response.data
 }
 
+/**
+ * 포스트 삭제 (작성자만)
+ */
 export async function deletePost(id: string): Promise<{ message: string }> {
-  const response = await api.delete(`/posts/${id}`)
+  const response = await api.delete<{ message: string }>(`/posts/${id}`)
   return response.data
 }

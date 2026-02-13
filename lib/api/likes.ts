@@ -1,28 +1,29 @@
 import api from './client'
+import type { LikeTargetType, LikeStatus } from '@/lib/types/api'
 
-export interface ToggleLikeResponse {
-  liked: boolean
-  likeCount: number
-}
+// ============================================
+// Likes API
+// ============================================
 
-export interface CheckLikeResponse {
-  liked: boolean
-}
-
-export async function toggleLike(
-  targetType: 'project' | 'post',
+/**
+ * 좋아요 상태 조회
+ */
+export async function getLikeStatus(
+  targetType: LikeTargetType,
   targetId: string
-): Promise<ToggleLikeResponse> {
-  const response = await api.post('/likes/toggle', { targetType, targetId })
+): Promise<LikeStatus> {
+  const response = await api.get<LikeStatus>(`/likes/${targetType}/${targetId}`)
   return response.data
 }
 
-export async function checkLike(
-  targetType: 'project' | 'post',
+/**
+ * 좋아요 토글 (좋아요/취소)
+ * @returns 업데이트된 좋아요 상태
+ */
+export async function toggleLike(
+  targetType: LikeTargetType,
   targetId: string
-): Promise<CheckLikeResponse> {
-  const response = await api.get('/likes/check', {
-    params: { targetType, targetId }
-  })
+): Promise<LikeStatus> {
+  const response = await api.post<LikeStatus>(`/likes/${targetType}/${targetId}`)
   return response.data
 }
