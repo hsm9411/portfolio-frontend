@@ -35,34 +35,35 @@ api.interceptors.request.use(
     // Client-side only
     if (typeof window !== 'undefined') {
       try {
+        // Dynamic import를 동기적으로 처리
         const { createClient } = await import('@/lib/supabase/client')
         const supabase = createClient()
-        const { data: { session } } = await supabase.auth.getSession()
+        const { data: { session }, error } = await supabase.auth.getSession()
+        
+        console.log('🔍 세션 확인:', { 
+          hasSession: !!session, 
+          hasToken: !!session?.access_token,
+          error: error?.message 
+        })
         
         if (session?.access_token) {
           config.headers.Authorization = `Bearer ${session.access_token}`
-          
-          // Development 환경에서만 로그 출력
-          if (process.env.NODE_ENV === 'development') {
-            console.log('✅ JWT 토큰 추가:', session.access_token.substring(0, 20) + '...')
-          }
+          console.log('✅ JWT 토큰 추가:', session.access_token.substring(0, 30) + '...')
         } else {
-          // Public API는 토큰 없이도 접근 가능
-          if (process.env.NODE_ENV === 'development') {
-            console.log('ℹ️ JWT 토큰 없음 (Public API)')
-          }
+          console.warn('⚠️ JWT 토큰 없음 - 세션 없음 또는 만료됨')
         }
       } catch (error) {
         console.error('❌ 세션 가져오기 실패:', error)
       }
     }
     
-    // Development 로그
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[API Request]', config.method?.toUpperCase(), config.url, {
-        hasAuth: !!config.headers.Authorization,
-      })
-    }
+    // Request 로그
+    console.log('[API Request]', {
+      method: config.method?.toUpperCase(),
+      url: config.url,
+      hasAuth: !!config.headers.Authorization,
+      headers: config.headers,
+    })
     
     return config
   },
@@ -78,10 +79,10 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (response) => {
-    // Development 로그
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[API Response]', response.status, response.config.url)
-    }
+    console.log('[API Response]', {
+      status: response.status,
+      url: response.config.url,
+    })
     return response
   },
   async (error: AxiosError<ApiError>) => {
@@ -91,6 +92,7 @@ api.interceptors.response.use(
       status: error.response?.status,
       message: error.response?.data?.message || error.message,
       hasAuth: !!error.config?.headers?.Authorization,
+      headers: error.config?.headers,
     })
 
     // 401 Unauthorized → 로그아웃 처리
