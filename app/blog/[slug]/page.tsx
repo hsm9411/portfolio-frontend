@@ -15,6 +15,13 @@ export default function BlogPostPage() {
   const [post, setPost] = useState<Post | null>(null)
   const [loading, setLoading] = useState(true)
 
+  // 읽기 시간 계산 (한국어 기준: 분당 약 500자)
+  const calculateReadTime = (content: string): number => {
+    const wordsPerMinute = 500
+    const wordCount = content.length
+    return Math.max(1, Math.ceil(wordCount / wordsPerMinute))
+  }
+
   useEffect(() => {
     if (params.slug) {
       loadPost(params.slug as string)
@@ -48,6 +55,8 @@ export default function BlogPostPage() {
   if (!post) {
     return null
   }
+
+  const readTimeMinutes = calculateReadTime(post.content)
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -99,7 +108,7 @@ export default function BlogPostPage() {
               👁️ {post.viewCount}
             </span>
             <span className="flex items-center gap-1">
-              📖 {post.readTimeMinutes}분
+              📖 {readTimeMinutes}분
             </span>
           </div>
         </div>
