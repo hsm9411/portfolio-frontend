@@ -1,4 +1,4 @@
-# 🔧 Vercel 빌드 에러 수정 완료 (v2)
+# 🔧 Vercel 빌드 에러 수정 완료 (v3)
 
 ## ❌ 발생한 에러들
 
@@ -10,6 +10,13 @@ Export checkLike doesn't exist in target module
 ### 에러 2: Post 타입 export 없음
 ```
 Type error: Module '"@/lib/api/posts"' declares 'Post' locally, but it is not exported.
+```
+
+### 에러 3: readTimeMinutes 필드 없음
+```
+Type error: Property 'readTimeMinutes' does not exist on type 'Post'.
+  - app/blog/[slug]/page.tsx:102
+  - components/PostCard.tsx:44
 ```
 
 ---
@@ -88,6 +95,51 @@ export type {
 export type { User, AuthResponse, LoginRequest, RegisterRequest }
 ```
 
+### 3차 수정: readTimeMinutes 자동 계산
+
+백엔드 Post 엔티티에 `readTimeMinutes` 필드가 없으므로, 프론트엔드에서 자동 계산하도록 수정.
+
+#### `app/blog/[slug]/page.tsx`
+```typescript
+// 읽기 시간 계산 (한국어 기준: 분당 약 500자)
+const calculateReadTime = (content: string): number => {
+  const wordsPerMinute = 500
+  const wordCount = content.length
+  return Math.max(1, Math.ceil(wordCount / wordsPerMinute))
+}
+
+export default function BlogPostPage() {
+  // ...
+  const readTimeMinutes = calculateReadTime(post.content)
+  
+  // JSX에서 사용
+  <span className="flex items-center gap-1">
+    📖 {readTimeMinutes}분
+  </span>
+}
+```
+
+#### `components/PostCard.tsx`
+```typescript
+// 읽기 시간 계산 함수 추가
+const calculateReadTime = (content: string): number => {
+  const wordsPerMinute = 500
+  const wordCount = content.length
+  return Math.max(1, Math.ceil(wordCount / wordsPerMinute))
+}
+
+export default function PostCard({ post }: PostCardProps) {
+  const readTimeMinutes = calculateReadTime(post.content)
+  
+  return (
+    // ...
+    <span className="flex items-center gap-1">
+      📖 {readTimeMinutes}분
+    </span>
+  )
+}
+```
+
 ---
 
 ## 📝 타입 Import 방법
@@ -115,12 +167,12 @@ import { getProjects } from '@/lib/api/projects'
 ```bash
 # 변경사항 커밋
 git add .
-git commit -m "fix: Add type re-exports to all API modules
+git commit -m "fix: Calculate readTimeMinutes from content length
 
-- Export Post, Project, Comment types from respective API files
-- Fix LikeButton to use getLikeStatus instead of checkLike
-- Update CommentSection to match backend API structure
-- Ensure all types are properly exported for TypeScript compilation"
+- Add calculateReadTime function to compute reading time
+- Remove readTimeMinutes from Post type (not in backend)
+- Apply to app/blog/[slug]/page.tsx and PostCard component
+- Use 500 chars/min for Korean content"
 
 # Vercel 자동 재배포
 git push origin main
@@ -153,10 +205,33 @@ npm run build
 5. ✅ `lib/api/likes.ts` - LikeStatus 타입 export + getLikeStatus 추가
 6. ✅ `components/LikeButton.tsx` - API 호출 수정
 7. ✅ `components/CommentSection.tsx` - API 호출 및 응답 구조 수정
+8. ✅ `app/blog/[slug]/page.tsx` - readTimeMinutes 자동 계산
+9. ✅ `components/PostCard.tsx` - readTimeMinutes 자동 계산
 
 ---
 
 ## 📚 백엔드 API 스펙
+
+### Post Entity
+```typescript
+// backend: src/entities/post/post.entity.ts
+interface Post {
+  id: string
+  slug: string
+  title: string
+  content: string
+  summary: string
+  tags: string[]
+  viewCount: number
+  likeCount: number
+  authorId: string
+  authorNickname: string
+  authorAvatarUrl: string | null
+  createdAt: Date
+  updatedAt: Date
+  // ❌ readTimeMinutes 필드 없음 (프론트엔드에서 계산)
+}
+```
 
 ### Comments API
 ```typescript
@@ -209,6 +284,29 @@ Response: { isLiked: boolean, likeCount: number }
 3. **API 응답 구조**
    - 백엔드 응답과 프론트엔드 타입이 일치해야 함
    - `lib/types/api.ts` 참고
+
+4. **계산된 필드**
+   - 백엔드에 없는 필드는 프론트엔드에서 계산
+   - `readTimeMinutes`는 `content.length / 500` 으로 자동 계산
+
+---
+
+## 💡 ReadTime 계산 로직
+
+```typescript
+/**
+ * 한국어 텍스트 읽기 시간 계산
+ * - 기준: 분당 500자 (한국어 평균)
+ * - 최소값: 1분
+ */
+const calculateReadTime = (content: string): number => {
+  const wordsPerMinute = 500
+  const wordCount = content.length
+  return Math.max(1, Math.ceil(wordCount / wordsPerMinute))
+}
+```
+
+영어는 분당 200-250 단어가 평균이지만, 한국어는 글자 수 기준으로 계산합니다.
 
 ---
 

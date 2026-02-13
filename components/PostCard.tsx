@@ -7,7 +7,16 @@ interface PostCardProps {
   post: Post
 }
 
+// 읽기 시간 계산 (한국어 기준: 분당 약 500자)
+const calculateReadTime = (content: string): number => {
+  const wordsPerMinute = 500
+  const wordCount = content.length
+  return Math.max(1, Math.ceil(wordCount / wordsPerMinute))
+}
+
 export default function PostCard({ post }: PostCardProps) {
+  const readTimeMinutes = calculateReadTime(post.content)
+
   return (
     <article className="rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
       <div className="mb-3 flex items-center gap-2">
@@ -41,7 +50,7 @@ export default function PostCard({ post }: PostCardProps) {
             ❤️ {post.likeCount}
           </span>
           <span className="flex items-center gap-1">
-            📖 {post.readTimeMinutes}분
+            📖 {readTimeMinutes}분
           </span>
         </div>
         <span className="text-xs">
