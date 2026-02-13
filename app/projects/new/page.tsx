@@ -5,10 +5,6 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import api from '@/lib/api/client'
 
-// 동적 렌더링 강제
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
-
 export default function NewProjectPage() {
   const router = useRouter()
   const { user, isAdmin, loading } = useAuth()
@@ -58,13 +54,23 @@ export default function NewProjectPage() {
         status: formData.status
       }
 
+      console.log('📤 프로젝트 생성 요청:', payload)
       const response = await api.post('/projects', payload)
+      console.log('✅ 프로젝트 생성 성공:', response.data)
       
       alert('프로젝트가 작성되었습니다!')
       router.push(`/projects/${response.data.id}`)
     } catch (err: any) {
-      console.error('Failed to create project:', err)
-      setError(err.response?.data?.message || '프로젝트 작성에 실패했습니다.')
+      console.error('❌ 프로젝트 작성 실패:', err)
+      
+      if (err.statusCode === 401) {
+        setError('로그인이 필요합니다. 다시 로그인해주세요.')
+        setTimeout(() => router.push('/login'), 2000)
+      } else if (err.statusCode === 403) {
+        setError('권한이 없습니다. 관리자만 프로젝트를 작성할 수 있습니다.')
+      } else {
+        setError(err.message || '프로젝트 작성에 실패했습니다.')
+      }
     } finally {
       setSubmitting(false)
     }

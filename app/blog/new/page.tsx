@@ -7,10 +7,6 @@ import { createClient } from '@/lib/supabase/client'
 import api from '@/lib/api/client'
 import ReactMarkdown from 'react-markdown'
 
-// Next.js에게 이 페이지를 정적으로 생성하지 말고 동적으로 렌더링하도록 지시
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
-
 export default function NewPostPage() {
   const router = useRouter()
   const { user, isAdmin, loading } = useAuth()
@@ -38,10 +34,9 @@ export default function NewPostPage() {
   // 인증 및 관리자 권한 체크
   useEffect(() => {
     const checkAuthAndAdmin = async () => {
-      if (loading || !supabaseClient) return // 로딩 중이거나 클라이언트가 없으면 대기
+      if (loading || !supabaseClient) return
       
       try {
-        // 세션 재확인
         const { data: { session }, error } = await supabaseClient.auth.getSession()
         
         if (error || !session) {
@@ -51,7 +46,6 @@ export default function NewPostPage() {
           return
         }
 
-        // 관리자 권한 확인
         if (!isAdmin) {
           console.log('❌ 관리자 권한 없음:', session.user.email)
           alert('관리자만 접근할 수 있습니다.')
@@ -90,19 +84,28 @@ export default function NewPostPage() {
         tags: formData.tags.split(',').map(s => s.trim()).filter(Boolean)
       }
 
+      console.log('📤 포스트 생성 요청:', payload)
       const response = await api.post('/posts', payload)
+      console.log('✅ 포스트 생성 성공:', response.data)
       
       alert('포스트가 작성되었습니다!')
       router.push(`/blog/${response.data.slug}`)
     } catch (err: any) {
-      console.error('Failed to create post:', err)
-      setError(err.response?.data?.message || '포스트 작성에 실패했습니다.')
+      console.error('❌ 포스트 작성 실패:', err)
+      
+      if (err.statusCode === 401) {
+        setError('로그인이 필요합니다. 다시 로그인해주세요.')
+        setTimeout(() => router.push('/login'), 2000)
+      } else if (err.statusCode === 403) {
+        setError('권한이 없습니다. 관리자만 포스트를 작성할 수 있습니다.')
+      } else {
+        setError(err.message || '포스트 작성에 실패했습니다.')
+      }
     } finally {
       setSubmitting(false)
     }
   }
 
-  // 로딩 중이거나 인증 체크가 완료되지 않았으면 로딩 표시
   if (loading || !authChecked || !supabaseClient) {
     return (
       <div className="flex min-h-screen items-center justify-center">
