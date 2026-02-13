@@ -7,6 +7,16 @@ import type {
 } from '@/lib/types/api'
 
 // ============================================
+// Re-export Types
+// ============================================
+export type { 
+  Comment, 
+  CommentTargetType, 
+  CreateCommentRequest, 
+  UpdateCommentRequest 
+}
+
+// ============================================
 // Comments API
 // ============================================
 

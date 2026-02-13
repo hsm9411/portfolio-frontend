@@ -7,6 +7,11 @@ import type {
 } from '@/lib/types/api'
 
 // ============================================
+// Re-export Types
+// ============================================
+export type { User, AuthResponse, LoginRequest, RegisterRequest }
+
+// ============================================
 // Auth API
 // ============================================
 

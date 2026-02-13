@@ -8,6 +8,11 @@ import type {
 } from '@/lib/types/api'
 
 // ============================================
+// Re-export Types
+// ============================================
+export type { Post, GetPostsRequest, CreatePostRequest, UpdatePostRequest }
+
+// ============================================
 // Posts API
 // ============================================
 

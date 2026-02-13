@@ -8,6 +8,16 @@ import type {
 } from '@/lib/types/api'
 
 // ============================================
+// Re-export Types
+// ============================================
+export type { 
+  Project, 
+  GetProjectsRequest, 
+  CreateProjectRequest, 
+  UpdateProjectRequest 
+}
+
+// ============================================
 // Projects API
 // ============================================
 

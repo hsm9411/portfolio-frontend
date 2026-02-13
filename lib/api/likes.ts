@@ -2,6 +2,11 @@ import api from './client'
 import type { LikeTargetType, LikeStatus } from '@/lib/types/api'
 
 // ============================================
+// Re-export Types
+// ============================================
+export type { LikeTargetType, LikeStatus }
+
+// ============================================
 // Likes API
 // ============================================
 
