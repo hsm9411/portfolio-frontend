@@ -26,6 +26,9 @@ const api: AxiosInstance = axios.create({
   },
 })
 
+// 401 에러 처리 중복 방지 플래그
+let isRedirecting = false
+
 // ============================================
 // Request Interceptor (JWT 토큰 자동 추가)
 // ============================================
@@ -35,7 +38,6 @@ api.interceptors.request.use(
     // Client-side only
     if (typeof window !== 'undefined') {
       try {
-        // Dynamic import를 동기적으로 처리
         const { createClient } = await import('@/lib/supabase/client')
         const supabase = createClient()
         const { data: { session }, error } = await supabase.auth.getSession()
@@ -43,6 +45,7 @@ api.interceptors.request.use(
         console.log('🔍 세션 확인:', { 
           hasSession: !!session, 
           hasToken: !!session?.access_token,
+          email: session?.user?.email,
           error: error?.message 
         })
         
@@ -62,7 +65,6 @@ api.interceptors.request.use(
       method: config.method?.toUpperCase(),
       url: config.url,
       hasAuth: !!config.headers.Authorization,
-      headers: config.headers,
     })
     
     return config
@@ -92,23 +94,33 @@ api.interceptors.response.use(
       status: error.response?.status,
       message: error.response?.data?.message || error.message,
       hasAuth: !!error.config?.headers?.Authorization,
-      headers: error.config?.headers,
     })
 
-    // 401 Unauthorized → 로그아웃 처리
-    if (error.response?.status === 401) {
+    // 401 Unauthorized → 세션이 있었는데 만료된 경우만 로그아웃
+    if (error.response?.status === 401 && !isRedirecting) {
       if (typeof window !== 'undefined') {
-        console.warn('⚠️ 인증 만료 - 로그아웃 처리')
+        // 세션이 있었는지 확인
+        const hadAuth = !!error.config?.headers?.Authorization
         
-        try {
-          const { createClient } = await import('@/lib/supabase/client')
-          const supabase = createClient()
-          await supabase.auth.signOut()
+        if (hadAuth) {
+          // 토큰이 있었는데 401이면 → 토큰 만료
+          console.warn('⚠️ 인증 토큰 만료 - 로그인 페이지로 이동')
+          isRedirecting = true
           
-          // 로그인 페이지로 리다이렉트
-          window.location.href = '/login?error=session_expired'
-        } catch (signOutError) {
-          console.error('로그아웃 실패:', signOutError)
+          try {
+            const { createClient } = await import('@/lib/supabase/client')
+            const supabase = createClient()
+            await supabase.auth.signOut()
+          } catch (signOutError) {
+            console.error('로그아웃 실패:', signOutError)
+          }
+          
+          // 현재 페이지 URL 저장
+          const currentPath = window.location.pathname + window.location.search
+          window.location.href = `/login?error=session_expired&redirect=${encodeURIComponent(currentPath)}`
+        } else {
+          // 토큰이 없었는데 401이면 → 애초에 로그인 안 함
+          console.warn('⚠️ 로그인 필요 - 세션 없음')
         }
       }
     }

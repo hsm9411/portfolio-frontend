@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
 export default function LoginPage() {
@@ -12,28 +12,36 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
   const supabase = createClient()
+
+  // 리다이렉트 URL
+  const redirectUrl = searchParams.get('redirect') || '/'
 
   // 로그인 상태 확인
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         setIsLoggedIn(true)
+        console.log('✅ 이미 로그인됨, 리다이렉트:', redirectUrl)
         setTimeout(() => {
-          router.push('/')
-        }, 3000)
+          router.push(redirectUrl)
+        }, 1500)
       }
     })
-  }, [supabase.auth, router])
+  }, [supabase.auth, router, redirectUrl])
 
   // URL 에러 파라미터 확인
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const errorParam = urlParams.get('error')
+    const errorParam = searchParams.get('error')
     if (errorParam) {
-      setError(`OAuth 에러: ${decodeURIComponent(errorParam)}`)
+      if (errorParam === 'session_expired') {
+        setError('세션이 만료되었습니다. 다시 로그인해주세요.')
+      } else {
+        setError(`OAuth 에러: ${decodeURIComponent(errorParam)}`)
+      }
     }
-  }, [])
+  }, [searchParams])
 
   // 로컬 로그인
   const handleLocalLogin = async (e: React.FormEvent) => {
@@ -59,7 +67,7 @@ export default function LoginPage() {
       const nickname = data.user?.user_metadata?.nickname || data.user?.email
       alert(`환영합니다, ${nickname}님!`)
       
-      router.push('/')
+      router.push(redirectUrl)
       router.refresh()
     } catch (err: any) {
       console.error('❌ 로그인 실패:', err)
@@ -84,7 +92,7 @@ export default function LoginPage() {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: provider,
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectUrl)}`,
         },
       })
 
@@ -114,10 +122,10 @@ export default function LoginPage() {
             이미 로그인되어 있습니다
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            잠시 후 홈으로 이동합니다...
+            잠시 후 {redirectUrl === '/' ? '홈' : '원래 페이지'}으로 이동합니다...
           </p>
           <Link
-            href="/"
+            href={redirectUrl}
             className="mt-4 inline-block text-blue-600 hover:text-blue-700"
           >
             지금 이동하기 →
@@ -138,6 +146,11 @@ export default function LoginPage() {
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
             포트폴리오 사이트에 오신 것을 환영합니다
           </p>
+          {searchParams.get('error') === 'session_expired' && (
+            <div className="mt-4 rounded-lg bg-yellow-50 p-3 text-sm text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200">
+              ⏰ 세션이 만료되었습니다. 다시 로그인해주세요.
+            </div>
+          )}
         </div>
 
         {/* Error Message */}
