@@ -34,10 +34,12 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
   const loadComments = async () => {
     try {
       setLoading(true)
-      const response = await getComments({ targetType, targetId, limit: 50 })
-      setComments(response.items)
+      // 백엔드 API 수정: /comments/:targetType/:targetId
+      const data = await getComments(targetType, targetId)
+      setComments(data)
     } catch (error) {
       console.error('Failed to load comments:', error)
+      setComments([])
     } finally {
       setLoading(false)
     }
@@ -58,16 +60,14 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
 
     try {
       setSubmitting(true)
-      await createComment({
-        targetType,
-        targetId,
+      await createComment(targetType, targetId, {
         content: newComment.trim(),
       })
       setNewComment('')
       await loadComments()
     } catch (error: any) {
       console.error('Failed to create comment:', error)
-      alert(error.response?.data?.message || '댓글 작성 중 오류가 발생했습니다.')
+      alert(error.message || '댓글 작성 중 오류가 발생했습니다.')
     } finally {
       setSubmitting(false)
     }
@@ -119,7 +119,7 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
               <div className="mb-2 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="font-medium text-gray-900 dark:text-white">
-                    {comment.authorNickname}
+                    {comment.user.nickname}
                   </span>
                   {comment.isAnonymous && (
                     <span className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-600 dark:bg-gray-700 dark:text-gray-400">

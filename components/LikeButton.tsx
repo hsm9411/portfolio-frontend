@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { toggleLike, checkLike } from '@/lib/api/likes'
+import { toggleLike, getLikeStatus } from '@/lib/api/likes'
 import { createClient } from '@/lib/supabase/client'
 
 interface LikeButtonProps {
@@ -24,8 +24,11 @@ export default function LikeButton({ targetType, targetId, initialLikeCount }: L
       
       // 로그인 상태면 좋아요 여부 확인
       if (session) {
-        checkLike(targetType, targetId)
-          .then(response => setLiked(response.liked))
+        getLikeStatus(targetType, targetId)
+          .then(response => {
+            setLiked(response.isLiked)
+            setLikeCount(response.likeCount)
+          })
           .catch(() => {})
       }
     })
@@ -42,11 +45,11 @@ export default function LikeButton({ targetType, targetId, initialLikeCount }: L
     try {
       setLoading(true)
       const response = await toggleLike(targetType, targetId)
-      setLiked(response.liked)
+      setLiked(response.isLiked)
       setLikeCount(response.likeCount)
     } catch (error: any) {
       console.error('Toggle like failed:', error)
-      alert(error.response?.data?.message || '좋아요 처리 중 오류가 발생했습니다.')
+      alert(error.message || '좋아요 처리 중 오류가 발생했습니다.')
     } finally {
       setLoading(false)
     }
