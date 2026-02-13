@@ -5,6 +5,10 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import api from '@/lib/api/client'
 
+// 동적 렌더링 강제
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default function NewProjectPage() {
   const router = useRouter()
   const { user, isAdmin, loading } = useAuth()

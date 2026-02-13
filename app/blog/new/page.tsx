@@ -7,6 +7,10 @@ import { createClient } from '@/lib/supabase/client'
 import api from '@/lib/api/client'
 import ReactMarkdown from 'react-markdown'
 
+// Next.js에게 이 페이지를 정적으로 생성하지 말고 동적으로 렌더링하도록 지시
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default function NewPostPage() {
   const router = useRouter()
   const { user, isAdmin, loading } = useAuth()
@@ -14,7 +18,7 @@ export default function NewPostPage() {
   const [error, setError] = useState('')
   const [preview, setPreview] = useState(false)
   const [authChecked, setAuthChecked] = useState(false)
-  const supabase = createClient()
+  const [supabaseClient, setSupabaseClient] = useState<any>(null)
 
   const [formData, setFormData] = useState({
     title: '',
@@ -23,14 +27,22 @@ export default function NewPostPage() {
     tags: ''
   })
 
+  // Supabase 클라이언트 초기화 (클라이언트 사이드에서만)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const client = createClient()
+      setSupabaseClient(client)
+    }
+  }, [])
+
   // 인증 및 관리자 권한 체크
   useEffect(() => {
     const checkAuthAndAdmin = async () => {
-      if (loading) return // 로딩 중이면 대기
+      if (loading || !supabaseClient) return // 로딩 중이거나 클라이언트가 없으면 대기
       
       try {
         // 세션 재확인
-        const { data: { session }, error } = await supabase.auth.getSession()
+        const { data: { session }, error } = await supabaseClient.auth.getSession()
         
         if (error || !session) {
           console.log('⚠️ 세션 없음, 로그인 페이지로 이동')
@@ -57,7 +69,7 @@ export default function NewPostPage() {
     }
 
     checkAuthAndAdmin()
-  }, [loading, isAdmin, router, supabase.auth])
+  }, [loading, isAdmin, router, supabaseClient])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -91,7 +103,7 @@ export default function NewPostPage() {
   }
 
   // 로딩 중이거나 인증 체크가 완료되지 않았으면 로딩 표시
-  if (loading || !authChecked) {
+  if (loading || !authChecked || !supabaseClient) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
