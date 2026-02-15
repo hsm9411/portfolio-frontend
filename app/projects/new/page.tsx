@@ -24,11 +24,18 @@ export default function NewProjectPage() {
   })
 
   useEffect(() => {
+    // 디버깅: 현재 사용자 정보 출력
+    console.log('🔍 현재 사용자 정보:', {
+      email: user?.email,
+      isAdmin: isAdmin,
+      loading: loading
+    })
+    
     if (!loading && !isAdmin) {
       alert('관리자만 접근할 수 있습니다.')
       router.push('/projects')
     }
-  }, [loading, isAdmin, router])
+  }, [loading, isAdmin, router, user])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -92,7 +99,7 @@ export default function NewProjectPage() {
         setError('로그인이 필요합니다. 다시 로그인해주세요.')
         setTimeout(() => router.push('/login'), 2000)
       } else if (error.statusCode === 403) {
-        setError('권한이 없습니다. 관리자만 프로젝트를 작성할 수 있습니다.')
+        setError(`권한이 없습니다. 현재 이메일: ${user?.email}. 관리자 이메일을 확인하세요.`)
       } else {
         // message가 배열일 경우 처리
         const errorMessage = Array.isArray(error.message) 
@@ -124,6 +131,10 @@ export default function NewProjectPage() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             프로젝트 작성
           </h1>
+          {/* 디버깅 정보 표시 */}
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            현재 로그인: {user?.email} (관리자: {isAdmin ? '✅' : '❌'})
+          </p>
         </div>
       </header>
 
