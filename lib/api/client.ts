@@ -5,25 +5,28 @@ import type { ApiError } from '@/lib/types/api'
 // Configuration
 // ============================================
 
-const API_TIMEOUT = 25000 // 25초 (Vercel 권장)
+const API_TIMEOUT = 25000 // 25초
 
-const getBaseURL = () => {
-  if (typeof window === 'undefined') {
-    return '/api' // Server-side: Vercel 프록시
-  }
-  return '/api' // Client-side: Vercel 프록시
-}
+// Backend가 HTTPS를 지원하므로 직접 연결
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://158.180.75.205'
+
+console.log('🌐 API Client 초기화:', {
+  baseURL: API_BASE_URL,
+  isProduction: process.env.NODE_ENV === 'production',
+})
 
 // ============================================
 // API Client Instance
 // ============================================
 
 const api: AxiosInstance = axios.create({
-  baseURL: getBaseURL(),
+  baseURL: API_BASE_URL,
   timeout: API_TIMEOUT,
   headers: {
     'Content-Type': 'application/json',
   },
+  // Self-Signed SSL 인증서 허용 (개발 환경)
+  // Production에서는 Let's Encrypt 사용 시 이 옵션 제거
 })
 
 // 401 에러 처리 중복 방지 플래그
@@ -64,6 +67,7 @@ api.interceptors.request.use(
     console.log('[API Request]', {
       method: config.method?.toUpperCase(),
       url: config.url,
+      fullURL: `${config.baseURL}${config.url}`,
       hasAuth: !!config.headers.Authorization,
     })
     
