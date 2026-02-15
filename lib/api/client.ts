@@ -7,7 +7,7 @@ import type { ApiError } from '@/lib/types/api'
 
 const API_TIMEOUT = 25000 // 25초
 
-// Backend가 HTTPS를 지원하므로 직접 연결
+// Backend HTTPS 직접 연결 (표준 포트 443)
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://158.180.75.205'
 
 console.log('🌐 API Client 초기화:', {
@@ -25,8 +25,6 @@ const api: AxiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  // Self-Signed SSL 인증서 허용 (개발 환경)
-  // Production에서는 Let's Encrypt 사용 시 이 옵션 제거
 })
 
 // 401 에러 처리 중복 방지 플래그
@@ -43,23 +41,32 @@ api.interceptors.request.use(
       try {
         const { createClient } = await import('@/lib/supabase/client')
         const supabase = createClient()
-        const { data: { session }, error } = await supabase.auth.getSession()
         
-        console.log('🔍 세션 확인:', { 
-          hasSession: !!session, 
-          hasToken: !!session?.access_token,
-          email: session?.user?.email,
-          error: error?.message 
+        // Timeout 추가하여 AbortError 방지
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('Session timeout')), 3000)
         })
+        
+        const sessionPromise = supabase.auth.getSession()
+        
+        const { data: { session }, error } = await Promise.race([
+          sessionPromise,
+          timeoutPromise
+        ]) as any
+        
+        if (error) {
+          console.warn('⚠️ 세션 가져오기 에러:', error.message)
+        }
         
         if (session?.access_token) {
           config.headers.Authorization = `Bearer ${session.access_token}`
-          console.log('✅ JWT 토큰 추가:', session.access_token.substring(0, 30) + '...')
+          console.log('✅ JWT 토큰 추가')
         } else {
-          console.warn('⚠️ JWT 토큰 없음 - 세션 없음 또는 만료됨')
+          console.log('ℹ️ 세션 없음 - 비인증 요청으로 진행')
         }
       } catch (error) {
-        console.error('❌ 세션 가져오기 실패:', error)
+        // 세션 에러는 무시하고 계속 진행 (비인증 요청)
+        console.warn('⚠️ 세션 처리 실패 - 비인증 요청으로 진행:', (error as Error).message)
       }
     }
     
@@ -103,11 +110,9 @@ api.interceptors.response.use(
     // 401 Unauthorized → 세션이 있었는데 만료된 경우만 로그아웃
     if (error.response?.status === 401 && !isRedirecting) {
       if (typeof window !== 'undefined') {
-        // 세션이 있었는지 확인
         const hadAuth = !!error.config?.headers?.Authorization
         
         if (hadAuth) {
-          // 토큰이 있었는데 401이면 → 토큰 만료
           console.warn('⚠️ 인증 토큰 만료 - 로그인 페이지로 이동')
           isRedirecting = true
           
@@ -119,11 +124,9 @@ api.interceptors.response.use(
             console.error('로그아웃 실패:', signOutError)
           }
           
-          // 현재 페이지 URL 저장
           const currentPath = window.location.pathname + window.location.search
           window.location.href = `/login?error=session_expired&redirect=${encodeURIComponent(currentPath)}`
         } else {
-          // 토큰이 없었는데 401이면 → 애초에 로그인 안 함
           console.warn('⚠️ 로그인 필요 - 세션 없음')
         }
       }
