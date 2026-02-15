@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import type { User } from '@supabase/supabase-js'
+import type { User, Session, AuthChangeEvent } from '@supabase/supabase-js'
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null)
@@ -25,7 +25,7 @@ export function useAuth() {
           setUser(null)
           setIsAdmin(false)
         }
-      } catch (err) {
+      } catch (err: unknown) {
         console.error('❌ Auth 초기화 에러:', err)
         setUser(null)
         setIsAdmin(false)
@@ -39,7 +39,7 @@ export function useAuth() {
     // 세션 변경 리스너
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
       console.log('🔄 Auth 상태 변경:', event, session?.user?.email)
       
       // 세션 만료 시 자동 갱신 시도
