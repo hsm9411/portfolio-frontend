@@ -5,6 +5,7 @@ import { getComments, createComment, type Comment } from '@/lib/api/comments'
 import { createClient } from '@/lib/supabase/client'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
+import type { Session } from '@supabase/supabase-js'
 
 interface CommentSectionProps {
   targetType: 'project' | 'post'
@@ -21,8 +22,10 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
 
   // 인증 상태 확인
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
       setIsAuthenticated(!!session)
+    }).catch((err: unknown) => {
+      console.error('세션 확인 실패:', err)
     })
   }, [supabase.auth])
 
@@ -65,9 +68,10 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
       })
       setNewComment('')
       await loadComments()
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to create comment:', error)
-      alert(error.message || '댓글 작성 중 오류가 발생했습니다.')
+      const err = error as { message?: string }
+      alert(err.message || '댓글 작성 중 오류가 발생했습니다.')
     } finally {
       setSubmitting(false)
     }

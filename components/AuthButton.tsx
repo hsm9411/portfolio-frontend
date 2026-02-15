@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabase/client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import type { User } from '@supabase/supabase-js'
+import type { User, Session } from '@supabase/supabase-js'
 import Link from 'next/link'
 
 export default function AuthButton() {
@@ -14,8 +14,11 @@ export default function AuthButton() {
 
   useEffect(() => {
     // 초기 세션 확인
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
       setUser(session?.user ?? null)
+      setLoading(false)
+    }).catch((err: unknown) => {
+      console.error('세션 확인 실패:', err)
       setLoading(false)
     })
 

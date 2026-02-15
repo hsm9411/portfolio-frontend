@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { toggleLike, getLikeStatus } from '@/lib/api/likes'
 import { createClient } from '@/lib/supabase/client'
+import type { Session } from '@supabase/supabase-js'
 
 interface LikeButtonProps {
   targetType: 'project' | 'post'
@@ -19,7 +20,7 @@ export default function LikeButton({ targetType, targetId, initialLikeCount }: L
 
   // 인증 상태 확인
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
       setIsAuthenticated(!!session)
       
       // 로그인 상태면 좋아요 여부 확인
@@ -31,6 +32,8 @@ export default function LikeButton({ targetType, targetId, initialLikeCount }: L
           })
           .catch(() => {})
       }
+    }).catch((err: unknown) => {
+      console.error('세션 확인 실패:', err)
     })
   }, [targetType, targetId, supabase.auth])
 
@@ -47,9 +50,10 @@ export default function LikeButton({ targetType, targetId, initialLikeCount }: L
       const response = await toggleLike(targetType, targetId)
       setLiked(response.isLiked)
       setLikeCount(response.likeCount)
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Toggle like failed:', error)
-      alert(error.message || '좋아요 처리 중 오류가 발생했습니다.')
+      const err = error as { message?: string }
+      alert(err.message || '좋아요 처리 중 오류가 발생했습니다.')
     } finally {
       setLoading(false)
     }
