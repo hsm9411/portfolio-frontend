@@ -29,7 +29,7 @@ function LoginForm() {
           router.push(redirectUrl)
         }, 1500)
       }
-    }).catch((err) => {
+    }).catch((err: unknown) => {
       console.error('세션 확인 실패:', err)
     })
   }, [supabase.auth, router, redirectUrl])
