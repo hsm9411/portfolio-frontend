@@ -53,7 +53,7 @@ export default function NewProjectPage() {
         .map(s => s.trim())
         .filter(s => s.length > 0)
 
-      // Backend는 snake_case를 기대함
+      // Backend는 camelCase를 사용함!
       const payload: Record<string, any> = {
         title: formData.title,
         summary: formData.summary,
@@ -61,18 +61,18 @@ export default function NewProjectPage() {
         status: formData.status
       }
 
-      // Optional 필드들 (snake_case 사용)
+      // Optional 필드들 (camelCase 사용)
       if (formData.thumbnailUrl) {
-        payload.thumbnail_url = formData.thumbnailUrl
+        payload.thumbnailUrl = formData.thumbnailUrl
       }
       if (formData.demoUrl) {
-        payload.demo_url = formData.demoUrl
+        payload.demoUrl = formData.demoUrl
       }
       if (formData.githubUrl) {
-        payload.github_url = formData.githubUrl
+        payload.githubUrl = formData.githubUrl
       }
       if (techStackArray.length > 0) {
-        payload.tech_stack = techStackArray
+        payload.techStack = techStackArray
       }
       if (tagsArray.length > 0) {
         payload.tags = tagsArray
