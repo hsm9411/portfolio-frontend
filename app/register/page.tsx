@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import type { Session } from '@supabase/supabase-js'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -16,10 +17,12 @@ export default function RegisterPage() {
   const supabase = createClient()
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
       if (session) {
         router.push('/')
       }
+    }).catch((err: unknown) => {
+      console.error('세션 확인 실패:', err)
     })
   }, [supabase.auth, router])
 
@@ -61,13 +64,14 @@ export default function RegisterPage() {
 
       alert(`회원가입이 완료되었습니다!\n\n이메일(${email})로 인증 링크가 발송되었습니다.\n인증 후 로그인해주세요.`)
       router.push('/login')
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('❌ 회원가입 실패:', err)
       
-      if (err.message?.includes('already registered')) {
+      const error = err as { message?: string }
+      if (error.message?.includes('already registered')) {
         setError('이미 가입된 이메일입니다.')
       } else {
-        setError(err.message || '회원가입에 실패했습니다.')
+        setError(error.message || '회원가입에 실패했습니다.')
       }
     } finally {
       setLoading(false)
@@ -84,9 +88,10 @@ export default function RegisterPage() {
         },
       })
       if (error) throw error
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(`${provider} signup failed:`, err)
-      setError(err.message || `${provider} 회원가입에 실패했습니다.`)
+      const error = err as { message?: string }
+      setError(error.message || `${provider} 회원가입에 실패했습니다.`)
     }
   }
 
