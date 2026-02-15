@@ -42,17 +42,8 @@ api.interceptors.request.use(
         const { createClient } = await import('@/lib/supabase/client')
         const supabase = createClient()
         
-        // Timeout 추가하여 AbortError 방지
-        const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Session timeout')), 3000)
-        })
-        
-        const sessionPromise = supabase.auth.getSession()
-        
-        const { data: { session }, error } = await Promise.race([
-          sessionPromise,
-          timeoutPromise
-        ]) as any
+        // Timeout 제거 - 직접 호출
+        const { data: { session }, error } = await supabase.auth.getSession()
         
         if (error) {
           console.warn('⚠️ 세션 가져오기 에러:', error.message)
@@ -66,7 +57,7 @@ api.interceptors.request.use(
         }
       } catch (error) {
         // 세션 에러는 무시하고 계속 진행 (비인증 요청)
-        console.warn('⚠️ 세션 처리 실패 - 비인증 요청으로 진행:', (error as Error).message)
+        console.warn('⚠️ 세션 처리 실패:', (error as Error).message)
       }
     }
     
