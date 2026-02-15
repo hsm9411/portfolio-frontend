@@ -42,15 +42,26 @@ export default function NewProjectPage() {
     try {
       setSubmitting(true)
 
+      // 기술 스택과 태그를 배열로 변환 (빈 문자열 제거)
+      const techStackArray = formData.techStack
+        .split(',')
+        .map(s => s.trim())
+        .filter(s => s.length > 0)
+
+      const tagsArray = formData.tags
+        .split(',')
+        .map(s => s.trim())
+        .filter(s => s.length > 0)
+
       const payload = {
         title: formData.title,
         summary: formData.summary,
         description: formData.description,
-        thumbnail_url: formData.thumbnailUrl || undefined,
-        demo_url: formData.demoUrl || undefined,
-        github_url: formData.githubUrl || undefined,
-        tech_stack: formData.techStack.split(',').map(s => s.trim()).filter(Boolean),
-        tags: formData.tags.split(',').map(s => s.trim()).filter(Boolean),
+        thumbnailUrl: formData.thumbnailUrl || undefined,
+        demoUrl: formData.demoUrl || undefined,
+        githubUrl: formData.githubUrl || undefined,
+        techStack: techStackArray.length > 0 ? techStackArray : undefined,
+        tags: tagsArray.length > 0 ? tagsArray : undefined,
         status: formData.status
       }
 
@@ -60,16 +71,17 @@ export default function NewProjectPage() {
       
       alert('프로젝트가 작성되었습니다!')
       router.push(`/projects/${response.data.id}`)
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('❌ 프로젝트 작성 실패:', err)
       
-      if (err.statusCode === 401) {
+      const error = err as { statusCode?: number; message?: string }
+      if (error.statusCode === 401) {
         setError('로그인이 필요합니다. 다시 로그인해주세요.')
         setTimeout(() => router.push('/login'), 2000)
-      } else if (err.statusCode === 403) {
+      } else if (error.statusCode === 403) {
         setError('권한이 없습니다. 관리자만 프로젝트를 작성할 수 있습니다.')
       } else {
-        setError(err.message || '프로젝트 작성에 실패했습니다.')
+        setError(error.message || '프로젝트 작성에 실패했습니다.')
       }
     } finally {
       setSubmitting(false)
@@ -203,6 +215,9 @@ export default function NewProjectPage() {
                 className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                 placeholder="NestJS, TypeScript, PostgreSQL"
               />
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                예시: NestJS, TypeScript, PostgreSQL
+              </p>
             </div>
 
             {/* 태그 */}
@@ -217,6 +232,9 @@ export default function NewProjectPage() {
                 className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                 placeholder="Backend, API, Microservices"
               />
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                예시: Backend, API, Microservices
+              </p>
             </div>
 
             {/* 상태 */}

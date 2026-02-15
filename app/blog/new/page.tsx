@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { createClient } from '@/lib/supabase/client'
 import api from '@/lib/api/client'
 import ReactMarkdown from 'react-markdown'
+import type { Session } from '@supabase/supabase-js'
 
 export default function NewPostPage() {
   const router = useRouter()
@@ -14,7 +15,7 @@ export default function NewPostPage() {
   const [error, setError] = useState('')
   const [preview, setPreview] = useState(false)
   const [authChecked, setAuthChecked] = useState(false)
-  const [supabaseClient, setSupabaseClient] = useState<any>(null)
+  const [supabaseClient, setSupabaseClient] = useState<ReturnType<typeof createClient> | null>(null)
 
   const [formData, setFormData] = useState({
     title: '',
@@ -55,7 +56,7 @@ export default function NewPostPage() {
 
         console.log('✅ 인증 및 권한 확인 완료')
         setAuthChecked(true)
-      } catch (err) {
+      } catch (err: unknown) {
         console.error('인증 체크 에러:', err)
         alert('인증 확인 중 오류가 발생했습니다.')
         router.push('/login')
@@ -77,11 +78,17 @@ export default function NewPostPage() {
     try {
       setSubmitting(true)
 
+      // 태그를 배열로 변환 (빈 문자열 제거)
+      const tagsArray = formData.tags
+        .split(',')
+        .map(s => s.trim())
+        .filter(s => s.length > 0)
+
       const payload = {
         title: formData.title,
         summary: formData.summary,
         content: formData.content,
-        tags: formData.tags.split(',').map(s => s.trim()).filter(Boolean)
+        tags: tagsArray.length > 0 ? tagsArray : undefined
       }
 
       console.log('📤 포스트 생성 요청:', payload)
@@ -90,16 +97,17 @@ export default function NewPostPage() {
       
       alert('포스트가 작성되었습니다!')
       router.push(`/blog/${response.data.slug}`)
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('❌ 포스트 작성 실패:', err)
       
-      if (err.statusCode === 401) {
+      const error = err as { statusCode?: number; message?: string }
+      if (error.statusCode === 401) {
         setError('로그인이 필요합니다. 다시 로그인해주세요.')
         setTimeout(() => router.push('/login'), 2000)
-      } else if (err.statusCode === 403) {
+      } else if (error.statusCode === 403) {
         setError('권한이 없습니다. 관리자만 포스트를 작성할 수 있습니다.')
       } else {
-        setError(err.message || '포스트 작성에 실패했습니다.')
+        setError(error.message || '포스트 작성에 실패했습니다.')
       }
     } finally {
       setSubmitting(false)
@@ -186,6 +194,9 @@ export default function NewPostPage() {
                   className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                   placeholder="NestJS, TypeScript, Backend"
                 />
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  예시: NestJS, TypeScript, Backend
+                </p>
               </div>
 
               {/* Markdown 에디터 */}
