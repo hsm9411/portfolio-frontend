@@ -53,16 +53,29 @@ export default function NewProjectPage() {
         .map(s => s.trim())
         .filter(s => s.length > 0)
 
-      const payload = {
+      // Backend는 snake_case를 기대함
+      const payload: Record<string, any> = {
         title: formData.title,
         summary: formData.summary,
         description: formData.description,
-        thumbnailUrl: formData.thumbnailUrl || undefined,
-        demoUrl: formData.demoUrl || undefined,
-        githubUrl: formData.githubUrl || undefined,
-        techStack: techStackArray.length > 0 ? techStackArray : undefined,
-        tags: tagsArray.length > 0 ? tagsArray : undefined,
         status: formData.status
+      }
+
+      // Optional 필드들 (snake_case 사용)
+      if (formData.thumbnailUrl) {
+        payload.thumbnail_url = formData.thumbnailUrl
+      }
+      if (formData.demoUrl) {
+        payload.demo_url = formData.demoUrl
+      }
+      if (formData.githubUrl) {
+        payload.github_url = formData.githubUrl
+      }
+      if (techStackArray.length > 0) {
+        payload.tech_stack = techStackArray
+      }
+      if (tagsArray.length > 0) {
+        payload.tags = tagsArray
       }
 
       console.log('📤 프로젝트 생성 요청:', payload)
@@ -74,14 +87,18 @@ export default function NewProjectPage() {
     } catch (err: unknown) {
       console.error('❌ 프로젝트 작성 실패:', err)
       
-      const error = err as { statusCode?: number; message?: string }
+      const error = err as { statusCode?: number; message?: string | string[] }
       if (error.statusCode === 401) {
         setError('로그인이 필요합니다. 다시 로그인해주세요.')
         setTimeout(() => router.push('/login'), 2000)
       } else if (error.statusCode === 403) {
         setError('권한이 없습니다. 관리자만 프로젝트를 작성할 수 있습니다.')
       } else {
-        setError(error.message || '프로젝트 작성에 실패했습니다.')
+        // message가 배열일 경우 처리
+        const errorMessage = Array.isArray(error.message) 
+          ? error.message.join(', ') 
+          : error.message || '프로젝트 작성에 실패했습니다.'
+        setError(errorMessage)
       }
     } finally {
       setSubmitting(false)

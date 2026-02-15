@@ -70,12 +70,13 @@ api.interceptors.request.use(
       }
     }
     
-    // Request 로그
+    // Request 로그 (payload 포함)
     console.log('[API Request]', {
       method: config.method?.toUpperCase(),
       url: config.url,
       fullURL: `${config.baseURL}${config.url}`,
       hasAuth: !!config.headers.Authorization,
+      data: config.data, // payload 출력
     })
     
     return config
@@ -99,13 +100,32 @@ api.interceptors.response.use(
     return response
   },
   async (error: AxiosError<ApiError>) => {
-    // 에러 로그
+    // 에러 상세 로그
     console.error('[API Response Error]', {
       url: error.config?.url,
       status: error.response?.status,
+      data: error.response?.data, // 전체 응답 데이터
       message: error.response?.data?.message || error.message,
       hasAuth: !!error.config?.headers?.Authorization,
     })
+
+    // 400 Bad Request - 검증 에러 상세 출력
+    if (error.response?.status === 400) {
+      const errorData = error.response.data
+      console.error('❌ 400 Bad Request 상세:', {
+        message: errorData?.message,
+        error: errorData?.error,
+        statusCode: errorData?.statusCode,
+      })
+      
+      // 배열 메시지 처리
+      if (Array.isArray(errorData?.message)) {
+        console.error('📋 검증 에러 목록:')
+        errorData.message.forEach((msg: string, index: number) => {
+          console.error(`  ${index + 1}. ${msg}`)
+        })
+      }
+    }
 
     // 401 Unauthorized → 세션이 있었는데 만료된 경우만 로그아웃
     if (error.response?.status === 401 && !isRedirecting) {
@@ -169,7 +189,11 @@ export function getErrorMessage(error: unknown): string {
   if (typeof error === 'string') return error
   
   if (error && typeof error === 'object' && 'message' in error) {
-    return (error as ApiError).message
+    const apiError = error as ApiError
+    if (Array.isArray(apiError.message)) {
+      return apiError.message.join(', ')
+    }
+    return apiError.message as string
   }
   
   return '알 수 없는 오류가 발생했습니다.'
