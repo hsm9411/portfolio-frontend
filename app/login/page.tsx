@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import type { Session } from '@supabase/supabase-js'
 
 function LoginForm() {
   const [email, setEmail] = useState('')
@@ -20,7 +21,7 @@ function LoginForm() {
 
   // 로그인 상태 확인
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
       if (session) {
         setIsLoggedIn(true)
         console.log('✅ 이미 로그인됨, 리다이렉트:', redirectUrl)
@@ -28,6 +29,8 @@ function LoginForm() {
           router.push(redirectUrl)
         }, 1500)
       }
+    }).catch((err) => {
+      console.error('세션 확인 실패:', err)
     })
   }, [supabase.auth, router, redirectUrl])
 
