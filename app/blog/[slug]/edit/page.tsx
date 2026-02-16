@@ -1,21 +1,22 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
+import { getPostBySlug } from '@/lib/api/posts'
 import TechStackInput from '@/components/TechStackInput'
-import { createClient } from '@/lib/supabase/client'
 import api from '@/lib/api/client'
 import ReactMarkdown from 'react-markdown'
 
-export default function NewPostPage() {
+export default function EditPostPage() {
+  const params = useParams()
   const router = useRouter()
-  const { isAdmin, loading } = useAuth()
+  const { isAdmin, loading: authLoading } = useAuth()
+  const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [preview, setPreview] = useState(false)
-  const [authChecked, setAuthChecked] = useState(false)
-  const [supabaseClient, setSupabaseClient] = useState<ReturnType<typeof createClient> | null>(null)
+  const [hasChanges, setHasChanges] = useState(false)
 
   const [formData, setFormData] = useState({
     title: '',
@@ -24,42 +25,47 @@ export default function NewPostPage() {
     tags: [] as string[]
   })
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const client = createClient()
-      setSupabaseClient(client)
-    }
-  }, [])
+  const [originalData, setOriginalData] = useState(formData)
 
   useEffect(() => {
-    const checkAuthAndAdmin = async () => {
-      if (loading || !supabaseClient) return
+    if (!authLoading && !isAdmin) {
+      alert('관리자만 접근할 수 있습니다.')
+      router.push('/blog')
+      return
+    }
+
+    if (params.slug && isAdmin) {
+      loadPost(params.slug as string)
+    }
+  }, [params.slug, isAdmin, authLoading, router])
+
+  useEffect(() => {
+    const changed = JSON.stringify(formData) !== JSON.stringify(originalData)
+    setHasChanges(changed)
+  }, [formData, originalData])
+
+  const loadPost = async (slug: string) => {
+    try {
+      setLoading(true)
+      const post = await getPostBySlug(slug)
       
-      try {
-        const { data: { session }, error } = await supabaseClient.auth.getSession()
-        
-        if (error || !session) {
-          alert('로그인이 필요합니다.')
-          router.push('/login')
-          return
-        }
-
-        if (!isAdmin) {
-          alert('관리자만 접근할 수 있습니다.')
-          router.push('/blog')
-          return
-        }
-
-        setAuthChecked(true)
-      } catch (err) {
-        console.error('인증 체크 에러:', err)
-        alert('인증 확인 중 오류가 발생했습니다.')
-        router.push('/login')
+      const data = {
+        title: post.title,
+        summary: post.summary,
+        content: post.content,
+        tags: post.tags || []
       }
+      
+      setFormData(data)
+      setOriginalData(data)
+    } catch (error: unknown) {
+      console.error('Failed to load post:', error)
+      alert('포스트를 불러오는데 실패했습니다.')
+      router.push('/blog')
+    } finally {
+      setLoading(false)
     }
-
-    checkAuthAndAdmin()
-  }, [loading, isAdmin, router, supabaseClient])
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -80,39 +86,43 @@ export default function NewPostPage() {
         tags: formData.tags.length > 0 ? formData.tags : undefined
       }
 
-      const response = await api.post('/posts', payload)
+      await api.patch(`/posts/${params.slug}`, payload)
       
-      router.replace('/blog')
-      setTimeout(() => alert('포스트가 작성되었습니다!'), 100)
+      router.replace(`/blog/${params.slug}`)
+      setTimeout(() => alert('포스트가 수정되었습니다!'), 100)
     } catch (err: unknown) {
-      console.error('포스트 작성 실패:', err)
+      console.error('Failed to update post:', err)
+      const error = err as { statusCode?: number; message?: string | string[] }
       
-      const error = err as { statusCode?: number; message?: string }
-      if (error.statusCode === 401) {
-        setError('로그인이 필요합니다.')
-        setTimeout(() => router.push('/login'), 2000)
-      } else if (error.statusCode === 403) {
-        setError('권한이 없습니다.')
-      } else {
-        setError(error.message || '포스트 작성에 실패했습니다.')
-      }
+      const errorMessage = Array.isArray(error.message) 
+        ? error.message.join(', ') 
+        : error.message || '포스트 수정에 실패했습니다.'
+      setError(errorMessage)
     } finally {
       setSubmitting(false)
     }
   }
 
   const handleCancel = () => {
-    if (confirm('작성을 취소하시겠습니까? 입력한 내용이 사라집니다.')) {
-      router.push('/blog')
+    if (hasChanges) {
+      if (confirm('변경사항이 저장되지 않았습니다. 취소하시겠습니까?')) {
+        router.push(`/blog/${params.slug}`)
+      }
+    } else {
+      router.push(`/blog/${params.slug}`)
     }
   }
 
-  if (loading || !authChecked || !supabaseClient) {
+  if (authLoading || loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
       </div>
     )
+  }
+
+  if (!isAdmin) {
+    return null
   }
 
   return (
@@ -121,9 +131,16 @@ export default function NewPostPage() {
       <header className="border-b border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-800">
         <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              📝 포스트 작성
-            </h1>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                📝 포스트 수정
+              </h1>
+              {hasChanges && (
+                <p className="mt-1 text-sm text-orange-600 dark:text-orange-400">
+                  ⚠️ 저장되지 않은 변경사항이 있습니다
+                </p>
+              )}
+            </div>
             <button
               type="button"
               onClick={() => setPreview(!preview)}
@@ -199,18 +216,7 @@ export default function NewPostPage() {
                     onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                     rows={24}
                     className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-3 font-mono text-sm leading-relaxed focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                    placeholder="# 제목
-
-## 소제목
-
-본문 내용...
-
-```javascript
-const example = 'code';
-```
-
-- 리스트 항목
-- 또 다른 항목"
+                    placeholder="Markdown 내용..."
                   />
                   <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
                     Markdown 문법을 사용하세요. 미리보기로 렌더링을 확인할 수 있습니다.
@@ -249,10 +255,10 @@ const example = 'code';
           <div className="flex gap-4">
             <button
               type="submit"
-              disabled={submitting}
+              disabled={submitting || !hasChanges}
               className="flex-1 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {submitting ? '작성 중...' : '작성하기'}
+              {submitting ? '수정 중...' : hasChanges ? '수정하기' : '변경사항 없음'}
             </button>
             <button
               type="button"
