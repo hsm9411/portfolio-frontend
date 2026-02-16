@@ -28,9 +28,10 @@ export default function ProjectDetailPage() {
       setLoading(true)
       const data = await getProject(id)
       setProject(data)
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to load project:', error)
-      if (error.response?.status === 404) {
+      const err = error as { response?: { status?: number } }
+      if (err.response?.status === 404) {
         alert('프로젝트를 찾을 수 없습니다.')
         router.push('/projects')
       }
@@ -48,9 +49,10 @@ export default function ProjectDetailPage() {
       await api.delete(`/projects/${project.id}`)
       alert('프로젝트가 삭제되었습니다.')
       router.push('/projects')
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to delete project:', error)
-      alert(error.response?.data?.message || '삭제에 실패했습니다.')
+      const err = error as { response?: { data?: { message?: string } } }
+      alert(err.response?.data?.message || '삭제에 실패했습니다.')
     }
   }
 
@@ -152,24 +154,26 @@ export default function ProjectDetailPage() {
         )}
 
         {/* Tech Stack */}
-        <div className="mb-8">
-          <h2 className="mb-3 text-lg font-bold text-gray-900 dark:text-white">
-            기술 스택
-          </h2>
-          <div className="flex flex-wrap gap-2">
-            {project.techStack.map((tech) => (
-              <span
-                key={tech}
-                className="rounded-lg bg-blue-100 px-3 py-1.5 text-sm font-medium text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
-              >
-                {tech}
-              </span>
-            ))}
+        {project.techStack && project.techStack.length > 0 && (
+          <div className="mb-8">
+            <h2 className="mb-3 text-lg font-bold text-gray-900 dark:text-white">
+              기술 스택
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {project.techStack.map((tech) => (
+                <span
+                  key={tech}
+                  className="rounded-lg bg-blue-100 px-3 py-1.5 text-sm font-medium text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Tags */}
-        {project.tags.length > 0 && (
+        {project.tags && project.tags.length > 0 && (
           <div className="mb-8">
             <h2 className="mb-3 text-lg font-bold text-gray-900 dark:text-white">
               태그
@@ -200,28 +204,30 @@ export default function ProjectDetailPage() {
         </div>
 
         {/* Links */}
-        <div className="mb-8 flex gap-4">
-          {project.demoUrl && (
-            <a
-              href={project.demoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-medium text-white hover:bg-blue-700"
-            >
-              🌐 데모 보기
-            </a>
-          )}
-          {project.githubUrl && (
-            <a
-              href={project.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 rounded-lg bg-gray-900 px-6 py-3 text-sm font-medium text-white hover:bg-gray-800"
-            >
-              💻 GitHub
-            </a>
-          )}
-        </div>
+        {(project.demoUrl || project.githubUrl) && (
+          <div className="mb-8 flex gap-4">
+            {project.demoUrl && (
+              <a
+                href={project.demoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-medium text-white hover:bg-blue-700"
+              >
+                🌐 데모 보기
+              </a>
+            )}
+            {project.githubUrl && (
+              <a
+                href={project.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 rounded-lg bg-gray-900 px-6 py-3 text-sm font-medium text-white hover:bg-gray-800"
+              >
+                💻 GitHub
+              </a>
+            )}
+          </div>
+        )}
 
         {/* Like Button */}
         <div className="mb-8 border-t border-gray-200 pt-8 dark:border-gray-700">
