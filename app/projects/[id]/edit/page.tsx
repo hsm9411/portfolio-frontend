@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { getProject } from '@/lib/api/projects'
+import TechStackInput from '@/components/TechStackInput'
 import api from '@/lib/api/client'
 
 export default function EditProjectPage() {
@@ -13,6 +14,7 @@ export default function EditProjectPage() {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const [hasChanges, setHasChanges] = useState(false)
 
   const [formData, setFormData] = useState({
     title: '',
@@ -21,10 +23,12 @@ export default function EditProjectPage() {
     thumbnailUrl: '',
     demoUrl: '',
     githubUrl: '',
-    techStack: '',
-    tags: '',
+    techStack: [] as string[],
+    tags: [] as string[],
     status: 'in-progress' as 'in-progress' | 'completed' | 'archived'
   })
+
+  const [originalData, setOriginalData] = useState(formData)
 
   useEffect(() => {
     if (!authLoading && !isAdmin) {
@@ -38,22 +42,30 @@ export default function EditProjectPage() {
     }
   }, [params.id, isAdmin, authLoading, router])
 
+  useEffect(() => {
+    const changed = JSON.stringify(formData) !== JSON.stringify(originalData)
+    setHasChanges(changed)
+  }, [formData, originalData])
+
   const loadProject = async (id: string) => {
     try {
       setLoading(true)
       const project = await getProject(id)
       
-      setFormData({
+      const data = {
         title: project.title,
         summary: project.summary,
         description: project.description,
         thumbnailUrl: project.thumbnailUrl || '',
         demoUrl: project.demoUrl || '',
         githubUrl: project.githubUrl || '',
-        techStack: project.techStack?.join(', ') || '',
-        tags: project.tags?.join(', ') || '',
+        techStack: project.techStack || [],
+        tags: project.tags || [],
         status: project.status
-      })
+      }
+      
+      setFormData(data)
+      setOriginalData(data)
     } catch (error: unknown) {
       console.error('Failed to load project:', error)
       alert('프로젝트를 불러오는데 실패했습니다.')
@@ -72,45 +84,32 @@ export default function EditProjectPage() {
       return
     }
 
+    if (formData.techStack.length === 0) {
+      setError('최소 1개의 기술 스택을 선택해주세요.')
+      return
+    }
+
     try {
       setSubmitting(true)
-
-      const techStackArray = formData.techStack
-        .split(',')
-        .map(s => s.trim())
-        .filter(s => s.length > 0)
-
-      const tagsArray = formData.tags
-        .split(',')
-        .map(s => s.trim())
-        .filter(s => s.length > 0)
 
       const payload: Record<string, any> = {
         title: formData.title,
         summary: formData.summary,
         description: formData.description,
-        status: formData.status
+        status: formData.status,
+        techStack: formData.techStack,
       }
 
-      if (formData.thumbnailUrl) {
-        payload.thumbnailUrl = formData.thumbnailUrl
-      }
-      if (formData.demoUrl) {
-        payload.demoUrl = formData.demoUrl
-      }
-      if (formData.githubUrl) {
-        payload.githubUrl = formData.githubUrl
-      }
-      if (techStackArray.length > 0) {
-        payload.techStack = techStackArray
-      }
-      if (tagsArray.length > 0) {
-        payload.tags = tagsArray
-      }
+      if (formData.thumbnailUrl) payload.thumbnailUrl = formData.thumbnailUrl
+      if (formData.demoUrl) payload.demoUrl = formData.demoUrl
+      if (formData.githubUrl) payload.githubUrl = formData.githubUrl
+      if (formData.tags.length > 0) payload.tags = formData.tags
 
       await api.patch(`/projects/${params.id}`, payload)
-      alert('프로젝트가 수정되었습니다!')
-      router.push(`/projects/${params.id}`)
+      
+      // ✅ replace 사용: 히스토리 대체 (뒤로가기 시 수정 페이지로 안 감)
+      router.replace(`/projects/${params.id}`)
+      setTimeout(() => alert('프로젝트가 수정되었습니다!'), 100)
     } catch (err: unknown) {
       console.error('Failed to update project:', err)
       const error = err as { statusCode?: number; message?: string | string[] }
@@ -121,6 +120,16 @@ export default function EditProjectPage() {
       setError(errorMessage)
     } finally {
       setSubmitting(false)
+    }
+  }
+
+  const handleCancel = () => {
+    if (hasChanges) {
+      if (confirm('변경사항이 저장되지 않았습니다. 취소하시겠습니까?')) {
+        router.push(`/projects/${params.id}`)
+      }
+    } else {
+      router.push(`/projects/${params.id}`)
     }
   }
 
@@ -143,6 +152,11 @@ export default function EditProjectPage() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             프로젝트 수정
           </h1>
+          {hasChanges && (
+            <p className="mt-1 text-sm text-orange-600 dark:text-orange-400">
+              ⚠️ 저장되지 않은 변경사항이 있습니다
+            </p>
+          )}
         </div>
       </header>
 
@@ -165,6 +179,7 @@ export default function EditProjectPage() {
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                placeholder="프로젝트 제목"
               />
             </div>
 
@@ -178,10 +193,11 @@ export default function EditProjectPage() {
                 value={formData.summary}
                 onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
                 className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                placeholder="프로젝트 한 줄 소개"
               />
             </div>
 
-            {/* 설명 */}
+            {/* 상세 설명 */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 상세 설명 <span className="text-red-500">*</span>
@@ -191,7 +207,34 @@ export default function EditProjectPage() {
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 rows={10}
                 className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                placeholder="프로젝트 상세 설명"
               />
+            </div>
+
+            {/* 기술 스택 */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                기술 스택 <span className="text-red-500">*</span>
+              </label>
+              <div className="mt-1">
+                <TechStackInput
+                  value={formData.techStack}
+                  onChange={(value) => setFormData({ ...formData, techStack: value })}
+                />
+              </div>
+            </div>
+
+            {/* 태그 */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                태그
+              </label>
+              <div className="mt-1">
+                <TechStackInput
+                  value={formData.tags}
+                  onChange={(value) => setFormData({ ...formData, tags: value })}
+                />
+              </div>
             </div>
 
             {/* 썸네일 URL */}
@@ -204,6 +247,7 @@ export default function EditProjectPage() {
                 value={formData.thumbnailUrl}
                 onChange={(e) => setFormData({ ...formData, thumbnailUrl: e.target.value })}
                 className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                placeholder="https://example.com/image.png"
               />
             </div>
 
@@ -217,6 +261,7 @@ export default function EditProjectPage() {
                 value={formData.demoUrl}
                 onChange={(e) => setFormData({ ...formData, demoUrl: e.target.value })}
                 className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                placeholder="https://demo.example.com"
               />
             </div>
 
@@ -230,32 +275,7 @@ export default function EditProjectPage() {
                 value={formData.githubUrl}
                 onChange={(e) => setFormData({ ...formData, githubUrl: e.target.value })}
                 className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-              />
-            </div>
-
-            {/* 기술 스택 */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                기술 스택 (쉼표로 구분)
-              </label>
-              <input
-                type="text"
-                value={formData.techStack}
-                onChange={(e) => setFormData({ ...formData, techStack: e.target.value })}
-                className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-              />
-            </div>
-
-            {/* 태그 */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                태그 (쉼표로 구분)
-              </label>
-              <input
-                type="text"
-                value={formData.tags}
-                onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-                className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                placeholder="https://github.com/username/repo"
               />
             </div>
 
@@ -279,14 +299,14 @@ export default function EditProjectPage() {
           <div className="flex gap-4">
             <button
               type="submit"
-              disabled={submitting}
+              disabled={submitting || !hasChanges}
               className="flex-1 rounded-lg bg-blue-600 px-6 py-3 font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {submitting ? '수정 중...' : '수정하기'}
+              {submitting ? '수정 중...' : hasChanges ? '수정하기' : '변경사항 없음'}
             </button>
             <button
               type="button"
-              onClick={() => router.back()}
+              onClick={handleCancel}
               className="rounded-lg border border-gray-300 px-6 py-3 font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
             >
               취소

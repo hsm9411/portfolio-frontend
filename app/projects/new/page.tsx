@@ -61,9 +61,10 @@ export default function NewProjectPage() {
       if (formData.githubUrl) payload.githubUrl = formData.githubUrl
       if (formData.tags.length > 0) payload.tags = formData.tags
 
-      const response = await api.post('/projects', payload)
+      await api.post('/projects', payload)
       
-      router.push('/projects')
+      // ✅ replace 사용: 히스토리 대체 (뒤로가기 시 작성 페이지로 안 감)
+      router.replace('/projects')
       setTimeout(() => alert('프로젝트가 작성되었습니다!'), 100)
     } catch (err: unknown) {
       console.error('프로젝트 작성 실패:', err)
