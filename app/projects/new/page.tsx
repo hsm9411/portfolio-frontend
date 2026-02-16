@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
+import TechStackInput from '@/components/TechStackInput'
 import api from '@/lib/api/client'
 
 export default function NewProjectPage() {
@@ -18,24 +19,17 @@ export default function NewProjectPage() {
     thumbnailUrl: '',
     demoUrl: '',
     githubUrl: '',
-    techStack: '',
-    tags: '',
+    techStack: [] as string[],
+    tags: [] as string[],
     status: 'in-progress' as 'in-progress' | 'completed' | 'archived'
   })
 
   useEffect(() => {
-    // 디버깅: 현재 사용자 정보 출력
-    console.log('🔍 현재 사용자 정보:', {
-      email: user?.email,
-      isAdmin: isAdmin,
-      loading: loading
-    })
-    
     if (!loading && !isAdmin) {
       alert('관리자만 접근할 수 있습니다.')
       router.push('/projects')
     }
-  }, [loading, isAdmin, router, user])
+  }, [loading, isAdmin, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -46,62 +40,41 @@ export default function NewProjectPage() {
       return
     }
 
+    if (formData.techStack.length === 0) {
+      setError('최소 1개의 기술 스택을 선택해주세요.')
+      return
+    }
+
     try {
       setSubmitting(true)
 
-      // 기술 스택과 태그를 배열로 변환 (빈 문자열 제거)
-      const techStackArray = formData.techStack
-        .split(',')
-        .map(s => s.trim())
-        .filter(s => s.length > 0)
-
-      const tagsArray = formData.tags
-        .split(',')
-        .map(s => s.trim())
-        .filter(s => s.length > 0)
-
-      // Backend는 camelCase를 사용함!
       const payload: Record<string, any> = {
         title: formData.title,
         summary: formData.summary,
         description: formData.description,
-        status: formData.status
+        status: formData.status,
+        techStack: formData.techStack,
       }
 
-      // Optional 필드들 (camelCase 사용)
-      if (formData.thumbnailUrl) {
-        payload.thumbnailUrl = formData.thumbnailUrl
-      }
-      if (formData.demoUrl) {
-        payload.demoUrl = formData.demoUrl
-      }
-      if (formData.githubUrl) {
-        payload.githubUrl = formData.githubUrl
-      }
-      if (techStackArray.length > 0) {
-        payload.techStack = techStackArray
-      }
-      if (tagsArray.length > 0) {
-        payload.tags = tagsArray
-      }
+      if (formData.thumbnailUrl) payload.thumbnailUrl = formData.thumbnailUrl
+      if (formData.demoUrl) payload.demoUrl = formData.demoUrl
+      if (formData.githubUrl) payload.githubUrl = formData.githubUrl
+      if (formData.tags.length > 0) payload.tags = formData.tags
 
-      console.log('📤 프로젝트 생성 요청:', payload)
       const response = await api.post('/projects', payload)
-      console.log('✅ 프로젝트 생성 성공:', response.data)
       
-      alert('프로젝트가 작성되었습니다!')
-      router.push(`/projects/${response.data.id}`)
+      router.push('/projects')
+      setTimeout(() => alert('프로젝트가 작성되었습니다!'), 100)
     } catch (err: unknown) {
-      console.error('❌ 프로젝트 작성 실패:', err)
+      console.error('프로젝트 작성 실패:', err)
       
       const error = err as { statusCode?: number; message?: string | string[] }
       if (error.statusCode === 401) {
-        setError('로그인이 필요합니다. 다시 로그인해주세요.')
+        setError('로그인이 필요합니다.')
         setTimeout(() => router.push('/login'), 2000)
       } else if (error.statusCode === 403) {
-        setError(`권한이 없습니다. 현재 이메일: ${user?.email}. 관리자 이메일을 확인하세요.`)
+        setError('권한이 없습니다.')
       } else {
-        // message가 배열일 경우 처리
         const errorMessage = Array.isArray(error.message) 
           ? error.message.join(', ') 
           : error.message || '프로젝트 작성에 실패했습니다.'
@@ -109,6 +82,12 @@ export default function NewProjectPage() {
       }
     } finally {
       setSubmitting(false)
+    }
+  }
+
+  const handleCancel = () => {
+    if (confirm('작성을 취소하시겠습니까? 입력한 내용이 사라집니다.')) {
+      router.push('/projects')
     }
   }
 
@@ -131,10 +110,6 @@ export default function NewProjectPage() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             프로젝트 작성
           </h1>
-          {/* 디버깅 정보 표시 */}
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            현재 로그인: {user?.email} (관리자: {isAdmin ? '✅' : '❌'})
-          </p>
         </div>
       </header>
 
@@ -175,7 +150,7 @@ export default function NewProjectPage() {
               />
             </div>
 
-            {/* 설명 */}
+            {/* 상세 설명 */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 상세 설명 <span className="text-red-500">*</span>
@@ -187,6 +162,32 @@ export default function NewProjectPage() {
                 className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                 placeholder="프로젝트 상세 설명"
               />
+            </div>
+
+            {/* 기술 스택 */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                기술 스택 <span className="text-red-500">*</span>
+              </label>
+              <div className="mt-1">
+                <TechStackInput
+                  value={formData.techStack}
+                  onChange={(value) => setFormData({ ...formData, techStack: value })}
+                />
+              </div>
+            </div>
+
+            {/* 태그 */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                태그
+              </label>
+              <div className="mt-1">
+                <TechStackInput
+                  value={formData.tags}
+                  onChange={(value) => setFormData({ ...formData, tags: value })}
+                />
+              </div>
             </div>
 
             {/* 썸네일 URL */}
@@ -231,40 +232,6 @@ export default function NewProjectPage() {
               />
             </div>
 
-            {/* 기술 스택 */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                기술 스택 (쉼표로 구분)
-              </label>
-              <input
-                type="text"
-                value={formData.techStack}
-                onChange={(e) => setFormData({ ...formData, techStack: e.target.value })}
-                className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                placeholder="NestJS, TypeScript, PostgreSQL"
-              />
-              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                예시: NestJS, TypeScript, PostgreSQL
-              </p>
-            </div>
-
-            {/* 태그 */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                태그 (쉼표로 구분)
-              </label>
-              <input
-                type="text"
-                value={formData.tags}
-                onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-                className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                placeholder="Backend, API, Microservices"
-              />
-              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                예시: Backend, API, Microservices
-              </p>
-            </div>
-
             {/* 상태 */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -292,7 +259,7 @@ export default function NewProjectPage() {
             </button>
             <button
               type="button"
-              onClick={() => router.back()}
+              onClick={handleCancel}
               className="rounded-lg border border-gray-300 px-6 py-3 font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
             >
               취소
