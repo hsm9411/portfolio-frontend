@@ -10,7 +10,7 @@
 
 **🌐 Live Demo:**
 - **Production**: https://portfolio-front-ten-gamma.vercel.app
-- **Backend API**: http://158.180.75.205:3001
+- **Backend API**: https://158.180.75.205 (Nginx HTTPS)
 
 ---
 
@@ -39,10 +39,29 @@
 - **좋아요 기능**: 실시간 카운트 + 토글 UI
 - **사용자 피드백**: Toast 알림 (성공/에러)
 
-### 5. Vercel API Routes (Proxy)
-- **Mixed Content 해결**: HTTPS → HTTP 백엔드 프록시
-- **보안 강화**: CORS 우회 없이 안전한 통신
-- **자동 배포**: main 브랜치 푸시 시 Vercel 자동 배포
+---
+
+## 🏗️ 아키텍처
+
+### 전체 통신 흐름
+
+```
+사용자 브라우저
+    ↓ HTTPS
+Vercel (Next.js Frontend)
+    ↓ HTTPS (No Mixed Content!)
+OCI Server - Nginx (443)
+    ↓ HTTP (내부 통신)
+NestJS Backend (3000)
+    ↓
+Supabase PostgreSQL + Redis
+```
+
+**핵심:**
+- ✅ **HTTPS → HTTPS**: Vercel → Nginx (443)
+- ✅ **No Mixed Content**: 완전한 HTTPS 체인
+- ✅ **No Vercel Proxy**: 직접 Backend HTTPS 호출
+- ✅ **Nginx Reverse Proxy**: HTTPS 종료 + NestJS 프록시
 
 ---
 
@@ -83,15 +102,9 @@ Supabase 프로젝트 생성 (무료)
 
 ### 1. Installation
 ```bash
-# 레포지토리 클론
 git clone https://github.com/hsm9411/portfolio-frontend.git
 cd portfolio-frontend
-
-# 의존성 설치
 npm install
-
-# 환경 변수 설정
-cp .env.local.example .env.local
 ```
 
 ### 2. Environment Variables (.env.local)
@@ -100,19 +113,31 @@ cp .env.local.example .env.local
 NEXT_PUBLIC_SUPABASE_URL=https://vcegupzlmopajpqxttfo.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 
-# Backend API (Vercel Proxy)
-NEXT_PUBLIC_API_URL=/api
+# Backend API (Direct HTTPS - No Proxy!)
+NEXT_PUBLIC_API_URL=https://158.180.75.205
 
 # 관리자 이메일 (쉼표로 구분)
 NEXT_PUBLIC_ADMIN_EMAILS=your-email@gmail.com,admin@example.com
 ```
 
+**중요:**
+- `NEXT_PUBLIC_API_URL`은 **HTTPS URL**
+- Vercel API Routes 프록시 사용 안 함
+- Backend Nginx가 HTTPS 처리
+
 ### 3. Run Development Server
+
+**로컬 개발 안 함** - Vercel Preview 또는 Production에서만 테스트
+
 ```bash
+# 로컬 실행 (테스트용)
 npm run dev
+
+# Vercel 배포 (권장)
+git push origin main  # 자동 배포
 ```
 
-브라우저에서 [http://localhost:3000](http://localhost:3000) 접속
+접속: http://localhost:3000
 
 ---
 
@@ -140,11 +165,8 @@ portfolio-frontend/
 │   │   │   └── page.tsx
 │   │   └── new/                 # 작성 (관리자)
 │   │       └── page.tsx
-│   ├── auth/                    # OAuth 콜백
-│   │   └── callback/
-│   │       └── route.ts
-│   └── api/                     # API Routes (Vercel Proxy)
-│       └── [...path]/
+│   └── auth/                    # OAuth 콜백
+│       └── callback/
 │           └── route.ts
 ├── components/                  # 재사용 컴포넌트
 │   ├── AuthButton.tsx           # 로그인/로그아웃 버튼
@@ -166,8 +188,6 @@ portfolio-frontend/
 ├── hooks/                       # Custom Hooks
 │   └── useAuth.ts               # 인증 상태 관리
 ├── public/                      # 정적 파일
-│   ├── favicon.ico
-│   └── images/
 ├── .env.local.example           # 환경 변수 템플릿
 ├── next.config.ts               # Next.js 설정
 ├── tailwind.config.ts           # Tailwind CSS 설정
@@ -194,37 +214,51 @@ portfolio-frontend/
 ### API 호출 시 JWT 자동 주입
 ```typescript
 // lib/api/client.ts
+import axios from 'axios';
+import { createClient } from '@/lib/supabase/client';
+
+const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL, // https://158.180.75.205
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
 api.interceptors.request.use(async (config) => {
+  const supabase = createClient();
   const { data: { session } } = await supabase.auth.getSession();
+  
   if (session?.access_token) {
     config.headers.Authorization = `Bearer ${session.access_token}`;
     console.log('✅ JWT 토큰 추가됨');
   }
+  
   return config;
 });
+
+export default api;
 ```
 
-### Vercel API Proxy (Mixed Content 해결)
-```typescript
-// app/api/[...path]/route.ts
-export async function GET(request: NextRequest) {
-  const path = request.nextUrl.pathname.replace('/api', '');
-  const backendUrl = `http://158.180.75.205:3001${path}`;
-  
-  const response = await fetch(backendUrl, {
-    headers: {
-      Authorization: request.headers.get('Authorization') || '',
-    },
-  });
-  
-  return response;
-}
+### 통신 흐름
+
+```
+Frontend (Vercel HTTPS)
+    ↓
+axios.get('https://158.180.75.205/projects')
+    ↓
+Backend Nginx (443 HTTPS)
+    ↓
+NestJS (3000 HTTP)
+    ↓
+Response → Frontend
 ```
 
 **장점:**
-- HTTPS → HTTP 안전한 통신
-- CORS 문제 완전 해결
-- JWT 토큰 자동 전달
+- ✅ 완전한 HTTPS 체인
+- ✅ Mixed Content 문제 없음
+- ✅ 직접 통신 (프록시 불필요)
+- ✅ Nginx가 SSL/TLS 처리
 
 ---
 
@@ -282,30 +316,34 @@ git push origin main
 ```
 
 ### Environment Variables (Vercel)
+
 **Vercel Dashboard → 프로젝트 → Settings → Environment Variables**
 
 필수 설정:
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://vcegupzlmopajpqxttfo.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGc...
-NEXT_PUBLIC_API_URL=/api
+NEXT_PUBLIC_API_URL=https://158.180.75.205
 NEXT_PUBLIC_ADMIN_EMAILS=your-email@gmail.com
 ```
 
-설정 후 **Redeploy** 필수!
+**중요:**
+- `NEXT_PUBLIC_API_URL`은 반드시 **HTTPS**
+- Nginx가 443 포트에서 HTTPS 제공
+- 설정 후 **Redeploy** 필수!
 
 ---
 
 ## 🧪 Development Commands
 
 ```bash
-# 개발 서버 (Hot Reload)
+# 개발 서버 (테스트용)
 npm run dev
 
 # 프로덕션 빌드
 npm run build
 
-# 프로덕션 서버 실행
+# 프로덕션 서버 실행 (로컬)
 npm run start
 
 # 린트 (ESLint)
@@ -314,6 +352,8 @@ npm run lint
 # 타입 체크
 npx tsc --noEmit
 ```
+
+**권장:** 로컬 개발 대신 Vercel Preview 사용
 
 ---
 
@@ -334,16 +374,7 @@ npx tsc --noEmit
 
 ## 🐛 Troubleshooting
 
-### 1. OAuth 로그인 시 홈으로 리다이렉트 안 됨
-**원인**: OAuth 콜백 처리 실패
-
-**해결**:
-```typescript
-// app/auth/callback/route.ts 확인
-// exchangeCodeForSession이 정상 동작하는지 확인
-```
-
-### 2. API 요청 시 401 Unauthorized
+### 1. API 요청 시 401 Unauthorized
 **원인**: JWT 토큰이 백엔드로 전달되지 않음
 
 **해결**:
@@ -351,6 +382,18 @@ npx tsc --noEmit
 # 브라우저 콘솔 확인 (F12)
 # "✅ JWT 토큰 추가됨" 로그 확인
 # Network 탭에서 Authorization 헤더 확인
+```
+
+### 2. CORS 에러 (발생하지 않아야 함)
+**원인**: Backend CORS 설정 문제
+
+**해결**:
+```bash
+# Backend .env 확인
+CORS_ORIGINS=https://portfolio-front-ten-gamma.vercel.app
+
+# Nginx 재시작
+docker-compose restart nginx
 ```
 
 ### 3. 관리자 기능이 보이지 않음
@@ -361,31 +404,25 @@ npx tsc --noEmit
 # Vercel 환경 변수 추가
 NEXT_PUBLIC_ADMIN_EMAILS=your-email@gmail.com
 
-# Redeploy 후 확인
+# Redeploy
 ```
 
-### 4. 빌드 에러 (TypeScript)
-**원인**: 타입 불일치
+### 4. SSL 인증서 오류 (Self-Signed)
+**원인**: Backend가 Self-Signed 인증서 사용
 
 **해결**:
-```bash
-# 타입 체크
-npx tsc --noEmit
-
-# 에러 메시지 확인 후 수정
+```
+브라우저에서 "안전하지 않음" 경고
+→ 고급 → 계속 진행 클릭
+(Dev 환경은 Self-Signed 인증서 사용)
 ```
 
-### 5. Tailwind CSS 스타일 적용 안 됨
-**원인**: Tailwind 설정 오류
-
-**해결**:
-```bash
-# tailwind.config.ts 확인
-# content 경로가 올바른지 확인
-
-# 개발 서버 재시작
-npm run dev
-```
+### 5. Mixed Content 경고
+**발생하지 않아야 함!**
+- Vercel (HTTPS) → Backend (HTTPS)
+- 만약 발생하면 `NEXT_PUBLIC_API_URL` 확인
+  - ✅ `https://158.180.75.205`
+  - ❌ `http://158.180.75.205`
 
 ---
 
@@ -403,11 +440,9 @@ npm run dev
 
 ### Git Workflow
 ```bash
-# Feature 개발
 git checkout -b feature/new-feature
 git commit -m "feat: 새로운 기능 추가"
 git push origin feature/new-feature
-
 # Pull Request → main 브랜치
 ```
 
@@ -440,4 +475,5 @@ MIT License
 
 **Last Updated**: 2026-02-17  
 **Status**: Production Ready ✅  
-**Tech Stack**: Next.js 16 | React 19 | Supabase | Tailwind CSS 4 | Vercel
+**Tech Stack**: Next.js 16 | React 19 | Supabase | Tailwind CSS 4 | Vercel  
+**Backend**: Nginx HTTPS (443) → NestJS (3000)
