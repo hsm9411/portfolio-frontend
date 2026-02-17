@@ -5,7 +5,6 @@ import { getProjects, type Project } from '@/lib/api/projects'
 import { getPosts, type Post } from '@/lib/api/posts'
 import ProjectCard from '@/components/ProjectCard'
 import PostCard from '@/components/PostCard'
-import AuthButton from '@/components/AuthButton'
 import Link from 'next/link'
 
 export default function Home() {
@@ -47,22 +46,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <header className="border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                Portfolio
-              </h1>
-              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                개발자 포트폴리오 & 블로그
-              </p>
-            </div>
-            <AuthButton />
-          </div>
-        </div>
-      </header>
 
       {/* Main */}
       <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">

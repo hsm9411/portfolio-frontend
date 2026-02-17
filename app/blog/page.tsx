@@ -61,22 +61,14 @@ export default function BlogPage() {
                 개발 블로그 및 기술 포스팅
               </p>
             </div>
-            <div className="flex gap-3">
-              {isAdmin && (
-                <Link
-                  href="/blog/new"
-                  className="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
-                >
-                  + 포스트 작성
-                </Link>
-              )}
+            {isAdmin && (
               <Link
-                href="/"
-                className="rounded-lg bg-gray-100 px-4 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                href="/blog/new"
+                className="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
               >
-                홈으로
+                + 포스트 작성
               </Link>
-            </div>
+            )}
           </div>
 
           {/* Search */}

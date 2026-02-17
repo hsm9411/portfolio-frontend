@@ -56,22 +56,14 @@ export default function ProjectsPage() {
                 포트폴리오 프로젝트 모음
               </p>
             </div>
-            <div className="flex gap-3">
-              {isAdmin && (
-                <Link
-                  href="/projects/new"
-                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-                >
-                  + 프로젝트 작성
-                </Link>
-              )}
+            {isAdmin && (
               <Link
-                href="/"
-                className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                href="/projects/new"
+                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
               >
-                홈으로
+                + 프로젝트 작성
               </Link>
-            </div>
+            )}
           </div>
         </div>
       </header>

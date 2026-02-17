@@ -81,35 +81,23 @@ export default function BlogPostPage() {
       {/* Header */}
       <header className="border-b border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-800">
         <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-          {/* Navigation & Actions */}
-          <div className="mb-6 flex items-center justify-between">
-            <button
-              onClick={() => router.push('/blog')}
-              className="flex items-center gap-2 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              목록으로
-            </button>
-            
-            {isAdmin && (
-              <div className="flex gap-3">
-                <button
-                  onClick={() => router.push(`/blog/${post.slug}/edit`)}
-                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
-                >
-                  수정
-                </button>
-                <button
-                  onClick={handleDelete}
-                  className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700"
-                >
-                  삭제
-                </button>
-              </div>
-            )}
-          </div>
+          {/* Actions */}
+          {isAdmin && (
+            <div className="mb-6 flex justify-end gap-3">
+              <button
+                onClick={() => router.push(`/blog/${post.slug}/edit`)}
+                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
+              >
+                수정
+              </button>
+              <button
+                onClick={handleDelete}
+                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700"
+              >
+                삭제
+              </button>
+            </div>
+          )}
 
           {/* Tags */}
           <div className="mb-4 flex flex-wrap gap-2">
