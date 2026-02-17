@@ -18,6 +18,8 @@ export default function EditPostPage() {
   const [preview, setPreview] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
 
+  const [postId, setPostId] = useState<string>('')
+
   const [formData, setFormData] = useState({
     title: '',
     summary: '',
@@ -55,7 +57,8 @@ export default function EditPostPage() {
         content: post.content,
         tags: post.tags || []
       }
-      
+
+      setPostId(post.id)
       setFormData(data)
       setOriginalData(data)
     } catch (error: unknown) {
@@ -86,7 +89,7 @@ export default function EditPostPage() {
         tags: formData.tags.length > 0 ? formData.tags : undefined
       }
 
-      await api.patch(`/posts/${params.slug}`, payload)
+      await api.put(`/posts/${postId}`, payload)
       
       router.replace(`/blog/${params.slug}`)
       setTimeout(() => alert('포스트가 수정되었습니다!'), 100)
