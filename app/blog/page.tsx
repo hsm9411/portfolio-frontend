@@ -138,10 +138,10 @@ export default function BlogPage() {
           </div>
         ) : (
           <>
-            {/* Posts Grid - 간격 개선 */}
-            <div className="space-y-6">
+            {/* Posts Grid */}
+            <div className="flex flex-col gap-5">
               {posts.map((post) => (
-                <Link key={post.id} href={`/blog/${post.slug}`}>
+                <Link key={post.id} href={`/blog/${post.slug}`} className="block">
                   <PostCard post={post} />
                 </Link>
               ))}
