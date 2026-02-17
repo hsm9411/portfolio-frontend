@@ -165,17 +165,32 @@ export default function BlogPostPage() {
       </header>
 
       {/* Main Content */}
-      <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="space-y-10">
+      <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="space-y-12">
           {/* Markdown Content */}
-          <section className="rounded-xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-            <article className="prose prose-lg max-w-none dark:prose-invert prose-headings:font-bold prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-strong:text-gray-900 dark:prose-strong:text-white prose-code:rounded prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm prose-code:font-mono prose-code:before:content-[''] prose-code:after:content-[''] prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-img:rounded-lg">
+          <section className="rounded-xl border border-gray-200 bg-white px-8 py-10 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:px-12 sm:py-12">
+            <article className="prose prose-lg max-w-none dark:prose-invert
+              prose-headings:font-bold prose-headings:tracking-tight
+              prose-h1:text-3xl prose-h1:mt-12 prose-h1:mb-6
+              prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-5 prose-h2:border-b prose-h2:border-gray-200 prose-h2:pb-3 dark:prose-h2:border-gray-700
+              prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-4
+              prose-p:leading-8 prose-p:text-gray-700 prose-p:my-5 dark:prose-p:text-gray-300
+              prose-a:text-blue-600 prose-a:font-medium hover:prose-a:text-blue-700 dark:prose-a:text-blue-400
+              prose-strong:text-gray-900 prose-strong:font-semibold dark:prose-strong:text-white
+              prose-ul:my-5 prose-ul:space-y-2 prose-ol:my-5 prose-ol:space-y-2
+              prose-li:text-gray-700 prose-li:leading-7 dark:prose-li:text-gray-300
+              prose-blockquote:border-l-4 prose-blockquote:border-blue-400 prose-blockquote:bg-blue-50 prose-blockquote:px-6 prose-blockquote:py-4 prose-blockquote:my-6 prose-blockquote:rounded-r-lg dark:prose-blockquote:bg-blue-900/20 dark:prose-blockquote:border-blue-500
+              prose-code:rounded prose-code:bg-gray-100 dark:prose-code:bg-gray-700 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm prose-code:font-mono prose-code:text-pink-600 dark:prose-code:text-pink-400 prose-code:before:content-[''] prose-code:after:content-[''] 
+              prose-pre:my-6 prose-pre:rounded-xl prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:shadow-md prose-pre:overflow-x-auto
+              prose-img:rounded-xl prose-img:shadow-sm prose-img:my-8
+              prose-hr:my-10 prose-hr:border-gray-200 dark:prose-hr:border-gray-700
+              prose-table:my-6 prose-thead:bg-gray-50 dark:prose-thead:bg-gray-700 prose-th:px-4 prose-th:py-3 prose-td:px-4 prose-td:py-3">
               <ReactMarkdown>{post.content}</ReactMarkdown>
             </article>
           </section>
 
           {/* Like Button */}
-          <section className="border-t border-gray-200 pt-8 dark:border-gray-700">
+          <section className="rounded-xl border border-gray-200 bg-white px-8 py-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
             <LikeButton
               targetType="post"
               targetId={post.id}
@@ -184,7 +199,7 @@ export default function BlogPostPage() {
           </section>
 
           {/* Comments */}
-          <section className="border-t border-gray-200 pt-8 dark:border-gray-700">
+          <section className="rounded-xl border border-gray-200 bg-white px-8 py-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
             <CommentSection targetType="post" targetId={post.id} />
           </section>
         </div>
