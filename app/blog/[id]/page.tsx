@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { getPostBySlug, type Post } from '@/lib/api/posts'
+import { getPostById, type Post } from '@/lib/api/posts'
 import { useAuth } from '@/hooks/useAuth'
 import LikeButton from '@/components/LikeButton'
 import CommentSection from '@/components/CommentSection'
@@ -18,26 +18,20 @@ export default function BlogPostPage() {
   const [post, setPost] = useState<Post | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const calculateReadTime = (content: string): number => {
-    const wordsPerMinute = 500
-    const wordCount = content.length
-    return Math.max(1, Math.ceil(wordCount / wordsPerMinute))
-  }
-
   useEffect(() => {
-    if (params.slug) {
-      loadPost(params.slug as string)
+    if (params.id) {
+      loadPost(params.id as string)
     }
-  }, [params.slug])
+  }, [params.id])
 
-  const loadPost = async (slug: string) => {
+  const loadPost = async (id: string) => {
     try {
       setLoading(true)
-      const data = await getPostBySlug(slug)
+      const data = await getPostById(id)
       setPost(data)
     } catch (error: any) {
       console.error('Failed to load post:', error)
-      if (error.response?.status === 404) {
+      if (error.statusCode === 404) {
         alert('포스트를 찾을 수 없습니다.')
         router.push('/blog')
       }
@@ -74,8 +68,6 @@ export default function BlogPostPage() {
     return null
   }
 
-  const readTimeMinutes = calculateReadTime(post.content)
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
@@ -85,7 +77,7 @@ export default function BlogPostPage() {
           {isAdmin && (
             <div className="mb-6 flex justify-end gap-3">
               <button
-                onClick={() => router.push(`/blog/${post.slug}/edit`)}
+                onClick={() => router.push(`/blog/${post.id}/edit`)}
                 className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
               >
                 수정
@@ -142,12 +134,14 @@ export default function BlogPostPage() {
               </svg>
               {post.viewCount}
             </span>
-            <span className="flex items-center gap-1.5">
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
-              {readTimeMinutes}분
-            </span>
+            {post.readingTime && (
+              <span className="flex items-center gap-1.5">
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+                {post.readingTime}분
+              </span>
+            )}
           </div>
         </div>
       </header>

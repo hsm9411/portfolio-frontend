@@ -116,24 +116,30 @@ export interface GetProjectsRequest {
 
 export interface Post {
   id: string;
-  slug: string;
   title: string;
-  content: string; // Markdown
   summary: string;
+  content: string; // Markdown
+  thumbnailUrl?: string;
+  category: string; // 'tutorial', 'essay', 'review', 'news'
   tags: string[];
+  isPublished: boolean;
   viewCount: number;
   likeCount: number;
+  commentCount: number;
+  readingTime?: number;
   authorId: string;
   authorNickname: string;
   authorAvatarUrl?: string;
   createdAt: string;
   updatedAt: string;
+  publishedAt?: string;
 }
 
 export interface CreatePostRequest {
   title: string;
   content: string;
   summary?: string;
+  category: 'tutorial' | 'essay' | 'review' | 'news';
   tags?: string[];
 }
 

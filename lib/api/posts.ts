@@ -27,10 +27,10 @@ export async function getPosts(
 }
 
 /**
- * Slug로 포스트 조회 (조회수 자동 증가)
+ * ID로 포스트 조회 (조회수 자동 증가)
  */
-export async function getPostBySlug(slug: string): Promise<Post> {
-  const response = await api.get<Post>(`/posts/${slug}`)
+export async function getPostById(id: string): Promise<Post> {
+  const response = await api.get<Post>(`/posts/${id}`)
   return response.data
 }
 

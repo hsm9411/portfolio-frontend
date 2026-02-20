@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
-import { getPostBySlug } from '@/lib/api/posts'
+import { getPostById } from '@/lib/api/posts'
 import TechStackInput from '@/components/TechStackInput'
 import api from '@/lib/api/client'
 import ReactMarkdown from 'react-markdown'
@@ -24,6 +24,7 @@ export default function EditPostPage() {
     title: '',
     summary: '',
     content: '',
+    category: 'tutorial' as 'tutorial' | 'essay' | 'review' | 'news',
     tags: [] as string[]
   })
 
@@ -36,25 +37,26 @@ export default function EditPostPage() {
       return
     }
 
-    if (params.slug && isAdmin) {
-      loadPost(params.slug as string)
+    if (params.id && isAdmin) {
+      loadPost(params.id as string)
     }
-  }, [params.slug, isAdmin, authLoading, router])
+  }, [params.id, isAdmin, authLoading, router])
 
   useEffect(() => {
     const changed = JSON.stringify(formData) !== JSON.stringify(originalData)
     setHasChanges(changed)
   }, [formData, originalData])
 
-  const loadPost = async (slug: string) => {
+  const loadPost = async (id: string) => {
     try {
       setLoading(true)
-      const post = await getPostBySlug(slug)
+      const post = await getPostById(id)
       
       const data = {
         title: post.title,
         summary: post.summary,
         content: post.content,
+        category: post.category as 'tutorial' | 'essay' | 'review' | 'news',
         tags: post.tags || []
       }
 
@@ -74,7 +76,7 @@ export default function EditPostPage() {
     e.preventDefault()
     setError('')
 
-    if (!formData.title || !formData.summary || !formData.content) {
+    if (!formData.title || !formData.summary || !formData.content || !formData.category) {
       setError('필수 항목을 입력해주세요.')
       return
     }
@@ -86,12 +88,13 @@ export default function EditPostPage() {
         title: formData.title,
         summary: formData.summary,
         content: formData.content,
+        category: formData.category,
         tags: formData.tags.length > 0 ? formData.tags : undefined
       }
 
       await api.put(`/posts/${postId}`, payload)
       
-      router.replace(`/blog/${params.slug}`)
+      router.replace(`/blog/${postId}`)
       setTimeout(() => alert('포스트가 수정되었습니다!'), 100)
     } catch (err: unknown) {
       console.error('Failed to update post:', err)
@@ -109,10 +112,10 @@ export default function EditPostPage() {
   const handleCancel = () => {
     if (hasChanges) {
       if (confirm('변경사항이 저장되지 않았습니다. 취소하시겠습니까?')) {
-        router.push(`/blog/${params.slug}`)
+        router.push(`/blog/${postId}`)
       }
     } else {
-      router.push(`/blog/${params.slug}`)
+      router.push(`/blog/${postId}`)
     }
   }
 
@@ -194,6 +197,23 @@ export default function EditPostPage() {
                     className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                     placeholder="포스트 한 줄 소개"
                   />
+                </div>
+
+                {/* 카테고리 */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    카테고리 <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
+                    className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                  >
+                    <option value="tutorial">튜토리얼</option>
+                    <option value="essay">에세이</option>
+                    <option value="review">리뷰</option>
+                    <option value="news">뉴스</option>
+                  </select>
                 </div>
 
                 {/* 태그 */}
