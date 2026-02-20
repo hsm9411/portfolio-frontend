@@ -82,7 +82,7 @@ export default function NewPostPage() {
         tags: formData.tags.length > 0 ? formData.tags : undefined
       }
 
-      const response = await api.post('/posts', payload)
+      await api.post('/posts', payload)
       
       router.replace('/blog')
       setTimeout(() => alert('포스트가 작성되었습니다!'), 100)

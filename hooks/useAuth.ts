@@ -1,33 +1,56 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import type { User, Session, AuthChangeEvent } from '@supabase/supabase-js'
+import { getCurrentUser } from '@/lib/api/auth'
+import type { User as SupabaseUser, Session, AuthChangeEvent } from '@supabase/supabase-js'
+import type { User as BackendUser } from '@/lib/types/api'
 
 export function useAuth() {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<SupabaseUser | null>(null)
+  const [backendUser, setBackendUser] = useState<BackendUser | null>(null)
   const [loading, setLoading] = useState(true)
   const [isAdmin, setIsAdmin] = useState(false)
   const supabase = createClient()
 
+  /**
+   * Backend /auth/me를 호출해 isAdmin 등 실제 권한 정보 조회
+   * Supabase 세션이 있을 때만 호출 (JWT가 있어야 /auth/me 호출 가능)
+   */
+  const fetchBackendUser = async () => {
+    try {
+      const user = await getCurrentUser()
+      setBackendUser(user)
+      setIsAdmin(user.isAdmin)
+    } catch (err) {
+      // 비인증 상태이거나 Backend 오류 시 권한 없음으로 처리
+      console.warn('⚠️ Backend 사용자 정보 조회 실패 (비인증 상태):', err)
+      setBackendUser(null)
+      setIsAdmin(false)
+    }
+  }
+
   useEffect(() => {
-    // 초기 세션 확인
     const initializeAuth = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession()
-        
+
         if (error) {
           console.error('❌ 세션 확인 에러:', error)
           setUser(null)
+          setBackendUser(null)
           setIsAdmin(false)
         } else if (session) {
           setUser(session.user)
-          checkAdmin(session.user.email)
+          // 세션이 있으면 Backend에서 실제 isAdmin 조회
+          await fetchBackendUser()
         } else {
           setUser(null)
+          setBackendUser(null)
           setIsAdmin(false)
         }
       } catch (err: unknown) {
         console.error('❌ Auth 초기화 에러:', err)
         setUser(null)
+        setBackendUser(null)
         setIsAdmin(false)
       } finally {
         setLoading(false)
@@ -41,43 +64,25 @@ export function useAuth() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
       console.log('🔄 Auth 상태 변경:', event, session?.user?.email)
-      
-      // 세션 만료 시 자동 갱신 시도
-      if (event === 'TOKEN_REFRESHED') {
-        console.log('✅ 토큰 자동 갱신됨')
-      } else if (event === 'SIGNED_OUT') {
-        console.log('⚠️ 로그아웃됨')
-      }
-      
-      setUser(session?.user ?? null)
-      checkAdmin(session?.user?.email)
-    })
 
-    // 5분마다 세션 체크 및 갱신 (선택적)
-    const intervalId = setInterval(async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        console.log('🔄 세션 유효성 체크 완료')
+      if (event === 'SIGNED_IN' && session) {
+        setUser(session.user)
+        // 로그인 시 Backend에서 isAdmin 재조회
+        await fetchBackendUser()
+      } else if (event === 'SIGNED_OUT') {
+        setUser(null)
+        setBackendUser(null)
+        setIsAdmin(false)
+      } else if (event === 'TOKEN_REFRESHED' && session) {
+        setUser(session.user)
+        // 토큰 갱신 시에도 Backend 사용자 정보 유지 (재조회는 필요 시만)
       }
-    }, 5 * 60 * 1000) // 5분
+    })
 
     return () => {
       subscription.unsubscribe()
-      clearInterval(intervalId)
     }
   }, [supabase.auth])
 
-  const checkAdmin = (email?: string) => {
-    if (!email) {
-      setIsAdmin(false)
-      return
-    }
-
-    const adminEmails = process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(',').map(e => e.trim()) || []
-    const isAdminUser = adminEmails.includes(email)
-    console.log('🔑 Admin 체크:', { email, isAdmin: isAdminUser, adminEmails })
-    setIsAdmin(isAdminUser)
-  }
-
-  return { user, loading, isAdmin }
+  return { user, backendUser, loading, isAdmin }
 }
