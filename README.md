@@ -29,10 +29,12 @@
 - **반응형 디자인**: 모바일/태블릿/데스크톱 최적화
 
 ### 3. 블로그 (Posts)
+- **ID 기반 URL**: `/blog/{id}` (간단하고 명확한 라우팅)
+- **카테고리 시스템**: 튜토리얼, 에세이, 리뷰, 뉴스
 - **목록 조회**: 검색 + 페이징
 - **Markdown 렌더링**: react-markdown + 코드 하이라이팅
-- **실시간 미리보기**: 작성 페이지 (관리자 전용)
-- **SEO 최적화**: Slug 기반 URL
+- **실시간 미리보기**: 작성/수정 페이지 (관리자 전용)
+- **읽기 시간**: 자동 계산된 예상 읽기 시간 표시
 
 ### 4. 인터랙션 (Comments & Likes)
 - **댓글 시스템**: 로그인 사용자만 작성, 본인 댓글 삭제
@@ -54,7 +56,7 @@ OCI Server - Nginx (443)
     ↓ HTTP (내부 통신)
 NestJS Backend (3000)
     ↓
-Supabase PostgreSQL + Redis
+Supabase PostgreSQL (portfolio schema) + Redis
 ```
 
 **핵심:**
@@ -77,7 +79,7 @@ Supabase PostgreSQL + Redis
 - **Dark Mode**: 시스템 테마 자동 감지
 
 ### State & Data Management
-- **Supabase**: 인증 + 사용자 관리
+- **Supabase**: 인증 전용 (OAuth)
 - **Axios**: HTTP 클라이언트 (Interceptor 패턴)
 - **React Hooks**: useState, useEffect, Custom Hooks
 
@@ -109,7 +111,7 @@ npm install
 
 ### 2. Environment Variables (.env.local)
 ```env
-# Supabase
+# Supabase (OAuth 전용)
 NEXT_PUBLIC_SUPABASE_URL=https://vcegupzlmopajpqxttfo.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 
@@ -124,6 +126,7 @@ NEXT_PUBLIC_ADMIN_EMAILS=your-email@gmail.com,admin@example.com
 - `NEXT_PUBLIC_API_URL`은 **HTTPS URL**
 - Vercel API Routes 프록시 사용 안 함
 - Backend Nginx가 HTTPS 처리
+- Supabase는 인증(OAuth)만 담당, 데이터는 Backend API 사용
 
 ### 3. Run Development Server
 
@@ -146,42 +149,46 @@ git push origin main  # 자동 배포
 ```
 portfolio-frontend/
 ├── app/                         # Next.js App Router
-│   ├── page.tsx                 # 홈 페이지
-│   ├── layout.tsx               # 루트 레이아웃
+│   ├── page.tsx                 # 홈 페이지 (Projects + Posts 미리보기)
+│   ├── layout.tsx               # 루트 레이아웃 (전역 Navigation)
 │   ├── globals.css              # Tailwind CSS
-│   ├── login/                   # 로그인 페이지
-│   │   └── page.tsx
-│   ├── register/                # 회원가입 페이지
+│   ├── login/                   # 로그인 페이지 (OAuth 버튼)
 │   │   └── page.tsx
 │   ├── projects/                # 프로젝트 페이지
-│   │   ├── page.tsx             # 목록
-│   │   ├── [id]/                # 상세
+│   │   ├── page.tsx             # 목록 (필터링, 페이징)
+│   │   ├── [id]/                # 상세 (ID 기반)
 │   │   │   └── page.tsx
 │   │   └── new/                 # 작성 (관리자)
 │   │       └── page.tsx
 │   ├── blog/                    # 블로그 페이지
-│   │   ├── page.tsx             # 목록
-│   │   ├── [slug]/              # 상세 (SEO 친화적)
-│   │   │   └── page.tsx
-│   │   └── new/                 # 작성 (관리자)
+│   │   ├── page.tsx             # 목록 (검색, 페이징)
+│   │   ├── [id]/                # 상세 (ID 기반) ✅ slug에서 변경
+│   │   │   ├── page.tsx
+│   │   │   └── edit/            # 수정 (관리자)
+│   │   │       └── page.tsx
+│   │   └── new/                 # 작성 (관리자, 카테고리 선택)
 │   │       └── page.tsx
 │   └── auth/                    # OAuth 콜백
 │       └── callback/
 │           └── route.ts
 ├── components/                  # 재사용 컴포넌트
+│   ├── Navigation.tsx           # 전역 네비게이션 바
 │   ├── AuthButton.tsx           # 로그인/로그아웃 버튼
 │   ├── ProjectCard.tsx          # 프로젝트 카드
 │   ├── PostCard.tsx             # 포스트 카드
 │   ├── CommentSection.tsx       # 댓글 섹션
-│   └── LikeButton.tsx           # 좋아요 버튼
+│   ├── LikeButton.tsx           # 좋아요 버튼
+│   └── TechStackInput.tsx       # 태그 입력 컴포넌트
 ├── lib/                         # 유틸리티 & API
 │   ├── api/                     # API 클라이언트
-│   │   ├── client.ts            # Axios 인스턴스
+│   │   ├── client.ts            # Axios 인스턴스 (Interceptor)
 │   │   ├── projects.ts          # Projects API
-│   │   ├── posts.ts             # Posts API
+│   │   ├── posts.ts             # Posts API (ID 기반)
 │   │   ├── comments.ts          # Comments API
 │   │   ├── likes.ts             # Likes API
 │   │   └── auth.ts              # Auth API
+│   ├── types/                   # TypeScript 타입
+│   │   └── api.ts               # Backend DTO 타입 정의
 │   └── supabase/                # Supabase 클라이언트
 │       ├── client.ts            # 브라우저용
 │       └── server.ts            # 서버용
@@ -193,8 +200,6 @@ portfolio-frontend/
 ├── tailwind.config.ts           # Tailwind CSS 설정
 ├── tsconfig.json                # TypeScript 설정
 ├── vercel.json                  # Vercel 배포 설정
-├── API_SPEC.md                  # API 명세 문서
-├── DEPLOY.md                    # 배포 가이드
 └── README.md                    # 이 파일
 ```
 
@@ -206,8 +211,8 @@ portfolio-frontend/
 ```
 1. 사용자 → "Google로 계속하기" 클릭
 2. Supabase OAuth → Google 로그인 페이지
-3. 사용자 인증 완료 → Supabase JWT 발급
-4. /auth/callback → Session 저장
+3. 사용자 인증 완료 → Supabase JWT 발급 (ES256)
+4. /auth/callback → Session 저장 (localStorage)
 5. 홈으로 리다이렉트 → "닉네임님" 표시
 ```
 
@@ -225,13 +230,13 @@ const api = axios.create({
   },
 });
 
+// Request Interceptor: JWT 토큰 자동 추가
 api.interceptors.request.use(async (config) => {
   const supabase = createClient();
   const { data: { session } } = await supabase.auth.getSession();
   
   if (session?.access_token) {
     config.headers.Authorization = `Bearer ${session.access_token}`;
-    console.log('✅ JWT 토큰 추가됨');
   }
   
   return config;
@@ -245,11 +250,16 @@ export default api;
 ```
 Frontend (Vercel HTTPS)
     ↓
-axios.get('https://158.180.75.205/projects')
+axios.get('https://158.180.75.205/posts')
+Header: Authorization: Bearer {Supabase JWT}
     ↓
 Backend Nginx (443 HTTPS)
     ↓
 NestJS (3000 HTTP)
+    ├─ SupabaseJwtStrategy (jwks-rsa)
+    ├─ JWT 검증 (ES256 비대칭키)
+    ├─ portfolio.users 조회/생성
+    └─ req.user 주입
     ↓
 Response → Frontend
 ```
@@ -267,11 +277,11 @@ Response → Frontend
 ### 홈 (`/`)
 - **Recent Projects**: 최신 프로젝트 6개 카드 표시
 - **Recent Posts**: 최신 블로그 포스트 3개 카드 표시
-- **AuthButton**: 로그인/로그아웃 버튼 (우측 상단)
-- **전체보기 링크**: Projects/Blog 전체 목록으로 이동
+- **Navigation Bar**: 전역 네비게이션 (Home, Projects, Blog, Login)
+- **전체보기 링크**: `/projects`, `/blog`로 이동
 
 ### Projects 목록 (`/projects`)
-- **필터링**: 전체/진행중/완료 버튼
+- **필터링**: 전체/진행중/완료/보관 버튼
 - **페이징**: 9개씩 표시 + 이전/다음 버튼
 - **관리자 UI**: "+ 프로젝트 작성" 버튼 (관리자만)
 - **반응형**: Grid 레이아웃 (1~3 columns)
@@ -287,18 +297,23 @@ Response → Frontend
 - **검색 기능**: 제목/내용 검색
 - **페이징**: 10개씩 표시
 - **태그 표시**: 각 포스트의 태그 목록
+- **카테고리**: 튜토리얼, 에세이, 리뷰, 뉴스
 - **관리자 UI**: "+ 포스트 작성" 버튼
 
-### Blog Post 상세 (`/blog/[slug]`)
+### Blog Post 상세 (`/blog/[id]`)
+- **ID 기반 URL**: `/blog/{uuid}` (slug 제거)
 - **Markdown 렌더링**: react-markdown
-- **메타 정보**: 작성자, 작성일, 조회수, 읽기 시간
+- **메타 정보**: 작성자, 작성일, 조회수, 읽기 시간, 카테고리
 - **좋아요 버튼**: 실시간 카운트
 - **댓글 섹션**: 댓글 목록 + 작성 폼
+- **관리자 액션**: 수정/삭제 버튼 (관리자만)
 
 ### 관리자 페이지 (`/projects/new`, `/blog/new`)
 - **권한 체크**: `NEXT_PUBLIC_ADMIN_EMAILS` 확인
-- **폼 검증**: 필수 필드 + 에러 메시지
-- **실시간 미리보기**: Markdown 에디터 (Blog)
+- **카테고리 선택**: 드롭다운 (튜토리얼/에세이/리뷰/뉴스)
+- **폼 검증**: 필수 필드 (제목, 요약, 본문, 카테고리) + 에러 메시지
+- **실시간 미리보기**: Markdown 에디터 토글 (편집 모드 ↔ 미리보기)
+- **태그 입력**: TechStackInput 컴포넌트 (자동완성)
 
 ---
 
@@ -365,8 +380,8 @@ npx tsc --noEmit
 | React | 19.2.3 | UI 라이브러리 |
 | TypeScript | 5.x | 타입 안전성 |
 | Tailwind CSS | 4.x | 유틸리티 CSS |
-| Supabase | 2.95.3 | 인증 + DB |
-| Axios | 1.13.5 | HTTP 클라이언트 |
+| Supabase | 2.95.3 | OAuth 인증 전용 |
+| Axios | 1.13.5 | HTTP 클라이언트 (Interceptor) |
 | react-markdown | 10.1.0 | Markdown 렌더링 |
 | date-fns | 4.1.0 | 날짜 포맷팅 |
 
@@ -380,8 +395,8 @@ npx tsc --noEmit
 **해결**:
 ```bash
 # 브라우저 콘솔 확인 (F12)
-# "✅ JWT 토큰 추가됨" 로그 확인
 # Network 탭에서 Authorization 헤더 확인
+# Supabase Session 확인
 ```
 
 ### 2. CORS 에러 (발생하지 않아야 함)
@@ -407,7 +422,27 @@ NEXT_PUBLIC_ADMIN_EMAILS=your-email@gmail.com
 # Redeploy
 ```
 
-### 4. SSL 인증서 오류 (Self-Signed)
+### 4. 다른 기기에서 글이 안 보임
+**증상**: 본인 컴퓨터는 정상, 다른 컴퓨터는 빈 화면
+
+**원인**: Backend Supabase RLS 설정 문제
+
+**해결** (Backend에서):
+```sql
+-- RLS 비활성화
+ALTER TABLE portfolio.posts DISABLE ROW LEVEL SECURITY;
+ALTER TABLE portfolio.projects DISABLE ROW LEVEL SECURITY;
+```
+
+**확인:**
+```
+1. F12 → Network 탭
+2. /posts 요청 확인
+3. Response에 데이터가 있는지 확인
+4. Status Code 200인지 확인
+```
+
+### 5. SSL 인증서 오류 (Self-Signed)
 **원인**: Backend가 Self-Signed 인증서 사용
 
 **해결**:
@@ -417,7 +452,7 @@ NEXT_PUBLIC_ADMIN_EMAILS=your-email@gmail.com
 (Dev 환경은 Self-Signed 인증서 사용)
 ```
 
-### 5. Mixed Content 경고
+### 6. Mixed Content 경고
 **발생하지 않아야 함!**
 - Vercel (HTTPS) → Backend (HTTPS)
 - 만약 발생하면 `NEXT_PUBLIC_API_URL` 확인
@@ -426,13 +461,37 @@ NEXT_PUBLIC_ADMIN_EMAILS=your-email@gmail.com
 
 ---
 
+## 📝 주요 변경 이력
+
+### 2026-02-20
+- ✅ Post URL을 slug 기반에서 **ID 기반**으로 변경
+  - `/blog/[slug]` → `/blog/[id]`
+  - SEO보다 단순성과 일관성 우선
+- ✅ Post 작성/수정 페이지에 **카테고리 선택** 추가
+  - 튜토리얼, 에세이, 리뷰, 뉴스
+  - 드롭다운 UI 구현
+- ✅ API 타입 정의 업데이트
+  - `Post` 타입에서 `slug` 제거, `category` 추가
+  - `is_published`, `reading_time` 등 필드 추가
+- ✅ 전역 Navigation Bar 추가
+  - 모든 페이지에서 일관된 네비게이션
+- ✅ 다른 기기 접근 문제 해결
+  - Backend RLS 비활성화로 해결
+
+### 2026-02-17
+- ✅ Supabase OAuth 전환 (Local 제거)
+- ✅ Axios Interceptor 기반 JWT 자동 주입
+- ✅ 환경변수 기반 관리자 권한
+
+---
+
 ## 📖 관련 문서
 
 | 문서 | 설명 |
 |------|------|
 | `DEPLOY.md` | 배포 가이드 (테스트 체크리스트 포함) |
-| `API_SPEC.md` | 백엔드 API 명세 (Swagger 기반) |
 | `.env.local.example` | 환경 변수 템플릿 |
+| Backend README | Backend API 명세 및 구조 |
 
 ---
 
@@ -473,7 +532,7 @@ MIT License
 
 ---
 
-**Last Updated**: 2026-02-17  
+**Last Updated**: 2026-02-20  
 **Status**: Production Ready ✅  
-**Tech Stack**: Next.js 16 | React 19 | Supabase | Tailwind CSS 4 | Vercel  
-**Backend**: Nginx HTTPS (443) → NestJS (3000)
+**Tech Stack**: Next.js 16 | React 19 | Supabase OAuth | Tailwind CSS 4 | Vercel  
+**Backend**: Nginx HTTPS (443) → NestJS (3000) → Supabase (portfolio schema)
