@@ -19,24 +19,10 @@ export default function Home() {
   const loadData = async () => {
     try {
       setLoading(true)
-      
-      // Projects와 Posts를 개별적으로 로드 (하나 실패해도 다른 건 표시)
-      const projectsPromise = getProjects({ limit: 6, sortBy: 'created_at', order: 'DESC' })
-        .then(res => res.items)
-        .catch(err => {
-          console.error('Failed to load projects:', err)
-          return []
-        })
-      
-      const postsPromise = getPosts({ limit: 3 })
-        .then(res => res.items)
-        .catch(err => {
-          console.error('Failed to load posts:', err)
-          return []
-        })
-
-      const [projectsData, postsData] = await Promise.all([projectsPromise, postsPromise])
-      
+      const [projectsData, postsData] = await Promise.all([
+        getProjects({ limit: 6, sortBy: 'created_at', order: 'DESC' }).then((r) => r.items).catch(() => []),
+        getPosts({ limit: 3 }).then((r) => r.items).catch(() => []),
+      ])
       setProjects(projectsData)
       setPosts(postsData)
     } finally {
@@ -47,39 +33,75 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
 
-      {/* Main */}
+      {/* ── 히어로 ── */}
+      <section className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800/50">
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
+          <div className="max-w-2xl">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 ring-1 ring-blue-600/20 dark:bg-blue-900/30 dark:text-blue-300 dark:ring-blue-500/30">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-blue-600 dark:bg-blue-400" />
+              Available for work
+            </div>
+            <h1 className="mb-4 text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl">
+              안녕하세요,<br />
+              <span className="text-blue-600 dark:text-blue-400">백엔드 개발자</span> HSM입니다.
+            </h1>
+            <p className="mb-8 text-lg leading-relaxed text-gray-600 dark:text-gray-400">
+              NestJS, Next.js, Docker를 활용한 풀스택 개발을 합니다.<br />
+              임베디드 시스템과 AI 최적화에도 관심이 있습니다.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/projects"
+                className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
+              >
+                프로젝트 보기
+              </Link>
+              <Link
+                href="/blog"
+                className="rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+              >
+                블로그 보기
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 콘텐츠 ── */}
       <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         {loading ? (
-          <div className="flex justify-center py-12">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
+          <div className="flex justify-center py-20">
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600" />
           </div>
         ) : (
-          <>
-            {/* Projects Section */}
-            <section className="mb-16">
+          <div className="space-y-16">
+
+            {/* Projects */}
+            <section>
               <div className="mb-6 flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  📁 Recent Projects
-                </h2>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">Recent Projects</h2>
+                  <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">최근 작업한 프로젝트</p>
+                </div>
                 <Link
                   href="/projects"
-                  className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                  className="flex items-center gap-1 text-sm font-medium text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                 >
-                  전체보기 →
+                  전체보기
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
                 </Link>
               </div>
 
               {projects.length === 0 ? (
-                <div className="rounded-lg border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
-                  <p className="text-gray-500">프로젝트가 없습니다.</p>
-                  <p className="mt-2 text-sm text-gray-400">
-                    백엔드 DB에 프로젝트를 추가해주세요.
-                  </p>
+                <div className="rounded-2xl border border-dashed border-gray-200 py-14 text-center dark:border-gray-700">
+                  <p className="text-sm text-gray-400">아직 프로젝트가 없습니다.</p>
                 </div>
               ) : (
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                   {projects.map((project) => (
-                    <Link key={project.id} href={`/projects/${project.id}`}>
+                    <Link key={project.id} href={`/projects/${project.id}`} className="block">
                       <ProjectCard project={project} />
                     </Link>
                   ))}
@@ -87,29 +109,30 @@ export default function Home() {
               )}
             </section>
 
-            {/* Blog Section */}
+            {/* Blog */}
             <section>
               <div className="mb-6 flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  📝 Recent Posts
-                </h2>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">Recent Posts</h2>
+                  <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">최근 작성한 블로그 포스트</p>
+                </div>
                 <Link
                   href="/blog"
-                  className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                  className="flex items-center gap-1 text-sm font-medium text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                 >
-                  전체보기 →
+                  전체보기
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
                 </Link>
               </div>
 
               {posts.length === 0 ? (
-                <div className="rounded-lg border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
-                  <p className="text-gray-500">포스트가 없습니다.</p>
-                  <p className="mt-2 text-sm text-gray-400">
-                    백엔드 DB에 포스트를 추가해주세요.
-                  </p>
+                <div className="rounded-2xl border border-dashed border-gray-200 py-14 text-center dark:border-gray-700">
+                  <p className="text-sm text-gray-400">아직 포스트가 없습니다.</p>
                 </div>
               ) : (
-                <div className="flex flex-col gap-5">
+                <div className="flex flex-col gap-4">
                   {posts.map((post) => (
                     <Link key={post.id} href={`/blog/${post.id}`} className="block">
                       <PostCard post={post} />
@@ -118,17 +141,19 @@ export default function Home() {
                 </div>
               )}
             </section>
-          </>
+          </div>
         )}
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 bg-white py-8 dark:border-gray-700 dark:bg-gray-800">
-        <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-          <p className="text-sm text-gray-500">포트폴리오 & 블로그</p>
-          <p className="mt-1 text-xs text-gray-400">
-            NestJS + Next.js + Supabase
-          </p>
+      <footer className="mt-16 border-t border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+          <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-between">
+            <p className="text-sm font-semibold text-gray-500 dark:text-gray-400">hsm9411</p>
+            <p className="text-xs text-gray-400 dark:text-gray-600">
+              Built with NestJS · Next.js · Supabase · Oracle Cloud
+            </p>
+          </div>
         </div>
       </footer>
     </div>

@@ -6,76 +6,92 @@ interface ProjectCardProps {
   project: Project
 }
 
+const statusConfig = {
+  completed: { label: '완료', className: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-900/30 dark:text-emerald-400 dark:ring-emerald-500/30' },
+  'in-progress': { label: '진행중', className: 'bg-blue-50 text-blue-700 ring-blue-600/20 dark:bg-blue-900/30 dark:text-blue-400 dark:ring-blue-500/30' },
+  archived: { label: '보관', className: 'bg-gray-100 text-gray-500 ring-gray-500/20 dark:bg-gray-700 dark:text-gray-400 dark:ring-gray-500/30' },
+}
+
 export default function ProjectCard({ project }: ProjectCardProps) {
+  const status = statusConfig[project.status as keyof typeof statusConfig] ?? statusConfig.archived
+
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
-      {project.thumbnailUrl && (
-        <div className="aspect-video w-full overflow-hidden bg-gray-100">
+    <div className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600">
+
+      {/* 썸네일 */}
+      <div className="aspect-video w-full overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800">
+        {project.thumbnailUrl ? (
           <img
             src={project.thumbnailUrl}
             alt={project.title}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
-        </div>
-      )}
-      
-      <div className="p-6">
-        <div className="mb-2 flex items-center gap-2">
-          <span
-            className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
-              project.status === 'completed'
-                ? 'bg-green-100 text-green-800'
-                : project.status === 'in-progress'
-                ? 'bg-blue-100 text-blue-800'
-                : 'bg-gray-100 text-gray-800'
-            }`}
-          >
-            {project.status === 'completed'
-              ? '완료'
-              : project.status === 'in-progress'
-              ? '진행중'
-              : '보관'}
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <svg className="h-12 w-12 text-gray-300 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+        )}
+      </div>
+
+      {/* 콘텐츠 */}
+      <div className="flex flex-1 flex-col p-5">
+        {/* 상태 배지 */}
+        <div className="mb-3">
+          <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset ${status.className}`}>
+            {status.label}
           </span>
         </div>
 
-        <h3 className="mb-2 text-xl font-bold text-gray-900 dark:text-white">
+        {/* 제목 */}
+        <h3 className="mb-2 text-base font-bold leading-snug text-gray-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">
           {project.title}
         </h3>
-        
-        <p className="mb-4 line-clamp-2 text-sm text-gray-600 dark:text-gray-300">
+
+        {/* 요약 */}
+        <p className="mb-4 line-clamp-2 flex-1 text-sm leading-relaxed text-gray-500 dark:text-gray-400">
           {project.summary}
         </p>
 
-        <div className="mb-4 flex flex-wrap gap-2">
-          {project.techStack.slice(0, 5).map((tech) => (
-            <span
-              key={tech}
-              className="inline-flex rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700 dark:bg-gray-700 dark:text-gray-300"
-            >
-              {tech}
-            </span>
-          ))}
-          {project.techStack.length > 5 && (
-            <span className="inline-flex items-center text-xs text-gray-500">
-              +{project.techStack.length - 5}
-            </span>
-          )}
-        </div>
+        {/* 기술 스택 */}
+        {project.techStack.length > 0 && (
+          <div className="mb-4 flex flex-wrap gap-1.5">
+            {project.techStack.slice(0, 4).map((tech) => (
+              <span
+                key={tech}
+                className="rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300"
+              >
+                {tech}
+              </span>
+            ))}
+            {project.techStack.length > 4 && (
+              <span className="rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-400 dark:bg-gray-700 dark:text-gray-500">
+                +{project.techStack.length - 4}
+              </span>
+            )}
+          </div>
+        )}
 
-        <div className="flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-700">
-          <div className="flex gap-4 text-sm text-gray-500">
+        {/* 메타 정보 */}
+        <div className="flex items-center justify-between border-t border-gray-100 pt-3.5 dark:border-gray-700">
+          <div className="flex items-center gap-3.5 text-xs text-gray-400 dark:text-gray-500">
             <span className="flex items-center gap-1">
-              👁️ {project.viewCount}
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              {project.viewCount.toLocaleString()}
             </span>
             <span className="flex items-center gap-1">
-              ❤️ {project.likeCount}
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+              {project.likeCount.toLocaleString()}
             </span>
           </div>
-          <span className="text-xs text-gray-400">
-            {formatDistanceToNow(new Date(project.createdAt), {
-              addSuffix: true,
-              locale: ko,
-            })}
+          <span className="text-xs text-gray-400 dark:text-gray-500">
+            {formatDistanceToNow(new Date(project.createdAt), { addSuffix: true, locale: ko })}
           </span>
         </div>
       </div>
