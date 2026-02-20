@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { useUnsavedWarning } from '@/hooks/useUnsavedWarning'
 import TechStackInput from '@/components/TechStackInput'
+import ThumbnailUploader from '@/components/ThumbnailUploader'
 import api from '@/lib/api/client'
 import ReactMarkdown from 'react-markdown'
 
@@ -12,6 +13,7 @@ const EMPTY_FORM = {
   title: '',
   summary: '',
   content: '',
+  thumbnailUrl: '',
   category: 'tutorial' as 'tutorial' | 'essay' | 'review' | 'news',
   tags: [] as string[],
 }
@@ -48,6 +50,7 @@ export default function NewPostPage() {
         content: formData.content,
         category: formData.category,
         tags: formData.tags.length > 0 ? formData.tags : undefined,
+        ...(formData.thumbnailUrl ? { thumbnailUrl: formData.thumbnailUrl } : {}),
       })
       router.replace('/blog')
     } catch (err: unknown) {
@@ -166,6 +169,13 @@ export default function NewPostPage() {
                 <input type="text" value={formData.summary}
                   onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
                   placeholder="한 줄 소개" className={inputClass} />
+              </Field>
+
+              <Field label="썸네일 이미지">
+                <ThumbnailUploader
+                  value={formData.thumbnailUrl}
+                  onChange={(url) => setFormData({ ...formData, thumbnailUrl: url })}
+                />
               </Field>
 
               <div className="mb-5 grid gap-5 sm:grid-cols-2">

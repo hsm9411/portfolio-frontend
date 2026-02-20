@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useUnsavedWarning } from '@/hooks/useUnsavedWarning'
 import { getProject } from '@/lib/api/projects'
 import TechStackInput from '@/components/TechStackInput'
+import ThumbnailUploader from '@/components/ThumbnailUploader'
 import api from '@/lib/api/client'
 
 export default function EditProjectPage() {
@@ -194,10 +195,11 @@ export default function EditProjectPage() {
             </Field>
 
             <div className="grid gap-5 sm:grid-cols-2">
-              <Field label="썸네일 URL">
-                <input type="url" value={formData.thumbnailUrl}
-                  onChange={(e) => setFormData({ ...formData, thumbnailUrl: e.target.value })}
-                  placeholder="https://example.com/image.png" className={inputClass} />
+              <Field label="썸네일 이미지">
+                <ThumbnailUploader
+                  value={formData.thumbnailUrl}
+                  onChange={(url) => setFormData({ ...formData, thumbnailUrl: url })}
+                />
               </Field>
               <Field label="데모 URL">
                 <input type="url" value={formData.demoUrl}

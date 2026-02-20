@@ -1,6 +1,7 @@
 import type { Project } from '@/lib/api/projects'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
+import { getDeviconUrls, getTechGradient } from '@/lib/utils/devicon'
 
 interface ProjectCardProps {
   project: Project
@@ -14,12 +15,14 @@ const statusConfig = {
 
 export default function ProjectCard({ project }: ProjectCardProps) {
   const status = statusConfig[project.status as keyof typeof statusConfig] ?? statusConfig.archived
+  const deviconUrls = getDeviconUrls(project.techStack, 3)
+  const gradient = getTechGradient(project.techStack)
 
   return (
     <div className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600">
 
       {/* 썸네일 */}
-      <div className="aspect-video w-full overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800">
+      <div className="aspect-video w-full overflow-hidden">
         {project.thumbnailUrl ? (
           <img
             src={project.thumbnailUrl}
@@ -27,10 +30,33 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center">
-            <svg className="h-12 w-12 text-gray-300 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
+          /* 플레이스홀더: 그라디언트 배경 + devicon 아이콘 */
+          <div className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${gradient}`}>
+            {deviconUrls.length > 0 ? (
+              <div className="flex items-center gap-3">
+                {deviconUrls.map((url, i) => (
+                  <div
+                    key={i}
+                    className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 p-2 backdrop-blur-sm"
+                    style={{ opacity: 1 - i * 0.2 }}
+                  >
+                    <img
+                      src={url}
+                      alt=""
+                      className="h-full w-full object-contain brightness-0 invert"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              /* devicon도 없으면 텍스트 이니셜 */
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm">
+                <span className="text-2xl font-bold text-white">
+                  {project.title.charAt(0).toUpperCase()}
+                </span>
+              </div>
+            )}
           </div>
         )}
       </div>
