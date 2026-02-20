@@ -21,6 +21,7 @@ export default function NewPostPage() {
     title: '',
     summary: '',
     content: '',
+    category: 'tutorial' as 'tutorial' | 'essay' | 'review' | 'news',
     tags: [] as string[]
   })
 
@@ -65,7 +66,7 @@ export default function NewPostPage() {
     e.preventDefault()
     setError('')
 
-    if (!formData.title || !formData.summary || !formData.content) {
+    if (!formData.title || !formData.summary || !formData.content || !formData.category) {
       setError('필수 항목을 입력해주세요.')
       return
     }
@@ -77,6 +78,7 @@ export default function NewPostPage() {
         title: formData.title,
         summary: formData.summary,
         content: formData.content,
+        category: formData.category,
         tags: formData.tags.length > 0 ? formData.tags : undefined
       }
 
@@ -174,6 +176,23 @@ export default function NewPostPage() {
                     className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                     placeholder="포스트 한 줄 소개"
                   />
+                </div>
+
+                {/* 카테고리 */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    카테고리 <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
+                    className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                  >
+                    <option value="tutorial">튜토리얼</option>
+                    <option value="essay">에세이</option>
+                    <option value="review">리뷰</option>
+                    <option value="news">뉴스</option>
+                  </select>
                 </div>
 
                 {/* 태그 */}
