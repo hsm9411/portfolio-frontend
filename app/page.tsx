@@ -111,7 +111,7 @@ export default function Home() {
               ) : (
                 <div className="flex flex-col gap-5">
                   {posts.map((post) => (
-                    <Link key={post.id} href={`/blog/${post.slug}`} className="block">
+                    <Link key={post.id} href={`/blog/${post.id}`} className="block">
                       <PostCard post={post} />
                     </Link>
                   ))}
