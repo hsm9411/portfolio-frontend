@@ -35,10 +35,11 @@ export function useAuth() {
           setUser(null)
           setIsAdmin(false)
         } else if (session) {
-          // 앱 초기화 시 토큰 store에 등록
           setAccessToken(session.access_token)
           setUser(session.user)
-          await fetchBackendUser()
+          // loading은 세션 확인 후 즉시 false로 변경
+          // fetchBackendUser는 병렬로 진행 (isAdmin은 나중에 업데이트)
+          fetchBackendUser()
         } else {
           setAccessToken(null)
           setUser(null)
@@ -50,14 +51,14 @@ export function useAuth() {
         setUser(null)
         setIsAdmin(false)
       } finally {
+        // getSession()만 끝나면 loading 해제
+        // fetchBackendUser()의 완료를 기다리지 않음
         setLoading(false)
       }
     }
 
     initializeAuth()
 
-    // 세션 변경 시 토큰 store 업데이트
-    // TOKEN_REFRESHED 포함 — Supabase가 자동 갱신한 토큰도 즉시 반영
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event: AuthChangeEvent, session: Session | null) => {
         if (session) {
