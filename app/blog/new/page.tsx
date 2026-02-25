@@ -8,6 +8,7 @@ import TechStackInput from '@/components/TechStackInput'
 import ThumbnailUploader from '@/components/ThumbnailUploader'
 import api from '@/lib/api/client'
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 const EMPTY_FORM = {
   title: '',
@@ -235,9 +236,9 @@ export default function NewPostPage() {
             <p className="mb-8 text-base text-gray-500 dark:text-gray-400">
               {formData.summary || '요약 없음'}
             </p>
-            <article className="prose prose-gray max-w-none dark:prose-invert">
-              <ReactMarkdown>{formData.content || '*내용 없음*'}</ReactMarkdown>
-            </article>
+            <div className="markdown-body">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{formData.content || '*내용 없음*'}</ReactMarkdown>
+            </div>
           </div>
         )}
       </main>
