@@ -6,6 +6,8 @@ import { getProject, type Project } from '@/lib/api/projects'
 import { useAuth } from '@/hooks/useAuth'
 import LikeButton from '@/components/LikeButton'
 import CommentSection from '@/components/CommentSection'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import api from '@/lib/api/client'
@@ -221,9 +223,9 @@ export default function ProjectDetailPage() {
           {/* 설명 */}
           <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700 sm:p-8">
             <h2 className="mb-5 text-base font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">📋 Description</h2>
-            <p className="whitespace-pre-wrap leading-8 text-gray-700 dark:text-gray-300">
-              {project.description}
-            </p>
+            <div className="markdown-body">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{project.description}</ReactMarkdown>
+            </div>
           </section>
 
           {/* 링크 */}
