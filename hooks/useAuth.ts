@@ -8,7 +8,8 @@ import type { User as BackendUser } from '@/lib/types/api'
 export function useAuth() {
   const [user, setUser] = useState<SupabaseUser | null>(null)
   const [backendUser, setBackendUser] = useState<BackendUser | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true)       // getSession() 완료 여부
+  const [authReady, setAuthReady] = useState(false)  // isAdmin까지 확정 여부
   const [isAdmin, setIsAdmin] = useState(false)
   const supabase = createClient()
 
@@ -21,6 +22,8 @@ export function useAuth() {
       console.warn('⚠️ Backend 사용자 정보 조회 실패:', err)
       setBackendUser(null)
       setIsAdmin(false)
+    } finally {
+      setAuthReady(true) // 성공/실패 무관하게 isAdmin 확정
     }
   }
 
@@ -34,25 +37,27 @@ export function useAuth() {
           setAccessToken(null)
           setUser(null)
           setIsAdmin(false)
+          setAuthReady(true)
         } else if (session) {
           setAccessToken(session.access_token)
           setUser(session.user)
-          // loading은 세션 확인 후 즉시 false로 변경
-          // fetchBackendUser는 병렬로 진행 (isAdmin은 나중에 업데이트)
+          // loading 해제 후 fetchBackendUser 병렬 진행
+          // authReady는 fetchBackendUser 완료 시 true
           fetchBackendUser()
         } else {
+          // 비로그인: isAdmin=false로 즉시 확정
           setAccessToken(null)
           setUser(null)
           setIsAdmin(false)
+          setAuthReady(true)
         }
       } catch (err) {
         console.error('❌ Auth 초기화 에러:', err)
         setAccessToken(null)
         setUser(null)
         setIsAdmin(false)
+        setAuthReady(true)
       } finally {
-        // getSession()만 끝나면 loading 해제
-        // fetchBackendUser()의 완료를 기다리지 않음
         setLoading(false)
       }
     }
@@ -66,6 +71,7 @@ export function useAuth() {
           setUser(session.user)
 
           if (event === 'SIGNED_IN') {
+            setAuthReady(false)
             await fetchBackendUser()
           }
         } else {
@@ -73,6 +79,7 @@ export function useAuth() {
           setUser(null)
           setBackendUser(null)
           setIsAdmin(false)
+          setAuthReady(true)
         }
       }
     )
@@ -82,5 +89,5 @@ export function useAuth() {
     }
   }, [supabase.auth])
 
-  return { user, backendUser, loading, isAdmin }
+  return { user, backendUser, loading, authReady, isAdmin }
 }

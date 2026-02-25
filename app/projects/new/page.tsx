@@ -22,7 +22,7 @@ const EMPTY_FORM = {
 
 export default function NewProjectPage() {
   const router = useRouter()
-  const { isAdmin, loading } = useAuth()
+  const { isAdmin, authReady } = useAuth()
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [formData, setFormData] = useState(EMPTY_FORM)
@@ -31,8 +31,8 @@ export default function NewProjectPage() {
   useUnsavedWarning(hasChanges)
 
   useEffect(() => {
-    if (!loading && !isAdmin) router.replace('/projects')
-  }, [loading, isAdmin, router])
+    if (authReady && !isAdmin) router.replace('/projects')
+  }, [authReady, isAdmin, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -73,7 +73,7 @@ export default function NewProjectPage() {
     router.back()
   }
 
-  if (loading || !isAdmin) {
+  if (!authReady || !isAdmin) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-gray-200 border-t-blue-600" />
