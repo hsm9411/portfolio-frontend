@@ -30,9 +30,7 @@ export default function NewPostPage() {
   useUnsavedWarning(hasChanges)
 
   useEffect(() => {
-    if (!loading && !isAdmin) {
-      router.replace('/blog')
-    }
+    if (!loading && !isAdmin) router.replace('/blog')
   }, [loading, isAdmin, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -75,8 +73,8 @@ export default function NewPostPage() {
 
   if (loading || !isAdmin) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600" />
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-gray-200 border-t-blue-600" />
       </div>
     )
   }
@@ -84,26 +82,25 @@ export default function NewPostPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
 
-      {/* ── Sticky 저장 바 ── */}
-      <div className="sticky top-16 z-40 border-b border-gray-200/80 bg-white/90 backdrop-blur-md dark:border-gray-800/80 dark:bg-gray-900/90">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-          {/* 왼쪽: 취소 + 제목 */}
+      {/* Sticky 액션 바 — navbar 바로 아래 */}
+      <div className="sticky top-[72px] z-40 border-b border-gray-200 bg-white/90 backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/90">
+        <div className="mx-auto flex max-w-[1000px] items-center justify-between px-5 py-3">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={handleCancel}
-              className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
+              className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-800 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
               취소
             </button>
-            <span className="text-base font-semibold text-gray-900 dark:text-white">포스트 작성</span>
+            <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">포스트 작성</span>
           </div>
 
-          {/* 오른쪽: 편집/미리보기 탭 + 작성 버튼 */}
           <div className="flex items-center gap-2">
+            {/* 편집 / 미리보기 토글 */}
             <div className="flex rounded-lg border border-gray-200 bg-gray-100 p-0.5 dark:border-gray-700 dark:bg-gray-800">
               <button
                 type="button"
@@ -132,7 +129,7 @@ export default function NewPostPage() {
               form="new-post-form"
               type="submit"
               disabled={submitting}
-              className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 disabled:opacity-50"
+              className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
             >
               {submitting ? (
                 <>
@@ -145,9 +142,9 @@ export default function NewPostPage() {
         </div>
       </div>
 
-      <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-[1000px] px-5 py-8">
         {error && (
-          <div className="mb-6 flex items-start gap-3 rounded-xl bg-red-50 p-4 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">
+          <div className="mb-6 flex items-start gap-3 rounded-lg border border-red-100 bg-red-50 p-4 text-sm text-red-600 dark:border-red-900/30 dark:bg-red-900/20 dark:text-red-400">
             <svg className="mt-0.5 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -157,18 +154,26 @@ export default function NewPostPage() {
 
         {!preview ? (
           <form id="new-post-form" onSubmit={handleSubmit}>
-            <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-8">
+            <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800 sm:p-8">
 
               <Field label="제목" required>
-                <input type="text" value={formData.title}
+                <input
+                  type="text"
+                  value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="포스트 제목" className={`${inputClass} text-lg font-semibold`} />
+                  placeholder="포스트 제목"
+                  className={`${inputClass} text-base font-semibold`}
+                />
               </Field>
 
               <Field label="요약" required>
-                <input type="text" value={formData.summary}
+                <input
+                  type="text"
+                  value={formData.summary}
                   onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
-                  placeholder="한 줄 소개" className={inputClass} />
+                  placeholder="한 줄 소개"
+                  className={inputClass}
+                />
               </Field>
 
               <Field label="썸네일 이미지">
@@ -180,9 +185,11 @@ export default function NewPostPage() {
 
               <div className="mb-5 grid gap-5 sm:grid-cols-2">
                 <Field label="카테고리" required>
-                  <select value={formData.category}
+                  <select
+                    value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
-                    className={inputClass}>
+                    className={inputClass}
+                  >
                     <option value="tutorial">튜토리얼</option>
                     <option value="essay">에세이</option>
                     <option value="review">리뷰</option>
@@ -190,24 +197,29 @@ export default function NewPostPage() {
                   </select>
                 </Field>
                 <Field label="태그">
-                  <TechStackInput value={formData.tags} onChange={(v) => setFormData({ ...formData, tags: v })} />
+                  <TechStackInput
+                    value={formData.tags}
+                    onChange={(v) => setFormData({ ...formData, tags: v })}
+                  />
                 </Field>
               </div>
 
               <Field label="본문 (Markdown)" required>
-                <textarea value={formData.content} rows={28}
+                <textarea
+                  value={formData.content}
+                  rows={28}
                   onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                   placeholder={`# 제목\n\n## 소제목\n\n본문 내용...\n\n\`\`\`javascript\nconst example = 'code';\n\`\`\``}
-                  className={`${inputClass} font-mono text-sm leading-relaxed`} />
+                  className={`${inputClass} font-mono text-sm leading-relaxed`}
+                />
                 <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-                  Markdown 문법을 사용하세요. 상단 미리보기 탭에서 렌더링을 확인할 수 있습니다.
+                  Markdown 문법을 지원합니다. 미리보기 탭에서 렌더링을 확인하세요.
                 </p>
               </Field>
             </div>
           </form>
         ) : (
-          /* 미리보기 */
-          <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-12">
+          <div className="rounded-xl border border-gray-200 bg-white p-8 dark:border-gray-700 dark:bg-gray-800 sm:p-12">
             {formData.tags.length > 0 && (
               <div className="mb-5 flex flex-wrap gap-2">
                 {formData.tags.map((tag) => (
@@ -220,10 +232,10 @@ export default function NewPostPage() {
             <h1 className="mb-3 text-3xl font-bold text-gray-900 dark:text-white">
               {formData.title || '제목 없음'}
             </h1>
-            <p className="mb-8 text-lg text-gray-600 dark:text-gray-400">
+            <p className="mb-8 text-base text-gray-500 dark:text-gray-400">
               {formData.summary || '요약 없음'}
             </p>
-            <article className="prose prose-lg max-w-none dark:prose-invert">
+            <article className="prose prose-gray max-w-none dark:prose-invert">
               <ReactMarkdown>{formData.content || '*내용 없음*'}</ReactMarkdown>
             </article>
           </div>
@@ -236,7 +248,7 @@ export default function NewPostPage() {
 function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div className="mb-5">
-      <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
+      <label className="mb-1.5 block text-sm font-medium text-gray-600 dark:text-gray-400">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       {children}
@@ -244,4 +256,4 @@ function Field({ label, required, children }: { label: string; required?: boolea
   )
 }
 
-const inputClass = 'w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm transition-colors focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:focus:border-blue-500 dark:focus:bg-gray-800'
+const inputClass = 'w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 transition-colors focus:border-blue-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500 dark:focus:border-blue-500 dark:focus:bg-gray-800/80'
