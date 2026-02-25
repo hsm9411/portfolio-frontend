@@ -25,19 +25,19 @@ export async function POST(req: NextRequest) {
 
   if (type === 'project') {
     revalidateTag('projects');
-    revalidatePath('/projects');
+    revalidatePath('/projects', 'page');
     if (id) {
       revalidateTag(`project-${id}`);
-      revalidatePath(`/projects/${id}`);
+      revalidatePath(`/projects/${id}`, 'page');
     }
   }
 
   if (type === 'post') {
     revalidateTag('posts');
-    revalidatePath('/blog');
+    revalidatePath('/blog', 'page');
     if (id) {
       revalidateTag(`post-${id}`);
-      revalidatePath(`/blog/${id}`);
+      revalidatePath(`/blog/${id}`, 'page');
     }
   }
 
