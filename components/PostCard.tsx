@@ -15,17 +15,30 @@ const categoryConfig: Record<string, { label: string; className: string }> = {
 
 const calcReadTime = (content: string) => Math.max(1, Math.ceil(content.length / 500))
 
+/*
+  레이아웃 계산 (카드 전체 h-[170px])
+  ├─ 카테고리 뱃지행   h-[22px]
+  ├─ gap                      8px
+  ├─ 제목 2줄  16px×1.4×2  = 46px  (h-[46px])
+  ├─ gap                      6px
+  ├─ 요약 2줄  14px×1.5×2  = 42px  (h-[42px])
+  ├─ mt-auto
+  └─ 메타행                  20px
+     + padding top/bottom 40px (py-5 = 20×2)
+  합계 ≈ 22+8+46+6+42+20+40 = 184px → 패딩 줄여 py-4(16×2=32) → 170px
+*/
 export default function PostCard({ post }: PostCardProps) {
   const category = categoryConfig[post.category] ?? { label: post.category, className: 'bg-gray-100 text-gray-600 ring-gray-500/20 dark:bg-gray-700 dark:text-gray-400' }
   const readTime = post.readingTime ?? calcReadTime(post.content)
 
   return (
-    <article className="group flex h-[140px] overflow-hidden rounded-xl border border-gray-200 bg-white transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600">
+    <article className="group flex h-[170px] overflow-hidden rounded-xl border border-gray-200 bg-white transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600">
 
       {/* 텍스트 영역 */}
-      <div className="flex min-w-0 flex-1 flex-col justify-between p-5">
-        {/* 상단: 카테고리 + 태그 */}
-        <div className="flex items-center gap-1.5">
+      <div className="flex min-w-0 flex-1 flex-col py-4 pl-5 pr-4">
+
+        {/* 카테고리 + 태그 — h-[22px] */}
+        <div className="flex h-[22px] items-center gap-1.5">
           <span className={`shrink-0 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset ${category.className}`}>
             {category.label}
           </span>
@@ -35,21 +48,21 @@ export default function PostCard({ post }: PostCardProps) {
             </span>
           ))}
           {post.tags.length > 2 && (
-            <span className="text-xs text-gray-400">+{post.tags.length - 2}</span>
+            <span className="text-xs text-gray-400 dark:text-gray-500">+{post.tags.length - 2}</span>
           )}
         </div>
 
-        {/* 중단: 제목 + 요약 */}
-        <div className="mt-2 min-w-0">
-          <h2 className="mb-1 line-clamp-1 text-base font-bold text-gray-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">
-            {post.title}
-          </h2>
-          <p className="line-clamp-1 text-sm text-gray-500 dark:text-gray-400">
-            {post.summary}
-          </p>
-        </div>
+        {/* 제목 — 2줄, 16px×1.4×2 = 44.8px → h-[46px] */}
+        <h2 className="mt-2 line-clamp-2 h-[46px] overflow-hidden text-base font-bold leading-[1.4] text-gray-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">
+          {post.title}
+        </h2>
 
-        {/* 하단: 메타 */}
+        {/* 요약 — 2줄, 14px×1.5×2 = 42px → h-[42px] */}
+        <p className="mt-1.5 line-clamp-2 h-[42px] overflow-hidden text-sm leading-[1.5] text-gray-500 dark:text-gray-400">
+          {post.summary}
+        </p>
+
+        {/* 메타 — mt-auto로 하단 고정 */}
         <div className="mt-auto flex items-center gap-x-4 text-xs text-gray-400 dark:text-gray-500">
           <span className="flex items-center gap-1">
             <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -76,9 +89,9 @@ export default function PostCard({ post }: PostCardProps) {
         </div>
       </div>
 
-      {/* 썸네일 — 고정 크기, 없으면 영역 자체 없음 */}
+      {/* 썸네일 — 카드 전체 높이에 맞춤, 없으면 영역 없음 */}
       {post.thumbnailUrl && (
-        <div className="w-[140px] shrink-0">
+        <div className="w-[170px] shrink-0">
           <img
             src={post.thumbnailUrl}
             alt={post.title}

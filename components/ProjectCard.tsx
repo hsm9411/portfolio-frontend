@@ -61,32 +61,30 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         )}
       </div>
 
-      {/* 콘텐츠 */}
-      <div className="flex flex-1 flex-col p-5">
-        {/* 상태 배지 */}
-        <div className="mb-3">
+      {/* 콘텐츠 — 각 영역 고정 높이로 카드 크기 통일 */}
+      <div className="flex flex-col p-5">
+
+        {/* 상태 배지 — h-[22px] 고정 */}
+        <div className="mb-2.5 flex h-[22px] items-center">
           <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset ${status.className}`}>
             {status.label}
           </span>
         </div>
 
-        {/* 제목 */}
-        <h3 className="mb-2 text-base font-bold leading-snug text-gray-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">
+        {/* 제목 — 최대 2줄, 16px × 1.4 × 2 = 44.8px → h-[46px] (여유 1px) */}
+        <h3 className="mb-2 line-clamp-2 h-[46px] overflow-hidden text-base font-bold leading-[1.4] text-gray-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">
           {project.title}
         </h3>
 
-        {/* 요약 */}
-        <p className="mb-4 line-clamp-2 flex-1 text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+        {/* 요약 — 최대 3줄, line-height 1.5 기준 h-[63px] */}
+        <p className="mb-3.5 line-clamp-3 h-[63px] text-sm leading-[1.5] text-gray-500 dark:text-gray-400">
           {project.summary}
         </p>
 
-        {/* 기술 스택 — 최대 3개 + 나머지 +n 븿지, 1줄 고정 */}
-        <div className="mb-4 flex h-[26px] items-center gap-1.5">
+        {/* 기술 스택 — 1줄 고정 h-[26px] */}
+        <div className="mb-3.5 flex h-[26px] items-center gap-1.5">
           {project.techStack.slice(0, 3).map((tech) => (
-            <span
-              key={tech}
-              className="shrink-0 rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300"
-            >
+            <span key={tech} className="shrink-0 rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
               {tech}
             </span>
           ))}
@@ -98,7 +96,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         </div>
 
         {/* 메타 정보 */}
-        <div className="flex items-center justify-between border-t border-gray-100 pt-3.5 dark:border-gray-700">
+        <div className="flex items-center justify-between border-t border-gray-100 pt-3 dark:border-gray-700">
           <div className="flex items-center gap-3.5 text-xs text-gray-400 dark:text-gray-500">
             <span className="flex items-center gap-1">
               <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
