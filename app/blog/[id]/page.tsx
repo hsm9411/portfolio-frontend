@@ -97,8 +97,8 @@ export default function BlogPostPage() {
       )}
 
       {/* ── 상단 네비게이션 바 ── */}
-      <div className="sticky top-16 z-40 border-b border-gray-200/80 bg-white/90 backdrop-blur-md dark:border-gray-800/80 dark:bg-gray-900/90">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+      <div className="sticky top-[72px] z-40 border-b border-gray-200 bg-white/90 backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/90">
+        <div className="mx-auto flex max-w-[1000px] items-center justify-between px-5 py-3">
           <button
             onClick={() => router.back()}
             className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
@@ -136,7 +136,7 @@ export default function BlogPostPage() {
 
       {/* ── 헤더 ── */}
       <header className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800/50">
-        <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-[1000px] px-5 py-10">
           {/* 태그 */}
           {post.tags.length > 0 && (
             <div className="mb-5 flex flex-wrap gap-2">
@@ -179,7 +179,7 @@ export default function BlogPostPage() {
       </header>
 
       {/* ── 본문 ── */}
-      <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-[1000px] px-5 py-10">
         <div className="space-y-8">
           {/* Markdown */}
           <section className="rounded-2xl border border-gray-200 bg-white px-6 py-10 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:px-10 sm:py-12">

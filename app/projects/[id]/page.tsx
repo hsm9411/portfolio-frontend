@@ -103,8 +103,8 @@ export default function ProjectDetailPage() {
       )}
 
       {/* ── 상단 네비게이션 바 ── */}
-      <div className="sticky top-16 z-40 border-b border-gray-200/80 bg-white/90 backdrop-blur-md dark:border-gray-800/80 dark:bg-gray-900/90">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+      <div className="sticky top-[72px] z-40 border-b border-gray-200 bg-white/90 backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/90">
+        <div className="mx-auto flex max-w-[1000px] items-center justify-between px-5 py-3">
           {/* 뒤로가기 */}
           <button
             onClick={() => router.back()}
@@ -144,7 +144,7 @@ export default function ProjectDetailPage() {
 
       {/* ── 헤더 ── */}
       <header className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800/50">
-        <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-[1000px] px-5 py-10">
           <div className="mb-4 flex items-center gap-2.5">
             <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-inset ${status.className}`}>
               {status.label}
@@ -180,7 +180,7 @@ export default function ProjectDetailPage() {
       </header>
 
       {/* ── 본문 ── */}
-      <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-[1000px] px-5 py-10">
         <div className="space-y-8">
 
           {/* 썸네일 */}
