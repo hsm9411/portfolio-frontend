@@ -12,7 +12,7 @@ import api from '@/lib/api/client'
 export default function EditProjectPage() {
   const params = useParams()
   const router = useRouter()
-  const { isAdmin, loading: authLoading } = useAuth()
+  const { isAdmin, authReady } = useAuth()
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -34,12 +34,13 @@ export default function EditProjectPage() {
   useUnsavedWarning(hasChanges)
 
   useEffect(() => {
-    if (!authLoading && !isAdmin) {
+    if (!authReady) return
+    if (!isAdmin) {
       router.replace('/projects')
       return
     }
-    if (params.id && isAdmin) loadProject(params.id as string)
-  }, [params.id, isAdmin, authLoading])
+    if (params.id) loadProject(params.id as string)
+  }, [params.id, isAdmin, authReady])
 
   const loadProject = async (id: string) => {
     try {
@@ -105,7 +106,7 @@ export default function EditProjectPage() {
     router.push(`/projects/${params.id}`)
   }
 
-  if (authLoading || loading) {
+  if (!authReady || loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600" />

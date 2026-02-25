@@ -13,7 +13,7 @@ import ReactMarkdown from 'react-markdown'
 export default function EditPostPage() {
   const params = useParams()
   const router = useRouter()
-  const { isAdmin, loading: authLoading } = useAuth()
+  const { isAdmin, authReady } = useAuth()
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -34,12 +34,13 @@ export default function EditPostPage() {
   useUnsavedWarning(hasChanges)
 
   useEffect(() => {
-    if (!authLoading && !isAdmin) {
+    if (!authReady) return
+    if (!isAdmin) {
       router.replace('/blog')
       return
     }
-    if (params.id && isAdmin) loadPost(params.id as string)
-  }, [params.id, isAdmin, authLoading])
+    if (params.id) loadPost(params.id as string)
+  }, [params.id, isAdmin, authReady])
 
   const loadPost = async (id: string) => {
     try {
@@ -94,7 +95,7 @@ export default function EditPostPage() {
     router.push(`/blog/${postId}`)
   }
 
-  if (authLoading || loading) {
+  if (!authReady || loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600" />
