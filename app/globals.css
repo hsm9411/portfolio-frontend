@@ -1,20 +1,22 @@
 @import "tailwindcss";
 
-/* Tailwind v4: .dark 클래스 기반 다크모드 활성화 */
 @custom-variant dark (&:is(.dark *));
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
 
-  /* Navbar 배경색 — JS 없이 CSS 레벨에서 테마 반응 */
-  --nav-bg: 255, 255, 255;
-  --nav-border: 0, 0, 0;
+  /* Navbar 배경 RGB 채널 — JS 없이 html.dark 클래스에 즉시 반응 */
+  --nav-r: 255; --nav-g: 255; --nav-b: 255;        /* white */
+  --nav-border-r: 0; --nav-border-g: 0; --nav-border-b: 0;
 }
 
 .dark {
-  --nav-bg: 18, 18, 18;
-  --nav-border: 255, 255, 255;
+  --background: #111827;
+  --foreground: #f3f4f6;
+
+  --nav-r: 17; --nav-g: 24; --nav-b: 39;           /* gray-900 */
+  --nav-border-r: 255; --nav-border-g: 255; --nav-border-b: 255;
 }
 
 @theme inline {
@@ -29,11 +31,4 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
   transition: background-color 0.3s, color 0.3s;
-}
-
-.dark body {
-  --background: #121212;
-  --foreground: #f3f4f6;
-  background: #121212;
-  color: #f3f4f6;
 }
