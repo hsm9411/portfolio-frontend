@@ -80,9 +80,9 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           {project.summary}
         </p>
 
-        {/* 기술 스택 — 고정 높이로 카드 크기 통일 */}
-        <div className="mb-4 flex h-[26px] items-center gap-1.5 overflow-hidden">
-          {project.techStack.slice(0, 4).map((tech) => (
+        {/* 기술 스택 — 최대 3개 + 나머지 +n 븿지, 1줄 고정 */}
+        <div className="mb-4 flex h-[26px] items-center gap-1.5">
+          {project.techStack.slice(0, 3).map((tech) => (
             <span
               key={tech}
               className="shrink-0 rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300"
@@ -90,9 +90,9 @@ export default function ProjectCard({ project }: ProjectCardProps) {
               {tech}
             </span>
           ))}
-          {project.techStack.length > 4 && (
-            <span className="shrink-0 rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-400 dark:bg-gray-700 dark:text-gray-500">
-              +{project.techStack.length - 4}
+          {project.techStack.length > 3 && (
+            <span className="shrink-0 rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-500 dark:bg-blue-900/30 dark:text-blue-400">
+              +{project.techStack.length - 3}
             </span>
           )}
         </div>
