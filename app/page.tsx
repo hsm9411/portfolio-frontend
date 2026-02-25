@@ -6,6 +6,10 @@ import { getPosts, type Post } from '@/lib/api/posts'
 import ProjectCard from '@/components/ProjectCard'
 import PostCard from '@/components/PostCard'
 import Link from 'next/link'
+import Skills from '@/components/Skills'
+import Experience from '@/components/Experience'
+import Education from '@/components/Education'
+import Contact from '@/components/Contact'
 
 export default function Home() {
   const [projects, setProjects] = useState<Project[]>([])
@@ -31,44 +35,45 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-[72px]">
 
       {/* ── 히어로 ── */}
-      <section className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800/50">
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
-          <div className="max-w-2xl">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 ring-1 ring-blue-600/20 dark:bg-blue-900/30 dark:text-blue-300 dark:ring-blue-500/30">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-blue-600 dark:bg-blue-400" />
-              Available for work
-            </div>
-            <h1 className="mb-4 text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl">
+      <section className="flex min-h-[calc(100vh-72px)] items-center justify-center border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+        <div className="mx-auto flex w-full max-w-[900px] flex-col items-center gap-12 px-5 pb-[5vh] pt-8 md:flex-row md:items-center md:justify-between md:gap-16">
+
+          {/* 텍스트 */}
+          <div className="text-center md:text-left">
+            <h1 className="mb-6 text-4xl font-black leading-tight tracking-tight text-gray-900 dark:text-white sm:text-5xl">
               안녕하세요,<br />
-              <span className="text-blue-600 dark:text-blue-400">백엔드 개발자</span> HSM입니다.
+              개발자 하성민입니다.
             </h1>
-            <p className="mb-8 text-lg leading-relaxed text-gray-600 dark:text-gray-400">
-              NestJS, Next.js, Docker를 활용한 풀스택 개발을 합니다.<br />
-              임베디드 시스템과 AI 최적화에도 관심이 있습니다.
+            <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+              최근에는 <strong className="font-semibold text-gray-800 dark:text-gray-200">웹개발</strong>과{' '}
+              <strong className="font-semibold text-gray-800 dark:text-gray-200">시스템 개발</strong>에 필요한 기능을 구현하기 위해<br />
+              다양한 <strong className="font-semibold text-gray-800 dark:text-gray-200">CS 개념</strong>과 기술들에 관심을 가지고 학습하고 있습니다.
             </p>
-            <div className="flex flex-wrap gap-3">
-              <Link
-                href="/projects"
-                className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
-              >
-                프로젝트 보기
-              </Link>
-              <Link
-                href="/blog"
-                className="rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-              >
-                블로그 보기
-              </Link>
-            </div>
+            <p className="mt-4 text-base leading-relaxed text-gray-500 dark:text-gray-400">
+              또한, 효율적인 <strong className="font-semibold text-gray-800 dark:text-gray-200">협업</strong>을 위해 필요한 툴과 기술,<br />
+              그리고 <strong className="font-semibold text-gray-800 dark:text-gray-200">개발 프로세스 체계</strong>를 경험하며 성장하고 있습니다.
+            </p>
           </div>
+
+          {/* 프로필 이미지 */}
+          <div className="shrink-0">
+            <img
+              src="/profile.png"
+              alt="Profile"
+              className="w-[240px] h-auto border border-gray-200 object-cover shadow-[15px_15px_0px_rgba(0,0,0,0.1)] dark:border-gray-700 dark:shadow-[15px_15px_0px_rgba(255,255,255,0.05)]"
+            />
+          </div>
+
         </div>
       </section>
 
+      <Skills />
+
       {/* ── 콘텐츠 ── */}
-      <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-[1000px] px-5 py-12">
         {loading ? (
           <div className="flex justify-center py-20">
             <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600" />
@@ -145,9 +150,13 @@ export default function Home() {
         )}
       </main>
 
+      <Experience />
+      <Education />
+      <Contact />
+
       {/* Footer */}
       <footer className="mt-16 border-t border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-[1000px] px-5 py-8">
           <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-between">
             <p className="text-sm font-semibold text-gray-500 dark:text-gray-400">hsm9411</p>
             <p className="text-xs text-gray-400 dark:text-gray-600">

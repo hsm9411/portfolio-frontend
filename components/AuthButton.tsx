@@ -26,11 +26,9 @@ export default function AuthButton() {
         if (_event === 'SIGNED_IN' || _event === 'SIGNED_OUT') router.refresh()
       }
     )
-
     return () => subscription.unsubscribe()
   }, [supabase.auth, router])
 
-  // 외부 클릭 시 드롭다운 닫기
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -47,10 +45,12 @@ export default function AuthButton() {
     router.push('/')
   }
 
+  // 로딩 중: 자리 유지용 스켈레톤
   if (loading) {
-    return <div className="h-8 w-8 animate-pulse rounded-full bg-gray-200 dark:bg-gray-700" />
+    return <div className="h-7 w-7 animate-pulse rounded-full bg-gray-200 dark:bg-gray-700" />
   }
 
+  // 로그인 상태: 아바타만
   if (user) {
     const displayName =
       user.user_metadata?.nickname ||
@@ -65,30 +65,28 @@ export default function AuthButton() {
       <div className="relative" ref={dropdownRef}>
         <button
           onClick={() => setOpen(!open)}
-          className="flex items-center gap-2 rounded-full transition-opacity hover:opacity-80"
+          className="flex items-center rounded-full transition-opacity hover:opacity-75"
+          aria-label="프로필 메뉴"
         >
           {avatarUrl ? (
             <img
               src={avatarUrl}
               alt={displayName}
-              className="h-8 w-8 rounded-full object-cover ring-1 ring-gray-200 dark:ring-white/10"
+              className="h-7 w-7 rounded-full object-cover ring-1 ring-gray-200 dark:ring-white/10"
             />
           ) : (
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-900 text-xs font-semibold text-white dark:bg-white dark:text-gray-900">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-[11px] font-bold text-white">
               {displayName.charAt(0).toUpperCase()}
             </div>
           )}
         </button>
 
-        {/* Dropdown */}
         {open && (
-          <div className="absolute right-0 mt-2 w-52 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg dark:border-white/10 dark:bg-gray-900">
-            {/* User info */}
+          <div className="absolute right-0 mt-2.5 w-52 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-lg dark:border-white/[0.08] dark:bg-gray-900">
             <div className="border-b border-gray-100 px-4 py-3 dark:border-white/[0.06]">
               <p className="text-xs font-semibold text-gray-900 dark:text-white">{displayName}</p>
-              <p className="mt-0.5 truncate text-xs text-gray-400">{user.email}</p>
+              <p className="mt-0.5 truncate text-[11px] text-gray-400 dark:text-gray-500">{user.email}</p>
             </div>
-            {/* Actions */}
             <div className="p-1.5">
               <button
                 onClick={handleLogout}
@@ -106,20 +104,13 @@ export default function AuthButton() {
     )
   }
 
+  // 비로그인 상태: 텍스트 링크만 (회원가입은 로그인 페이지에서 유도)
   return (
-    <div className="flex items-center gap-2">
-      <Link
-        href="/login"
-        className="text-xs font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-      >
-        로그인
-      </Link>
-      <Link
-        href="/register"
-        className="rounded-full bg-gray-900 px-3.5 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-80 dark:bg-white dark:text-gray-900"
-      >
-        회원가입
-      </Link>
-    </div>
+    <Link
+      href="/login"
+      className="text-[0.82rem] font-medium text-gray-400 transition-colors hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-200"
+    >
+      로그인
+    </Link>
   )
 }
