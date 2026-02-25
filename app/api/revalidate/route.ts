@@ -24,19 +24,19 @@ export async function POST(req: NextRequest) {
   const { type, id, slug } = body;
 
   if (type === 'project') {
-    revalidateTag('projects');
+    revalidateTag('projects', {});
     revalidatePath('/projects', 'page');
     if (id) {
-      revalidateTag(`project-${id}`);
+      revalidateTag(`project-${id}`, {});
       revalidatePath(`/projects/${id}`, 'page');
     }
   }
 
   if (type === 'post') {
-    revalidateTag('posts');
+    revalidateTag('posts', {});
     revalidatePath('/blog', 'page');
     if (id) {
-      revalidateTag(`post-${id}`);
+      revalidateTag(`post-${id}`, {});
       revalidatePath(`/blog/${id}`, 'page');
     }
   }
