@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { fetchPosts } from '@/lib/api/server'
 import BlogClient from './BlogClient'
 
@@ -10,5 +11,13 @@ export default async function BlogPage() {
     console.error('BlogPage SSR fetch failed, falling back to client fetch', e)
   }
 
-  return <BlogClient initialData={initialData} />
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-gray-200 border-t-blue-600" />
+      </div>
+    }>
+      <BlogClient initialData={initialData} />
+    </Suspense>
+  )
 }
