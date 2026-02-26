@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { getProjects, type Project } from '@/lib/api/projects'
 import ProjectCard from '@/components/ProjectCard'
 import Link from 'next/link'
@@ -22,20 +23,26 @@ interface InitialData {
 }
 
 export default function ProjectsClient({ initialData }: { initialData: InitialData }) {
-  const [projects, setProjects]     = useState<Project[]>(initialData.items)
-  const [page, setPage]             = useState(1)
-  const [totalPages, setTotalPages] = useState(initialData.totalPages)
-  const [status, setStatus]         = useState('all')
-  const [loading, setLoading]       = useState(false)
-  const { isAdmin }                 = useAuth()
+  const router = useRouter()
+  const searchParams = useSearchParams()
 
-  // 필터/페이지 변경 시에만 클라이언트 fetch (초기 렌더는 SSR 데이터 사용)
-  useEffect(() => {
-    if (page === 1 && status === 'all') return // 초기 상태는 SSR 데이터 재사용
-    loadProjects()
-  }, [page, status])
+  // URL 쿼리스트링에서 상태 읽기 → 뒤로가기 시 브라우저가 URL 복원 → 상태도 복원됨
+  const pageFromUrl   = Number(searchParams.get('page'))   || 1
+  const statusFromUrl = searchParams.get('status') || 'all'
 
-  const loadProjects = async () => {
+  const [projects, setProjects]     = useState<Project[]>(
+    pageFromUrl === 1 && statusFromUrl === 'all' ? initialData.items : []
+  )
+  const [totalPages, setTotalPages] = useState(
+    pageFromUrl === 1 && statusFromUrl === 'all' ? initialData.totalPages : 1
+  )
+  const [loading, setLoading]       = useState(
+    !(pageFromUrl === 1 && statusFromUrl === 'all')
+  )
+  const { isAdmin } = useAuth()
+
+  // URL 변경 시 데이터 fetch
+  const loadProjects = useCallback(async (page: number, status: string) => {
     try {
       setLoading(true)
       const params: Record<string, unknown> = { page, limit: 9, sortBy: 'created_at', order: 'DESC' }
@@ -48,7 +55,25 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
     } finally {
       setLoading(false)
     }
+  }, [])
+
+  useEffect(() => {
+    // 초기 상태(page=1, status=all)는 SSR 데이터 그대로 사용
+    if (pageFromUrl === 1 && statusFromUrl === 'all') return
+    loadProjects(pageFromUrl, statusFromUrl)
+  }, [pageFromUrl, statusFromUrl, loadProjects])
+
+  // 필터/페이지 변경 → URL 업데이트 (뒤로가기에 기록됨)
+  const updateUrl = (page: number, status: string) => {
+    const params = new URLSearchParams()
+    if (page > 1)         params.set('page', String(page))
+    if (status !== 'all') params.set('status', status)
+    const qs = params.toString()
+    router.push(`/projects${qs ? `?${qs}` : ''}`, { scroll: false })
   }
+
+  const handleStatusChange = (status: string) => updateUrl(1, status)
+  const handlePageChange   = (page: number)   => updateUrl(page, statusFromUrl)
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -56,12 +81,8 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
 
         <div className="mb-8 flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white">
-              Projects
-            </h1>
-            <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
-              포트폴리오 프로젝트 모음
-            </p>
+            <h1 className="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white">Projects</h1>
+            <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">포트폴리오 프로젝트 모음</p>
           </div>
           {isAdmin && (
             <Link
@@ -80,9 +101,9 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
           {STATUS_FILTERS.map((f) => (
             <button
               key={f.value}
-              onClick={() => { setStatus(f.value); setPage(1) }}
+              onClick={() => handleStatusChange(f.value)}
               className={`rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors ${
-                status === f.value
+                statusFromUrl === f.value
                   ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
                   : 'bg-white text-gray-500 ring-1 ring-inset ring-gray-200 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-gray-700'
               }`}
@@ -100,10 +121,7 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
           <div className="rounded-2xl border border-dashed border-gray-200 py-24 text-center dark:border-gray-700">
             <p className="text-sm text-gray-400 dark:text-gray-500">프로젝트가 없습니다.</p>
             {isAdmin && (
-              <Link
-                href="/projects/new"
-                className="mt-4 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-              >
+              <Link href="/projects/new" className="mt-4 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
                 첫 프로젝트 작성하기
               </Link>
             )}
@@ -121,8 +139,8 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
             {totalPages > 1 && (
               <div className="mt-10 flex items-center justify-center gap-2">
                 <button
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
+                  onClick={() => handlePageChange(Math.max(1, pageFromUrl - 1))}
+                  disabled={pageFromUrl === 1}
                   className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -130,11 +148,11 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
                   </svg>
                 </button>
                 <span className="min-w-[60px] text-center text-sm text-gray-500 dark:text-gray-400">
-                  {page} / {totalPages}
+                  {pageFromUrl} / {totalPages}
                 </span>
                 <button
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
+                  onClick={() => handlePageChange(Math.min(totalPages, pageFromUrl + 1))}
+                  disabled={pageFromUrl === totalPages}
                   className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

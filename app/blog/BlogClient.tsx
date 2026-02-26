@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { getPosts, type Post } from '@/lib/api/posts'
 import PostCard from '@/components/PostCard'
 import Link from 'next/link'
@@ -15,25 +16,29 @@ interface InitialData {
 }
 
 export default function BlogClient({ initialData }: { initialData: InitialData }) {
-  const [posts, setPosts]             = useState<Post[]>(initialData.items)
-  const [page, setPage]               = useState(1)
-  const [totalPages, setTotalPages]   = useState(initialData.totalPages)
-  const [searchTerm, setSearchTerm]   = useState('')
-  const [searchInput, setSearchInput] = useState('')
-  const [loading, setLoading]         = useState(false)
-  const { isAdmin }                   = useAuth()
+  const router = useRouter()
+  const searchParams = useSearchParams()
 
-  // 검색/페이지 변경 시에만 클라이언트 fetch
-  useEffect(() => {
-    if (page === 1 && searchTerm === '') return // 초기 상태는 SSR 데이터 재사용
-    loadPosts()
-  }, [page, searchTerm])
+  const pageFromUrl   = Number(searchParams.get('page'))   || 1
+  const searchFromUrl = searchParams.get('search') || ''
 
-  const loadPosts = async () => {
+  const [posts, setPosts]             = useState<Post[]>(
+    pageFromUrl === 1 && searchFromUrl === '' ? initialData.items : []
+  )
+  const [totalPages, setTotalPages]   = useState(
+    pageFromUrl === 1 && searchFromUrl === '' ? initialData.totalPages : 1
+  )
+  const [loading, setLoading]         = useState(
+    !(pageFromUrl === 1 && searchFromUrl === '')
+  )
+  const [searchInput, setSearchInput] = useState(searchFromUrl)
+  const { isAdmin } = useAuth()
+
+  const loadPosts = useCallback(async (page: number, search: string) => {
     try {
       setLoading(true)
       const params: Record<string, unknown> = { page, limit: 10 }
-      if (searchTerm) params.search = searchTerm
+      if (search) params.search = search
       const response = await getPosts(params)
       setPosts(response.items)
       setTotalPages(response.totalPages)
@@ -42,18 +47,29 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
     } finally {
       setLoading(false)
     }
+  }, [])
+
+  useEffect(() => {
+    if (pageFromUrl === 1 && searchFromUrl === '') return
+    loadPosts(pageFromUrl, searchFromUrl)
+  }, [pageFromUrl, searchFromUrl, loadPosts])
+
+  const updateUrl = (page: number, search: string) => {
+    const params = new URLSearchParams()
+    if (page > 1)  params.set('page',   String(page))
+    if (search)    params.set('search', search)
+    const qs = params.toString()
+    router.push(`/blog${qs ? `?${qs}` : ''}`, { scroll: false })
   }
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
-    setSearchTerm(searchInput)
-    setPage(1)
+    updateUrl(1, searchInput)
   }
 
   const handleClear = () => {
-    setSearchTerm('')
     setSearchInput('')
-    setPage(1)
+    updateUrl(1, '')
   }
 
   return (
@@ -62,12 +78,8 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
 
         <div className="mb-8 flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white">
-              Blog
-            </h1>
-            <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
-              개발 블로그 및 기술 포스팅
-            </p>
+            <h1 className="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white">Blog</h1>
+            <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">개발 블로그 및 기술 포스팅</p>
           </div>
           {isAdmin && (
             <Link
@@ -96,25 +108,18 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
                 className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 transition-colors focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500 dark:focus:border-blue-500"
               />
             </div>
-            <button
-              type="submit"
-              className="rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-gray-700 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
-            >
+            <button type="submit" className="rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-gray-700 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100">
               검색
             </button>
-            {searchTerm && (
-              <button
-                type="button"
-                onClick={handleClear}
-                className="rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
-              >
+            {searchFromUrl && (
+              <button type="button" onClick={handleClear} className="rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700">
                 초기화
               </button>
             )}
           </div>
-          {searchTerm && (
+          {searchFromUrl && (
             <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-              <span className="font-semibold text-gray-700 dark:text-gray-300">"{searchTerm}"</span> 검색 결과
+              <span className="font-semibold text-gray-700 dark:text-gray-300">"{searchFromUrl}"</span> 검색 결과
             </p>
           )}
         </form>
@@ -126,21 +131,15 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
         ) : posts.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-gray-200 py-24 text-center dark:border-gray-700">
             <p className="text-sm text-gray-400 dark:text-gray-500">
-              {searchTerm ? `"${searchTerm}"에 대한 결과가 없습니다.` : '포스트가 없습니다.'}
+              {searchFromUrl ? `"${searchFromUrl}"에 대한 결과가 없습니다.` : '포스트가 없습니다.'}
             </p>
-            {isAdmin && !searchTerm && (
-              <Link
-                href="/blog/new"
-                className="mt-4 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-              >
+            {isAdmin && !searchFromUrl && (
+              <Link href="/blog/new" className="mt-4 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
                 첫 포스트 작성하기
               </Link>
             )}
-            {searchTerm && (
-              <button
-                onClick={handleClear}
-                className="mt-4 inline-flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400"
-              >
+            {searchFromUrl && (
+              <button onClick={handleClear} className="mt-4 inline-flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400">
                 전체 목록으로
               </button>
             )}
@@ -158,8 +157,8 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
             {totalPages > 1 && (
               <div className="mt-10 flex items-center justify-center gap-2">
                 <button
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
+                  onClick={() => updateUrl(Math.max(1, pageFromUrl - 1), searchFromUrl)}
+                  disabled={pageFromUrl === 1}
                   className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -167,11 +166,11 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
                   </svg>
                 </button>
                 <span className="min-w-[60px] text-center text-sm text-gray-500 dark:text-gray-400">
-                  {page} / {totalPages}
+                  {pageFromUrl} / {totalPages}
                 </span>
                 <button
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
+                  onClick={() => updateUrl(Math.min(totalPages, pageFromUrl + 1), searchFromUrl)}
+                  disabled={pageFromUrl === totalPages}
                   className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

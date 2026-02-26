@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { getProject, type Project } from '@/lib/api/projects'
 import { useAuth } from '@/hooks/useAuth'
@@ -16,6 +16,25 @@ export default function ProjectDetailPage() {
   const params = useParams()
   const router = useRouter()
   const { isAdmin } = useAuth()
+
+  // 진입 경로 추적: /projects 목록에서 왔는지, 홈(/)에서 왔는지
+  const fromRef = useRef<string | null>(null)
+  useEffect(() => {
+    const prev = document.referrer
+    if (prev.includes('/projects') && !prev.includes(`/projects/${params.id as string}`)) {
+      fromRef.current = 'list'
+    } else {
+      fromRef.current = 'home'
+    }
+  }, [])
+
+  const handleBack = () => {
+    if (fromRef.current === 'list') {
+      router.back()
+    } else {
+      router.push('/projects')
+    }
+  }
   const [project, setProject] = useState<Project | null>(null)
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState(false)
@@ -109,13 +128,13 @@ export default function ProjectDetailPage() {
         <div className="mx-auto flex max-w-[1000px] items-center justify-between px-5 py-3">
           {/* 뒤로가기 */}
           <button
-            onClick={() => router.back()}
+            onClick={handleBack}
             className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
-            목록으로
+            {fromRef.current === 'list' ? '목록으로' : 'Projects'}
           </button>
 
           {/* 관리자 액션 */}
