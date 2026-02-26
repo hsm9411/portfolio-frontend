@@ -12,9 +12,6 @@ del /f "components\About.tsx" 2>nul && echo Removed: components/About.tsx
 del /f "components\ScrollRestorer.tsx" 2>nul && echo Removed: components/ScrollRestorer.tsx
 del /f "components\FormContainer.tsx" 2>nul && echo Removed: components/FormContainer.tsx
 
-:: Unused hooks
-del /f "hooks\useUnsavedWarning.ts" 2>nul && echo Removed: hooks/useUnsavedWarning.ts
-
 :: Outdated scripts and docs
 del /f "cleanup.ps1" 2>nul && echo Removed: cleanup.ps1
 del /f "git-push.ps1" 2>nul && echo Removed: git-push.ps1
