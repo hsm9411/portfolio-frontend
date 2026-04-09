@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { getProjects, type Project } from '@/lib/api/projects'
 import ProjectCard from '@/components/ProjectCard'
@@ -26,7 +26,6 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  // URL 쿼리스트링에서 상태 읽기 → 뒤로가기 시 브라우저가 URL 복원 → 상태도 복원됨
   const pageFromUrl   = Number(searchParams.get('page'))   || 1
   const statusFromUrl = searchParams.get('status') || 'all'
 
@@ -41,7 +40,22 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
   )
   const { isAdmin } = useAuth()
 
-  // URL 변경 시 데이터 fetch
+  /**
+   * 최초 마운트 여부 추적
+   *
+   * 문제 원인:
+   *   useEffect 내부에서 `pageFromUrl === 1 && statusFromUrl === 'all'` 조건으로
+   *   fetch를 스킵했는데, 이 조건이 두 가지 상황을 구분하지 못한다.
+   *
+   *   1) 최초 진입 → SSR 데이터 그대로 써야 하므로 fetch 스킵 (의도된 동작)
+   *   2) 다른 필터 → 전체 탭으로 복귀 → 반드시 fetch 해야 하는데 스킵됨 (버그)
+   *
+   *   URL 조건만으로는 두 경우를 구분할 수 없으므로,
+   *   `isInitialRender` ref로 마운트 첫 실행 여부를 추적한다.
+   *   초기 진입이면 스킵, 이후 URL이 변경되어 effect가 재실행되면 항상 fetch.
+   */
+  const isInitialRender = useRef(true)
+
   const loadProjects = useCallback(async (page: number, status: string) => {
     try {
       setLoading(true)
@@ -58,12 +72,22 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
   }, [])
 
   useEffect(() => {
-    // 초기 상태(page=1, status=all)는 SSR 데이터 그대로 사용
-    if (pageFromUrl === 1 && statusFromUrl === 'all') return
+    // 최초 마운트: SSR initialData 그대로 사용
+    // 단, URL에 이미 필터/페이지가 있으면 (직접 URL 입력, 뒤로가기 복원 등) fetch 필요
+    if (isInitialRender.current) {
+      isInitialRender.current = false
+      if (pageFromUrl === 1 && statusFromUrl === 'all') {
+        // SSR 데이터로 충분한 초기 상태 — fetch 스킵
+        return
+      }
+      // URL에 필터/페이지가 있는 상태로 최초 진입 → fetch 필요
+    }
+
+    // 마운트 이후 URL 변경 시 항상 fetch
+    // (전체 탭 복귀 포함)
     loadProjects(pageFromUrl, statusFromUrl)
   }, [pageFromUrl, statusFromUrl, loadProjects])
 
-  // 필터/페이지 변경 → URL 업데이트 (뒤로가기에 기록됨)
   const updateUrl = (page: number, status: string) => {
     const params = new URLSearchParams()
     if (page > 1)         params.set('page', String(page))
