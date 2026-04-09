@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { getPosts, type Post } from '@/lib/api/posts'
 import PostCard from '@/components/PostCard'
@@ -34,6 +34,14 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
   const [searchInput, setSearchInput] = useState(searchFromUrl)
   const { isAdmin } = useAuth()
 
+  /**
+   * 최초 마운트 여부 추적
+   * ProjectsClient와 동일한 버그 — 검색어 지운 뒤 초기화(전체 목록) 시
+   * `pageFromUrl === 1 && searchFromUrl === ''` 조건에 걸려 fetch를 스킵하는 문제.
+   * isInitialRender ref로 최초 마운트만 스킵, 이후는 항상 fetch.
+   */
+  const isInitialRender = useRef(true)
+
   const loadPosts = useCallback(async (page: number, search: string) => {
     try {
       setLoading(true)
@@ -50,7 +58,17 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
   }, [])
 
   useEffect(() => {
-    if (pageFromUrl === 1 && searchFromUrl === '') return
+    if (isInitialRender.current) {
+      isInitialRender.current = false
+      if (pageFromUrl === 1 && searchFromUrl === '') {
+        // SSR 데이터로 충분한 초기 상태 — fetch 스킵
+        return
+      }
+      // URL에 검색어/페이지가 있는 상태로 최초 진입 → fetch 필요
+    }
+
+    // 마운트 이후 URL 변경 시 항상 fetch
+    // (검색 초기화 포함)
     loadPosts(pageFromUrl, searchFromUrl)
   }, [pageFromUrl, searchFromUrl, loadPosts])
 
