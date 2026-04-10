@@ -5,6 +5,7 @@ import BlogPostClient from './BlogPostClient'
 
 interface Props {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ from?: string }>
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -33,8 +34,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function BlogPostPage({ params }: Props) {
+export default async function BlogPostPage({ params, searchParams }: Props) {
   const { id } = await params
+  const { from } = await searchParams
 
   let post
   try {
@@ -43,5 +45,5 @@ export default async function BlogPostPage({ params }: Props) {
     notFound()
   }
 
-  return <BlogPostClient post={post} />
+  return <BlogPostClient post={post} from={from} />
 }

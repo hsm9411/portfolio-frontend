@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { type Post } from '@/lib/api/posts'
 import { useAuth } from '@/hooks/useAuth'
@@ -15,25 +15,17 @@ import api from '@/lib/api/client'
 
 interface Props {
   post: Post
+  from?: string
 }
 
-export default function BlogPostClient({ post }: Props) {
+export default function BlogPostClient({ post, from }: Props) {
   const router = useRouter()
   const { isAdmin } = useAuth()
   const [deleting, setDeleting] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
-  const fromRef = useRef<'list' | 'home'>('home')
-  useEffect(() => {
-    const prev = document.referrer
-    fromRef.current =
-      prev.includes('/blog') && !prev.includes(`/blog/${post.id}`)
-        ? 'list'
-        : 'home'
-  }, [post.id])
-
   const handleBack = () => {
-    fromRef.current === 'list' ? router.back() : router.push('/blog')
+    from === 'list' ? router.back() : router.push('/blog')
   }
 
   const handleDelete = async () => {
@@ -82,7 +74,7 @@ export default function BlogPostClient({ post }: Props) {
             <svg className="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
-            {fromRef.current === 'list' ? '목록으로' : 'Blog'}
+            {from === 'list' ? '목록으로' : 'Blog'}
           </button>
 
           {isAdmin && (
