@@ -1,6 +1,17 @@
+import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { fetchPosts } from '@/lib/api/server'
 import BlogClient from './BlogClient'
+
+export const metadata: Metadata = {
+  title: 'Blog',
+  description: '개발 경험과 기술적 인사이트를 담은 블로그 포스트 모음입니다.',
+  openGraph: {
+    title: 'Blog | hsm',
+    description: '개발 경험과 기술적 인사이트를 담은 블로그 포스트 모음입니다.',
+    url: '/blog',
+  },
+}
 
 export default async function BlogPage() {
   let initialData = { items: [], total: 0, page: 1, pageSize: 10, totalPages: 1 }
