@@ -16,8 +16,10 @@ function LoginForm() {
   const searchParams = useSearchParams()
   const supabase = createClient()
 
-  // 리다이렉트 URL
-  const redirectUrl = searchParams.get('redirect') || '/'
+  // 리다이렉트 URL — 외부 도메인으로의 오픈 리다이렉트 방지
+  // '/'로 시작하지 않거나 '//'로 시작하는 값(프로토콜 상대 URL)은 홈으로 fallback
+  const raw = searchParams.get('redirect') || '/'
+  const redirectUrl = raw.startsWith('/') && !raw.startsWith('//') ? raw : '/'
 
   // 로그인 상태 확인
   useEffect(() => {
