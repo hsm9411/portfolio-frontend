@@ -8,6 +8,7 @@ import LikeButton from '@/components/LikeButton'
 import CommentSection from '@/components/CommentSection'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import rehypeHighlight from 'rehype-highlight'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import api from '@/lib/api/client'
@@ -176,7 +177,7 @@ export default function ProjectDetailClient({ project }: Props) {
           <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700 sm:p-8">
             <h2 className="mb-5 text-base font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">📋 Description</h2>
             <div className="markdown-body">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{project.description}</ReactMarkdown>
+              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>{project.description}</ReactMarkdown>
             </div>
           </section>
 

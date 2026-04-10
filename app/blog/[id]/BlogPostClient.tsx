@@ -8,6 +8,7 @@ import LikeButton from '@/components/LikeButton'
 import CommentSection from '@/components/CommentSection'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import rehypeHighlight from 'rehype-highlight'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import api from '@/lib/api/client'
@@ -143,7 +144,7 @@ export default function BlogPostClient({ post }: Props) {
         <div className="space-y-5 sm:space-y-8">
           <section className="rounded-2xl border border-gray-200 bg-white px-4 py-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:px-6 sm:py-10 md:px-10 md:py-12">
             <div className="markdown-body">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
+              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>{post.content}</ReactMarkdown>
             </div>
           </section>
 
