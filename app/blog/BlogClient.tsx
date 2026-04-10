@@ -166,7 +166,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
           <>
             <div className="flex flex-col gap-4">
               {posts.map((post) => (
-                <Link key={post.id} href={`/blog/${post.id}`} className="block">
+                <Link key={post.id} href={`/blog/${post.id}?from=list`} className="block">
                   <PostCard post={post} />
                 </Link>
               ))}

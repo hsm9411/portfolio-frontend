@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { type Project } from '@/lib/api/projects'
 import { useAuth } from '@/hooks/useAuth'
@@ -15,6 +15,7 @@ import api from '@/lib/api/client'
 
 interface Props {
   project: Project
+  from?: string
 }
 
 const statusConfig = {
@@ -23,23 +24,14 @@ const statusConfig = {
   archived:    { label: '보관',   className: 'bg-gray-100 text-gray-600 ring-gray-500/20 dark:bg-gray-700 dark:text-gray-400 dark:ring-gray-500/30' },
 }
 
-export default function ProjectDetailClient({ project }: Props) {
+export default function ProjectDetailClient({ project, from }: Props) {
   const router = useRouter()
   const { isAdmin } = useAuth()
   const [deleting, setDeleting] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
-  const fromRef = useRef<'list' | 'home'>('home')
-  useEffect(() => {
-    const prev = document.referrer
-    fromRef.current =
-      prev.includes('/projects') && !prev.includes(`/projects/${project.id}`)
-        ? 'list'
-        : 'home'
-  }, [project.id])
-
   const handleBack = () => {
-    fromRef.current === 'list' ? router.back() : router.push('/projects')
+    from === 'list' ? router.back() : router.push('/projects')
   }
 
   const handleDelete = async () => {
@@ -90,7 +82,7 @@ export default function ProjectDetailClient({ project }: Props) {
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
-            {fromRef.current === 'list' ? '목록으로' : 'Projects'}
+            {from === 'list' ? '목록으로' : 'Projects'}
           </button>
 
           {isAdmin && (

@@ -154,7 +154,7 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
           <>
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {projects.map((project) => (
-                <Link key={project.id} href={`/projects/${project.id}`} className="block">
+                <Link key={project.id} href={`/projects/${project.id}?from=list`} className="block">
                   <ProjectCard project={project} />
                 </Link>
               ))}

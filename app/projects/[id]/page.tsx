@@ -5,6 +5,7 @@ import ProjectDetailClient from './ProjectDetailClient'
 
 interface Props {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ from?: string }>
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -30,8 +31,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function ProjectDetailPage({ params }: Props) {
+export default async function ProjectDetailPage({ params, searchParams }: Props) {
   const { id } = await params
+  const { from } = await searchParams
 
   let project
   try {
@@ -40,5 +42,5 @@ export default async function ProjectDetailPage({ params }: Props) {
     notFound()
   }
 
-  return <ProjectDetailClient project={project} />
+  return <ProjectDetailClient project={project} from={from} />
 }
