@@ -254,16 +254,8 @@ function LoginForm() {
         </form>
 
         {/* Footer */}
-        <div className="mt-6 text-center text-sm">
-          <span className="text-gray-600 dark:text-gray-400">
-            계정이 없으신가요?{' '}
-          </span>
-          <Link
-            href="/register"
-            className="font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
-          >
-            회원가입
-          </Link>
+        <div className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+          소셜 계정으로 로그인하면 자동으로 회원가입됩니다.
         </div>
 
         <div className="mt-4 text-center">
