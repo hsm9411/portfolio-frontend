@@ -1,6 +1,17 @@
+import type { Metadata } from 'next'
 import { fetchProjects, fetchPosts } from '@/lib/api/server'
 import { type Project } from '@/lib/api/projects'
 import { type Post } from '@/lib/api/posts'
+
+export const metadata: Metadata = {
+  title: { absolute: 'hsm | Portfolio' },
+  description: '개발자 포트폴리오 & 기술 블로그. 프로젝트 경험과 기술적 인사이트를 공유합니다.',
+  openGraph: {
+    title: 'hsm | Portfolio',
+    description: '개발자 포트폴리오 & 기술 블로그. 프로젝트 경험과 기술적 인사이트를 공유합니다.',
+    url: '/',
+  },
+}
 import ProjectCard from '@/components/ProjectCard'
 import PostCard from '@/components/PostCard'
 import Link from 'next/link'
