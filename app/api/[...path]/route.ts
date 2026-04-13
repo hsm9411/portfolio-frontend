@@ -51,15 +51,9 @@ async function proxyRequest(
   const searchParams = request.nextUrl.searchParams.toString()
   const url = `${BACKEND_URL}/${path}${searchParams ? `?${searchParams}` : ''}`
 
-  console.log('=== PROXY START ===')
-  console.log('Method:', method)
-  console.log('URL:', url)
-  console.log('Origin:', request.headers.get('origin'))
-
   try {
     // Authorization 헤더 추출
     const authHeader = request.headers.get('authorization')
-    console.log('Auth header:', authHeader ? authHeader.substring(0, 30) + '...' : 'NONE')
 
     // 헤더 구성
     const headers: Record<string, string> = {
@@ -74,10 +68,7 @@ async function proxyRequest(
     let body: string | undefined = undefined
     if (method !== 'GET' && method !== 'DELETE') {
       body = await request.text()
-      console.log('Body length:', body?.length || 0)
     }
-
-    console.log('Sending request to backend...')
 
     // 백엔드 요청 (타임아웃 추가)
     const controller = new AbortController()
@@ -92,11 +83,7 @@ async function proxyRequest(
 
     clearTimeout(timeoutId)
 
-    console.log('Backend response status:', response.status)
-    
     const responseText = await response.text()
-    console.log('Response length:', responseText.length)
-    console.log('=== PROXY END ===')
 
     return new NextResponse(responseText, {
       status: response.status,

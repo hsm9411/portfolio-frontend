@@ -19,7 +19,6 @@ export function useAuth() {
       setBackendUser(user)
       setIsAdmin(user.isAdmin)
     } catch (err) {
-      console.warn('⚠️ Backend 사용자 정보 조회 실패:', err)
       setBackendUser(null)
       setIsAdmin(false)
     } finally {
