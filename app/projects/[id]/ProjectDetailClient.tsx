@@ -11,6 +11,7 @@ import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
+import Image from 'next/image'
 import api from '@/lib/api/client'
 
 interface Props {
@@ -139,8 +140,14 @@ export default function ProjectDetailClient({ project, from }: Props) {
       <main className="mx-auto max-w-[1000px] px-5 py-10">
         <div className="space-y-8">
           {project.thumbnailUrl && (
-            <div className="overflow-hidden rounded-2xl shadow-md">
-              <img src={project.thumbnailUrl} alt={project.title} className="w-full object-cover" />
+            <div className="relative aspect-video overflow-hidden rounded-2xl shadow-md">
+              <Image
+                src={project.thumbnailUrl}
+                alt={project.title}
+                fill
+                sizes="(max-width: 1000px) 100vw, 1000px"
+                className="object-cover"
+              />
             </div>
           )}
 
