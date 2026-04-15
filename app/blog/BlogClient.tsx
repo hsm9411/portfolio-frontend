@@ -22,25 +22,17 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
   const pageFromUrl   = Number(searchParams.get('page'))   || 1
   const searchFromUrl = searchParams.get('search') || ''
 
-  const [posts, setPosts]             = useState<Post[]>(
-    pageFromUrl === 1 && searchFromUrl === '' ? initialData.items : []
-  )
-  const [totalPages, setTotalPages]   = useState(
-    pageFromUrl === 1 && searchFromUrl === '' ? initialData.totalPages : 1
-  )
-  const [loading, setLoading]         = useState(
-    !(pageFromUrl === 1 && searchFromUrl === '')
-  )
+  // SSR initialData는 항상 page=1, 검색 없음 기준으로 받아옴
+  const isDefaultUrl = pageFromUrl === 1 && searchFromUrl === ''
+
+  const [posts, setPosts]             = useState<Post[]>(isDefaultUrl ? initialData.items : [])
+  const [totalPages, setTotalPages]   = useState(isDefaultUrl ? initialData.totalPages : 1)
+  const [loading, setLoading]         = useState(!isDefaultUrl)
   const [searchInput, setSearchInput] = useState(searchFromUrl)
   const { isAdmin } = useAuth()
 
-  /**
-   * 최초 마운트 여부 추적
-   * ProjectsClient와 동일한 버그 — 검색어 지운 뒤 초기화(전체 목록) 시
-   * `pageFromUrl === 1 && searchFromUrl === ''` 조건에 걸려 fetch를 스킵하는 문제.
-   * isInitialRender ref로 최초 마운트만 스킵, 이후는 항상 fetch.
-   */
-  const isInitialRender = useRef(true)
+  // 최초 마운트 시 SSR 데이터를 그대로 쓰는 경우 fetch 스킵
+  const hasMounted = useRef(false)
 
   const loadPosts = useCallback(async (page: number, search: string) => {
     try {
@@ -58,19 +50,12 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
   }, [])
 
   useEffect(() => {
-    if (isInitialRender.current) {
-      isInitialRender.current = false
-      if (pageFromUrl === 1 && searchFromUrl === '') {
-        // SSR 데이터로 충분한 초기 상태 — fetch 스킵
-        return
-      }
-      // URL에 검색어/페이지가 있는 상태로 최초 진입 → fetch 필요
+    if (!hasMounted.current) {
+      hasMounted.current = true
+      if (isDefaultUrl) return  // 최초 진입, SSR 데이터로 충분
     }
-
-    // 마운트 이후 URL 변경 시 항상 fetch
-    // (검색 초기화 포함)
     loadPosts(pageFromUrl, searchFromUrl)
-  }, [pageFromUrl, searchFromUrl, loadPosts])
+  }, [pageFromUrl, searchFromUrl, isDefaultUrl, loadPosts])
 
   const updateUrl = (page: number, search: string) => {
     const params = new URLSearchParams()
