@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import type { Post } from '@/lib/api/posts'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
@@ -79,11 +80,13 @@ export default function PostCard({ post }: PostCardProps) {
 
       {/* 썸네일 — 모바일에서 너비 축소, 없으면 영역 없음 */}
       {post.thumbnailUrl && (
-        <div className="w-[110px] shrink-0 sm:w-[150px] md:w-[170px]">
-          <img
+        <div className="relative w-[110px] shrink-0 self-stretch sm:w-[150px] md:w-[170px]">
+          <Image
             src={post.thumbnailUrl}
             alt={post.title}
-            className="h-full w-full object-cover"
+            fill
+            sizes="170px"
+            className="object-cover"
           />
         </div>
       )}

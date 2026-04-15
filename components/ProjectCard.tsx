@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import type { Project } from '@/lib/api/projects'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
@@ -24,12 +25,14 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     <div className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600">
 
       {/* 썸네일 */}
-      <div className="aspect-video w-full overflow-hidden">
+      <div className="relative aspect-video w-full overflow-hidden">
         {project.thumbnailUrl ? (
-          <img
+          <Image
             src={project.thumbnailUrl}
             alt={project.title}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
           /* 플레이스홀더: 그라디언트 배경 + devicon 아이콘 */
@@ -42,10 +45,12 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                     className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 p-2 backdrop-blur-sm"
                     style={{ opacity: 1 - i * 0.2 }}
                   >
-                    <img
+                    <Image
                       src={url}
                       alt=""
-                      className="h-full w-full object-contain brightness-0 invert"
+                      width={32}
+                      height={32}
+                      className="object-contain brightness-0 invert"
                       onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
                     />
                   </div>
