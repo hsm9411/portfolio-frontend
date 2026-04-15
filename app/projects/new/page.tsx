@@ -47,7 +47,7 @@ export default function NewProjectPage() {
     }
     try {
       setSubmitting(true)
-      const payload: Record<string, any> = {
+      const payload: Record<string, unknown> = {
         title: formData.title,
         summary: formData.summary,
         description: formData.description,
@@ -183,7 +183,7 @@ export default function NewProjectPage() {
               <Field label="상태">
                 <select
                   value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+                  onChange={(e) => setFormData({ ...formData, status: e.target.value as 'in-progress' | 'completed' | 'archived' })}
                   className={inputClass}
                 >
                   <option value="in-progress">진행중</option>

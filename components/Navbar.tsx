@@ -35,6 +35,7 @@ export default function Navbar() {
     return () => { document.body.style.overflow = '' }
   }, [mobileMenuOpen])
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setMobileMenuOpen(false) }, [pathname])
 
   const isActive = (href: string) => pathname.startsWith(href)

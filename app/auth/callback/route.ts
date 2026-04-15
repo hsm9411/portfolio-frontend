@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
       const supabase = await createClient()
 
       // OAuth 코드를 세션으로 교환
-      const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+      const { error } = await supabase.auth.exchangeCodeForSession(code)
 
       if (error) {
         console.error('[OAuth Callback] 에러:', error)
@@ -21,9 +21,10 @@ export async function GET(request: NextRequest) {
 
       // 성공 - 홈으로 리다이렉트
       return NextResponse.redirect(`${origin}`)
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err)
       console.error('[OAuth Callback] Exception:', err)
-      return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent(err.message)}`)
+      return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent(message)}`)
     }
   }
 

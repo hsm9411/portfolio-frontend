@@ -188,7 +188,7 @@ export default function NewPostPage() {
                 <Field label="카테고리" required>
                   <select
                     value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value as 'tutorial' | 'essay' | 'review' | 'news' })}
                     className={inputClass}
                   >
                     <option value="tutorial">튜토리얼</option>

@@ -32,7 +32,7 @@ export default function ProjectDetailClient({ project, from }: Props) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   const handleBack = () => {
-    from === 'list' ? router.back() : router.push('/projects')
+    if (from === 'list') { router.back() } else { router.push('/projects') }
   }
 
   const handleDelete = async () => {
@@ -64,7 +64,7 @@ export default function ProjectDetailClient({ project, from }: Props) {
             </div>
             <h3 className="mb-2 text-lg font-bold text-gray-900 dark:text-white">프로젝트 삭제</h3>
             <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
-              <span className="font-medium text-gray-900 dark:text-white">"{project.title}"</span>을(를) 삭제합니다. 이 작업은 되돌릴 수 없습니다.
+              <span className="font-medium text-gray-900 dark:text-white">{'"'}{project.title}{'"'}</span>을(를) 삭제합니다. 이 작업은 되돌릴 수 없습니다.
             </p>
             <div className="flex gap-3">
               <button onClick={() => setShowDeleteConfirm(false)} className="flex-1 rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700">취소</button>
