@@ -26,7 +26,6 @@ function LoginForm() {
     supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
       if (session) {
         setIsLoggedIn(true)
-        console.log('✅ 이미 로그인됨, 리다이렉트:', redirectUrl)
         setTimeout(() => {
           router.push(redirectUrl)
         }, 1500)
@@ -67,8 +66,6 @@ function LoginForm() {
 
       if (error) throw error
 
-      console.log('✅ 로그인 성공:', data.user?.email)
-      
       const nickname = data.user?.user_metadata?.nickname || data.user?.email
       alert(`환영합니다, ${nickname}님!`)
       
@@ -93,15 +90,12 @@ function LoginForm() {
   const handleOAuthLogin = async (provider: 'google' | 'github' | 'kakao') => {
     setError('')
     try {
-      console.log(`🔵 ${provider} OAuth 시작...`)
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: provider,
         options: {
           redirectTo: `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectUrl)}`,
         },
       })
-
-      console.log(`${provider} OAuth 응답:`, { data, error })
 
       if (error) {
         console.error(`❌ ${provider} OAuth 에러:`, error)

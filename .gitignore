@@ -43,6 +43,14 @@ next-env.d.ts
 .vercel
 
 # Claude Code
-.claude
+# .claude/ 디렉토리: 루트 및 하위 폴더 어디에 생겨도 무시
+.claude/
+**/.claude/
+
+# CLAUDE.md 계열: 루트 및 하위 폴더 어디에 생겨도 무시
+#   CLAUDE.md          - 프로젝트/폴더별 Claude 지시 파일
+#   CLAUDE.local.md    - 머신별 로컬 오버라이드
 CLAUDE.md
 CLAUDE.local.md
+**/CLAUDE.md
+**/CLAUDE.local.md
