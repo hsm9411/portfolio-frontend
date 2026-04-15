@@ -102,8 +102,8 @@ async function proxyRequest(
     return NextResponse.json(
       { 
         error: 'Proxy failed',
-        message: error.message,
-        name: error.name,
+        message: err.message,
+        name: err.name,
         url,
       },
       { status: 502 }

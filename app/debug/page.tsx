@@ -1,12 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import type { Session } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/client'
 import api from '@/lib/api/client'
 
 export default function DebugPage() {
   const [logs, setLogs] = useState<string[]>([])
-  const [session, setSession] = useState<unknown>(null)
+  const [session, setSession] = useState<Session | null>(null)
 
   const addLog = (message: string) => {
     setLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${message}`])
