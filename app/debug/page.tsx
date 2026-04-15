@@ -1,12 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import type { Session } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/client'
 import api from '@/lib/api/client'
 
 export default function DebugPage() {
   const [logs, setLogs] = useState<string[]>([])
-  const [session, setSession] = useState<any>(null)
+  const [session, setSession] = useState<Session | null>(null)
 
   const addLog = (message: string) => {
     setLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${message}`])
@@ -36,8 +37,9 @@ export default function DebugPage() {
       const response = await api.get('/projects?page=1&limit=5')
       addLog(`✅ API 요청 성공: ${response.status}`)
       addLog(`📦 데이터: ${JSON.stringify(response.data).substring(0, 100)}...`)
-    } catch (error: any) {
-      addLog(`❌ API 요청 실패: ${error.statusCode} ${error.message}`)
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error))
+      addLog(`❌ API 요청 실패: ${err.message}`)
     }
   }
 
@@ -56,8 +58,9 @@ export default function DebugPage() {
       const response = await api.post('/projects', testProject)
       addLog(`✅ 인증 API 요청 성공: ${response.status}`)
       addLog(`📦 생성된 프로젝트 ID: ${response.data.id}`)
-    } catch (error: any) {
-      addLog(`❌ 인증 API 요청 실패: ${error.statusCode} ${error.message}`)
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error))
+      addLog(`❌ 인증 API 요청 실패: ${err.message}`)
     }
   }
 
@@ -167,10 +170,10 @@ export default function DebugPage() {
         <div className="mt-8 rounded-lg border-l-4 border-blue-500 bg-blue-50 p-6">
           <h3 className="mb-2 font-bold text-blue-900">💡 사용 방법</h3>
           <ol className="list-inside list-decimal space-y-1 text-sm text-blue-800">
-            <li>먼저 "세션 확인" 버튼으로 로그인 상태 확인</li>
-            <li>"Public API 테스트"로 인증 없이 작동하는 API 테스트</li>
-            <li>"인증 API 테스트"로 관리자 권한이 필요한 API 테스트</li>
-            <li>401 에러 발생 시 "세션 갱신" 버튼 클릭</li>
+            <li>먼저 {'"'}세션 확인{'"'} 버튼으로 로그인 상태 확인</li>
+            <li>{'"'}Public API 테스트{'"'}로 인증 없이 작동하는 API 테스트</li>
+            <li>{'"'}인증 API 테스트{'"'}로 관리자 권한이 필요한 API 테스트</li>
+            <li>401 에러 발생 시 {'"'}세션 갱신{'"'} 버튼 클릭</li>
             <li>브라우저 개발자 도구(F12) → Console 탭에서 상세 로그 확인</li>
           </ol>
         </div>
@@ -181,7 +184,7 @@ export default function DebugPage() {
           <ol className="list-inside list-decimal space-y-1 text-sm text-purple-800">
             <li>F12 키 또는 우클릭 → 검사</li>
             <li>Console 탭에서 상세 로그 확인</li>
-            <li>Network 탭 → Filter: "api" 입력</li>
+            <li>Network 탭 → Filter: {'"'}api{'"'} 입력</li>
             <li>요청 클릭 → Headers 탭 → Request Headers에서 Authorization 확인</li>
           </ol>
         </div>

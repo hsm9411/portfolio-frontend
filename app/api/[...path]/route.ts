@@ -91,18 +91,19 @@ async function proxyRequest(
         'Content-Type': 'application/json',
       },
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error(String(error))
     console.error('=== PROXY ERROR ===')
-    console.error('Error name:', error.name)
-    console.error('Error message:', error.message)
-    console.error('Error stack:', error.stack)
+    console.error('Error name:', err.name)
+    console.error('Error message:', err.message)
+    console.error('Error stack:', err.stack)
     console.error('=== ERROR END ===')
 
     return NextResponse.json(
       { 
         error: 'Proxy failed',
-        message: error.message,
-        name: error.name,
+        message: err.message,
+        name: err.name,
         url,
       },
       { status: 502 }

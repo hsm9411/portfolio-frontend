@@ -122,7 +122,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
           </div>
           {searchFromUrl && (
             <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-              <span className="font-semibold text-gray-700 dark:text-gray-300">"{searchFromUrl}"</span> 검색 결과
+              <span className="font-semibold text-gray-700 dark:text-gray-300">{'"'}{searchFromUrl}{'"'}</span> 검색 결과
             </p>
           )}
         </form>

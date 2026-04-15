@@ -25,7 +25,7 @@ export default function BlogPostClient({ post, from }: Props) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   const handleBack = () => {
-    from === 'list' ? router.back() : router.push('/blog')
+    if (from === 'list') { router.back() } else { router.push('/blog') }
   }
 
   const handleDelete = async () => {
@@ -55,7 +55,7 @@ export default function BlogPostClient({ post, from }: Props) {
             </div>
             <h3 className="mb-2 text-base font-bold text-gray-900 dark:text-white sm:text-lg">포스트 삭제</h3>
             <p className="mb-5 text-xs text-gray-500 dark:text-gray-400 sm:mb-6 sm:text-sm">
-              <span className="font-medium text-gray-900 dark:text-white">"{post.title}"</span>을(를) 삭제합니다. 이 작업은 되돌릴 수 없습니다.
+              <span className="font-medium text-gray-900 dark:text-white">{'"'}{post.title}{'"'}</span>을(를) 삭제합니다. 이 작업은 되돌릴 수 없습니다.
             </p>
             <div className="flex gap-2.5 sm:gap-3">
               <button onClick={() => setShowDeleteConfirm(false)} className="flex-1 rounded-xl border border-gray-200 px-4 py-2 text-xs font-semibold text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700 sm:py-2.5 sm:text-sm">취소</button>
