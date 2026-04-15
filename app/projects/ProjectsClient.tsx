@@ -29,32 +29,16 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
   const pageFromUrl   = Number(searchParams.get('page'))   || 1
   const statusFromUrl = searchParams.get('status') || 'all'
 
-  const [projects, setProjects]     = useState<Project[]>(
-    pageFromUrl === 1 && statusFromUrl === 'all' ? initialData.items : []
-  )
-  const [totalPages, setTotalPages] = useState(
-    pageFromUrl === 1 && statusFromUrl === 'all' ? initialData.totalPages : 1
-  )
-  const [loading, setLoading]       = useState(
-    !(pageFromUrl === 1 && statusFromUrl === 'all')
-  )
+  // SSR initialData는 항상 page=1, status=all 기준으로 받아옴
+  const isDefaultUrl = pageFromUrl === 1 && statusFromUrl === 'all'
+
+  const [projects, setProjects]     = useState<Project[]>(isDefaultUrl ? initialData.items : [])
+  const [totalPages, setTotalPages] = useState(isDefaultUrl ? initialData.totalPages : 1)
+  const [loading, setLoading]       = useState(!isDefaultUrl)
   const { isAdmin } = useAuth()
 
-  /**
-   * 최초 마운트 여부 추적
-   *
-   * 문제 원인:
-   *   useEffect 내부에서 `pageFromUrl === 1 && statusFromUrl === 'all'` 조건으로
-   *   fetch를 스킵했는데, 이 조건이 두 가지 상황을 구분하지 못한다.
-   *
-   *   1) 최초 진입 → SSR 데이터 그대로 써야 하므로 fetch 스킵 (의도된 동작)
-   *   2) 다른 필터 → 전체 탭으로 복귀 → 반드시 fetch 해야 하는데 스킵됨 (버그)
-   *
-   *   URL 조건만으로는 두 경우를 구분할 수 없으므로,
-   *   `isInitialRender` ref로 마운트 첫 실행 여부를 추적한다.
-   *   초기 진입이면 스킵, 이후 URL이 변경되어 effect가 재실행되면 항상 fetch.
-   */
-  const isInitialRender = useRef(true)
+  // 최초 마운트 시 SSR 데이터를 그대로 쓰는 경우 fetch 스킵
+  const hasMounted = useRef(false)
 
   const loadProjects = useCallback(async (page: number, status: string) => {
     try {
@@ -72,21 +56,12 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
   }, [])
 
   useEffect(() => {
-    // 최초 마운트: SSR initialData 그대로 사용
-    // 단, URL에 이미 필터/페이지가 있으면 (직접 URL 입력, 뒤로가기 복원 등) fetch 필요
-    if (isInitialRender.current) {
-      isInitialRender.current = false
-      if (pageFromUrl === 1 && statusFromUrl === 'all') {
-        // SSR 데이터로 충분한 초기 상태 — fetch 스킵
-        return
-      }
-      // URL에 필터/페이지가 있는 상태로 최초 진입 → fetch 필요
+    if (!hasMounted.current) {
+      hasMounted.current = true
+      if (isDefaultUrl) return  // 최초 진입, SSR 데이터로 충분
     }
-
-    // 마운트 이후 URL 변경 시 항상 fetch
-    // (전체 탭 복귀 포함)
     loadProjects(pageFromUrl, statusFromUrl)
-  }, [pageFromUrl, statusFromUrl, loadProjects])
+  }, [pageFromUrl, statusFromUrl, isDefaultUrl, loadProjects])
 
   const updateUrl = (page: number, status: string) => {
     const params = new URLSearchParams()
