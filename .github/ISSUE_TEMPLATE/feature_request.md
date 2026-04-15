@@ -2,7 +2,7 @@
 name: Feature Request
 about: 새 기능 제안
 title: '[Feature] '
-labels: enhancement
+labels: ['enhancement', 'frontend']
 assignees: ''
 ---
 
@@ -20,6 +20,3 @@ assignees: ''
 
 ## 참고 자료
 <!-- 스크린샷, 레퍼런스 링크 등 (선택) -->
-
-## Labels
-`enhancement` `frontend`

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { type Post } from '@/lib/api/posts'
 import { useAuth } from '@/hooks/useAuth'
@@ -8,31 +8,24 @@ import LikeButton from '@/components/LikeButton'
 import CommentSection from '@/components/CommentSection'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import rehypeHighlight from 'rehype-highlight'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import api from '@/lib/api/client'
 
 interface Props {
   post: Post
+  from?: string
 }
 
-export default function BlogPostClient({ post }: Props) {
+export default function BlogPostClient({ post, from }: Props) {
   const router = useRouter()
   const { isAdmin } = useAuth()
   const [deleting, setDeleting] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
-  const fromRef = useRef<'list' | 'home'>('home')
-  useEffect(() => {
-    const prev = document.referrer
-    fromRef.current =
-      prev.includes('/blog') && !prev.includes(`/blog/${post.id}`)
-        ? 'list'
-        : 'home'
-  }, [post.id])
-
   const handleBack = () => {
-    fromRef.current === 'list' ? router.back() : router.push('/blog')
+    from === 'list' ? router.back() : router.push('/blog')
   }
 
   const handleDelete = async () => {
@@ -81,7 +74,7 @@ export default function BlogPostClient({ post }: Props) {
             <svg className="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
-            {fromRef.current === 'list' ? '목록으로' : 'Blog'}
+            {from === 'list' ? '목록으로' : 'Blog'}
           </button>
 
           {isAdmin && (
@@ -143,7 +136,7 @@ export default function BlogPostClient({ post }: Props) {
         <div className="space-y-5 sm:space-y-8">
           <section className="rounded-2xl border border-gray-200 bg-white px-4 py-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:px-6 sm:py-10 md:px-10 md:py-12">
             <div className="markdown-body">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
+              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>{post.content}</ReactMarkdown>
             </div>
           </section>
 

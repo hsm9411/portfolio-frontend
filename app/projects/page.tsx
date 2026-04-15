@@ -1,6 +1,17 @@
+import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { fetchProjects } from '@/lib/api/server'
 import ProjectsClient from './ProjectsClient'
+
+export const metadata: Metadata = {
+  title: 'Projects',
+  description: '개인 및 팀 프로젝트 모음입니다. 사용 기술과 구현 과정을 확인해보세요.',
+  openGraph: {
+    title: 'Projects | hsm',
+    description: '개인 및 팀 프로젝트 모음입니다. 사용 기술과 구현 과정을 확인해보세요.',
+    url: '/projects',
+  },
+}
 
 export default async function ProjectsPage() {
   let initialData = { items: [], total: 0, page: 1, pageSize: 9, totalPages: 1 }

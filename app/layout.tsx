@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import "highlight.js/styles/github-dark.css";
 import Navbar from "@/components/Navbar";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,8 +16,25 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Portfolio",
-  description: "개발자 포트폴리오 & 기술 블로그",
+  metadataBase: new URL('https://portfolio-front-ten-gamma.vercel.app'),
+  title: {
+    default: 'hsm | Portfolio',
+    template: '%s | hsm',
+  },
+  description: '개발자 포트폴리오 & 기술 블로그. 프로젝트 경험과 기술적 인사이트를 공유합니다.',
+  openGraph: {
+    type: 'website',
+    locale: 'ko_KR',
+    siteName: 'hsm Portfolio',
+    title: 'hsm | Portfolio',
+    description: '개발자 포트폴리오 & 기술 블로그. 프로젝트 경험과 기술적 인사이트를 공유합니다.',
+    url: 'https://portfolio-front-ten-gamma.vercel.app',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'hsm | Portfolio',
+    description: '개발자 포트폴리오 & 기술 블로그. 프로젝트 경험과 기술적 인사이트를 공유합니다.',
+  },
 };
 
 export default function RootLayout({
@@ -50,6 +69,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Navbar />
         <div className="pt-[72px]">{children}</div>
+        <Analytics />
       </body>
     </html>
   );

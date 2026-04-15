@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { type Project } from '@/lib/api/projects'
 import { useAuth } from '@/hooks/useAuth'
@@ -8,12 +8,15 @@ import LikeButton from '@/components/LikeButton'
 import CommentSection from '@/components/CommentSection'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import rehypeHighlight from 'rehype-highlight'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
+import Image from 'next/image'
 import api from '@/lib/api/client'
 
 interface Props {
   project: Project
+  from?: string
 }
 
 const statusConfig = {
@@ -22,23 +25,14 @@ const statusConfig = {
   archived:    { label: '보관',   className: 'bg-gray-100 text-gray-600 ring-gray-500/20 dark:bg-gray-700 dark:text-gray-400 dark:ring-gray-500/30' },
 }
 
-export default function ProjectDetailClient({ project }: Props) {
+export default function ProjectDetailClient({ project, from }: Props) {
   const router = useRouter()
   const { isAdmin } = useAuth()
   const [deleting, setDeleting] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
-  const fromRef = useRef<'list' | 'home'>('home')
-  useEffect(() => {
-    const prev = document.referrer
-    fromRef.current =
-      prev.includes('/projects') && !prev.includes(`/projects/${project.id}`)
-        ? 'list'
-        : 'home'
-  }, [project.id])
-
   const handleBack = () => {
-    fromRef.current === 'list' ? router.back() : router.push('/projects')
+    from === 'list' ? router.back() : router.push('/projects')
   }
 
   const handleDelete = async () => {
@@ -89,7 +83,7 @@ export default function ProjectDetailClient({ project }: Props) {
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
-            {fromRef.current === 'list' ? '목록으로' : 'Projects'}
+            {from === 'list' ? '목록으로' : 'Projects'}
           </button>
 
           {isAdmin && (
@@ -146,8 +140,14 @@ export default function ProjectDetailClient({ project }: Props) {
       <main className="mx-auto max-w-[1000px] px-5 py-10">
         <div className="space-y-8">
           {project.thumbnailUrl && (
-            <div className="overflow-hidden rounded-2xl shadow-md">
-              <img src={project.thumbnailUrl} alt={project.title} className="w-full object-cover" />
+            <div className="relative aspect-video overflow-hidden rounded-2xl shadow-md">
+              <Image
+                src={project.thumbnailUrl}
+                alt={project.title}
+                fill
+                sizes="(max-width: 1000px) 100vw, 1000px"
+                className="object-cover"
+              />
             </div>
           )}
 
@@ -176,7 +176,7 @@ export default function ProjectDetailClient({ project }: Props) {
           <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700 sm:p-8">
             <h2 className="mb-5 text-base font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">📋 Description</h2>
             <div className="markdown-body">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{project.description}</ReactMarkdown>
+              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>{project.description}</ReactMarkdown>
             </div>
           </section>
 

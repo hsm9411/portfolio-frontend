@@ -2,7 +2,7 @@
 name: Bug Report
 about: 버그 제보
 title: '[Bug] '
-labels: bug
+labels: ['bug', 'frontend']
 assignees: ''
 ---
 
@@ -29,6 +29,4 @@ assignees: ''
 ## 환경
 - Browser: 
 - Device: 
-
-## Labels
-`bug` `frontend`
+- OS: 

@@ -16,6 +16,18 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "k.kakaocdn.net", // Kakao OAuth 프로필
       },
+      {
+        protocol: "https",
+        hostname: "cdn.jsdelivr.net", // devicon 기술 스택 아이콘
+      },
+      {
+        protocol: "https",
+        hostname: "**", // 백엔드 업로드 썸네일 (동적 호스트)
+      },
+      {
+        protocol: "http",
+        hostname: "**", // 백엔드 업로드 썸네일 (개발 환경)
+      },
     ],
   },
 

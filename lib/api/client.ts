@@ -7,7 +7,7 @@ import type { ApiError } from '@/lib/types/api'
 
 const API_TIMEOUT = 25000 // 25초
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://158.180.75.205'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
 // ============================================
 // Session Token Store
