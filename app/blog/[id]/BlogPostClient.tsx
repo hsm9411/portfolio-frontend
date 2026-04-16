@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { type Post } from '@/lib/api/posts'
 import { useAuth } from '@/hooks/useAuth'
@@ -23,6 +23,17 @@ export default function BlogPostClient({ post, from }: Props) {
   const { isAdmin } = useAuth()
   const [deleting, setDeleting] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [readingProgress, setReadingProgress] = useState(0)
+
+  useEffect(() => {
+    const updateProgress = () => {
+      const scrollTop = window.scrollY
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight
+      setReadingProgress(docHeight > 0 ? Math.min(100, (scrollTop / docHeight) * 100) : 0)
+    }
+    window.addEventListener('scroll', updateProgress, { passive: true })
+    return () => window.removeEventListener('scroll', updateProgress)
+  }, [])
 
   const handleBack = () => {
     if (from === 'list') { router.back() } else { router.push('/blog') }
@@ -43,6 +54,14 @@ export default function BlogPostClient({ post, from }: Props) {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+
+      {/* 읽기 진행바 */}
+      <div className="fixed left-0 top-0 z-50 h-[3px] w-full bg-transparent">
+        <div
+          className="h-full bg-blue-500 transition-[width] duration-100 ease-out dark:bg-blue-400"
+          style={{ width: `${readingProgress}%` }}
+        />
+      </div>
 
       {/* 삭제 확인 모달 */}
       {showDeleteConfirm && (
