@@ -210,7 +210,7 @@ export default function EditPostPage() {
               <div className="mb-5 grid gap-5 sm:grid-cols-2">
                 <Field label="카테고리" required>
                   <select value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value as 'tutorial' | 'essay' | 'review' | 'news' })}
                     className={inputClass}>
                     <option value="tutorial">튜토리얼</option>
                     <option value="essay">에세이</option>

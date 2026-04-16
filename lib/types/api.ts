@@ -99,7 +99,7 @@ export interface CreateProjectRequest {
   status?: ProjectStatus;
 }
 
-export interface UpdateProjectRequest extends Partial<CreateProjectRequest> {}
+export type UpdateProjectRequest = Partial<CreateProjectRequest>
 
 export interface GetProjectsRequest {
   page?: number;
@@ -143,12 +143,13 @@ export interface CreatePostRequest {
   tags?: string[];
 }
 
-export interface UpdatePostRequest extends Partial<CreatePostRequest> {}
+export type UpdatePostRequest = Partial<CreatePostRequest>
 
 export interface GetPostsRequest {
   page?: number;
   limit?: number;
   search?: string;
+  category?: string;
   tags?: string[];
 }
 

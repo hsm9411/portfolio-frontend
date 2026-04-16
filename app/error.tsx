@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import Link from 'next/link'
 
 interface Props {
   error: Error & { digest?: string }
@@ -35,12 +36,12 @@ export default function GlobalError({ error, reset }: Props) {
           >
             다시 시도
           </button>
-          <a
+          <Link
             href="/"
             className="rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
           >
             홈으로
-          </a>
+          </Link>
         </div>
       </div>
     </div>

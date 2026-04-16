@@ -71,15 +71,16 @@ function LoginForm() {
       
       router.push(redirectUrl)
       router.refresh()
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : ''
       console.error('❌ 로그인 실패:', err)
-      
-      if (err.message?.includes('Invalid login credentials')) {
+
+      if (message.includes('Invalid login credentials')) {
         setError('이메일 또는 비밀번호가 올바르지 않습니다.')
-      } else if (err.message?.includes('Email not confirmed')) {
+      } else if (message.includes('Email not confirmed')) {
         setError('이메일 인증이 필요합니다. 메일함을 확인해주세요.')
       } else {
-        setError(err.message || '로그인에 실패했습니다.')
+        setError(message || '로그인에 실패했습니다.')
       }
     } finally {
       setLoading(false)
@@ -90,7 +91,7 @@ function LoginForm() {
   const handleOAuthLogin = async (provider: 'google' | 'github' | 'kakao') => {
     setError('')
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: provider,
         options: {
           redirectTo: `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectUrl)}`,
@@ -101,13 +102,14 @@ function LoginForm() {
         console.error(`❌ ${provider} OAuth 에러:`, error)
         throw error
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : ''
       console.error(`${provider} login failed:`, err)
-      
-      if (err.message?.includes('provider is not enabled')) {
+
+      if (message.includes('provider is not enabled')) {
         setError(`${provider === 'kakao' ? '카카오톡' : provider === 'google' ? 'Google' : 'GitHub'} 로그인이 활성화되지 않았습니다.\n\nSupabase Dashboard에서 ${provider} Provider를 활성화해주세요.`)
       } else {
-        setError(`${provider} 로그인 실패: ${err.message}`)
+        setError(`${provider} 로그인 실패: ${message}`)
       }
     }
   }
