@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { type Post } from '@/lib/api/posts'
 import { useAuth } from '@/hooks/useAuth'
+import { useToast } from '@/hooks/useToast'
 import LikeButton from '@/components/LikeButton'
 import CommentSection from '@/components/CommentSection'
 import ReactMarkdown from 'react-markdown'
@@ -42,6 +43,7 @@ interface Props {
 export default function BlogPostClient({ post, from }: Props) {
   const router = useRouter()
   const { isAdmin } = useAuth()
+  const { showToast } = useToast()
   const [deleting, setDeleting] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [readingProgress, setReadingProgress] = useState(0)
@@ -73,10 +75,11 @@ export default function BlogPostClient({ post, from }: Props) {
     try {
       setDeleting(true)
       await api.delete(`/posts/${post.id}`)
+      showToast('포스트가 삭제되었습니다.')
       router.push('/blog')
-    } catch (err) {
-      console.error('Failed to delete post:', err)
+    } catch {
       setShowDeleteConfirm(false)
+      showToast('삭제에 실패했습니다. 다시 시도해주세요.', 'error')
     } finally {
       setDeleting(false)
     }
@@ -109,52 +112,59 @@ export default function BlogPostClient({ post, from }: Props) {
             <div className="flex gap-2.5 sm:gap-3">
               <button onClick={() => setShowDeleteConfirm(false)} className="flex-1 rounded-xl border border-gray-200 px-4 py-2 text-xs font-semibold text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700 sm:py-2.5 sm:text-sm">취소</button>
               <button onClick={handleDelete} disabled={deleting} className="flex-1 rounded-xl bg-red-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-60 sm:py-2.5 sm:text-sm">
-                {deleting ? '삭제 중...' : '삭제'}
+                {deleting ? (
+                  <span className="flex items-center justify-center gap-1.5">
+                    <span className="h-3 w-3 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    삭제 중...
+                  </span>
+                ) : '삭제'}
               </button>
             </div>
           </div>
         </div>
       )}
 
+      {/* sticky 네비 바 (뒤로가기 + 관리자 액션) */}
+      <div className="sticky top-[72px] z-40 border-b border-gray-200 bg-white/90 backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/90">
+        <div className="mx-auto flex max-w-[1000px] items-center justify-between px-4 py-3 sm:px-5">
+          <button
+            onClick={handleBack}
+            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            {from === 'list' ? '목록으로' : 'Blog'}
+          </button>
+
+          {isAdmin && (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => router.push(`/blog/${post.id}/edit`)}
+                className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+              >
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                수정
+              </button>
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="flex items-center gap-1.5 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-medium text-red-600 shadow-sm transition-colors hover:bg-red-50 dark:border-red-900/50 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-red-900/20"
+              >
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                삭제
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* 헤더 */}
       <header className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800/50">
         <div className="mx-auto max-w-[1000px] px-4 pt-5 pb-6 sm:px-5 sm:pt-7 sm:pb-10">
-          {/* 뒤로가기 + 관리자 액션 */}
-          <div className="mb-5 flex items-center justify-between sm:mb-6">
-            <button
-              onClick={handleBack}
-              className="flex items-center gap-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-              </svg>
-              {from === 'list' ? '목록으로' : 'Blog'}
-            </button>
-
-            {isAdmin && (
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => router.push(`/blog/${post.id}/edit`)}
-                  className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-                >
-                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                  수정
-                </button>
-                <button
-                  onClick={() => setShowDeleteConfirm(true)}
-                  className="flex items-center gap-1.5 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-medium text-red-600 shadow-sm transition-colors hover:bg-red-50 dark:border-red-900/50 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-red-900/20"
-                >
-                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                  삭제
-                </button>
-              </div>
-            )}
-          </div>
-
           {post.tags.length > 0 && (
             <div className="mb-4 flex flex-wrap gap-1.5 sm:mb-5 sm:gap-2">
               {post.tags.map((tag) => (
@@ -217,7 +227,7 @@ export default function BlogPostClient({ post, from }: Props) {
         </aside>
       )}
 
-      {/* 본문 — 너비 원복 */}
+      {/* 본문 */}
       <main className="mx-auto max-w-[1000px] px-4 py-6 sm:px-5 sm:py-10">
         <div className="space-y-5 sm:space-y-8">
 
