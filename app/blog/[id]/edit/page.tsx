@@ -8,6 +8,9 @@ import { getPostById } from '@/lib/api/posts'
 import TechStackInput from '@/components/TechStackInput'
 import ThumbnailUploader from '@/components/ThumbnailUploader'
 import FormField from '@/components/ui/FormField'
+import ErrorAlert from '@/components/ui/ErrorAlert'
+import Spinner from '@/components/ui/Spinner'
+import EditorBar from '@/components/EditorBar'
 import { inputClass } from '@/lib/styles/form'
 import api from '@/lib/api/client'
 import ReactMarkdown from 'react-markdown'
@@ -99,91 +102,23 @@ export default function EditPostPage() {
     router.push(`/blog/${postId}`)
   }
 
-  if (!authReady || loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-gray-200 border-t-blue-600" />
-      </div>
-    )
-  }
-
+  if (!authReady || loading) return <Spinner />
   if (!isAdmin) return null
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-
-      {/* 페이지 헤더 — 취소 + 제목 */}
-      <header className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800/50">
-        <div className="mx-auto flex max-w-[1000px] items-center px-5 py-4">
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="flex items-center gap-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-          >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-            취소
-          </button>
-          <span className="ml-3 text-sm font-semibold text-gray-700 dark:text-gray-300">포스트 수정</span>
-          {hasChanges && (
-            <span className="ml-2 text-xs text-amber-600 dark:text-amber-400">● 저장되지 않은 변경사항</span>
-          )}
-        </div>
-      </header>
-
-      {/* Sticky 액션 바 — 편집/미리보기 + 저장 */}
-      <div className="sticky top-[72px] z-40 border-b border-gray-200 bg-white/90 backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/90">
-        <div className="mx-auto flex max-w-[1000px] items-center justify-end gap-2 px-5 py-2.5">
-          <div className="flex rounded-lg border border-gray-200 bg-gray-100 p-0.5 dark:border-gray-700 dark:bg-gray-800">
-            <button
-              type="button"
-              onClick={() => setPreview(false)}
-              className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-                !preview
-                  ? 'bg-white text-gray-900 shadow-sm dark:bg-gray-700 dark:text-white'
-                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-              }`}
-            >
-              편집
-            </button>
-            <button
-              type="button"
-              onClick={() => setPreview(true)}
-              className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-                preview
-                  ? 'bg-white text-gray-900 shadow-sm dark:bg-gray-700 dark:text-white'
-                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-              }`}
-            >
-              미리보기
-            </button>
-          </div>
-          <button
-            form="edit-post-form"
-            type="submit"
-            disabled={submitting || !hasChanges}
-            className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {submitting ? (
-              <>
-                <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                저장 중...
-              </>
-            ) : hasChanges ? '저장하기' : '변경사항 없음'}
-          </button>
-        </div>
-      </div>
+      <EditorBar
+        title="포스트 수정"
+        hasChanges={hasChanges}
+        submitting={submitting}
+        onCancel={handleCancel}
+        formId="edit-post-form"
+        preview={preview}
+        onPreviewChange={setPreview}
+      />
 
       <main className="mx-auto max-w-[1000px] px-5 py-8">
-        {error && (
-          <div className="mb-6 flex items-start gap-3 rounded-lg border border-red-100 bg-red-50 p-4 text-sm text-red-600 dark:border-red-900/30 dark:bg-red-900/20 dark:text-red-400">
-            <svg className="mt-0.5 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            {error}
-          </div>
-        )}
+        {error && <ErrorAlert message={error} />}
 
         {!preview ? (
           <form id="edit-post-form" onSubmit={handleSubmit}>
