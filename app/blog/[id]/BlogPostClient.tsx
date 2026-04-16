@@ -181,7 +181,7 @@ export default function BlogPostClient({ post, from }: Props) {
       </header>
 
       {/* 본문 */}
-      <main className="mx-auto max-w-[1280px] px-4 py-6 sm:px-5 sm:py-10">
+      <main className={`mx-auto px-4 py-6 sm:px-5 sm:py-10 ${tocItems.length > 0 ? 'max-w-[1000px] xl:max-w-[1280px]' : 'max-w-[1000px]'}`}>
         <div className={tocItems.length > 0 ? 'xl:flex xl:items-start xl:gap-8' : ''}>
 
           {/* 콘텐츠 */}
