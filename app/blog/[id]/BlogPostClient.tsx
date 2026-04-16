@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { type Post } from '@/lib/api/posts'
 import { useAuth } from '@/hooks/useAuth'
@@ -12,6 +12,27 @@ import rehypeHighlight from 'rehype-highlight'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import api from '@/lib/api/client'
+import type { Components } from 'react-markdown'
+
+// 헤딩 텍스트 → anchor ID 변환
+const slugify = (text: string) =>
+  text.toLowerCase().trim().replace(/[^\w\s가-힣-]/g, '').replace(/\s+/g, '-')
+
+interface TocItem {
+  level: 2 | 3
+  text: string
+  id: string
+}
+
+function extractToc(content: string): TocItem[] {
+  return content
+    .split('\n')
+    .flatMap((line) => {
+      const m = line.match(/^(#{2,3})\s+(.+)/)
+      if (!m) return []
+      return [{ level: m[1].length as 2 | 3, text: m[2].trim(), id: slugify(m[2].trim()) }]
+    })
+}
 
 interface Props {
   post: Post
@@ -24,6 +45,15 @@ export default function BlogPostClient({ post, from }: Props) {
   const [deleting, setDeleting] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [readingProgress, setReadingProgress] = useState(0)
+  const [tocOpen, setTocOpen] = useState(false)
+
+  const tocItems = useMemo(() => extractToc(post.content), [post.content])
+
+  // 헤딩에 id 부여하는 커스텀 컴포넌트
+  const markdownComponents: Components = useMemo(() => ({
+    h2: ({ children }) => <h2 id={slugify(String(children))}>{children}</h2>,
+    h3: ({ children }) => <h3 id={slugify(String(children))}>{children}</h3>,
+  }), [])
 
   useEffect(() => {
     const updateProgress = () => {
@@ -151,20 +181,98 @@ export default function BlogPostClient({ post, from }: Props) {
       </header>
 
       {/* 본문 */}
-      <main className="mx-auto max-w-[1000px] px-4 py-6 sm:px-5 sm:py-10">
-        <div className="space-y-5 sm:space-y-8">
-          <section className="rounded-2xl border border-gray-200 bg-white px-4 py-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:px-6 sm:py-10 md:px-10 md:py-12">
-            <div className="markdown-body">
-              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>{post.content}</ReactMarkdown>
-            </div>
-          </section>
+      <main className="mx-auto max-w-[1280px] px-4 py-6 sm:px-5 sm:py-10">
+        <div className={tocItems.length > 0 ? 'xl:flex xl:items-start xl:gap-8' : ''}>
 
-          <div className="rounded-2xl border border-gray-200 bg-white px-4 py-5 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:px-6">
-            <LikeButton targetType="post" targetId={post.id} initialLikeCount={post.likeCount} />
+          {/* 콘텐츠 */}
+          <div className={tocItems.length > 0 ? 'min-w-0 xl:flex-1' : 'mx-auto max-w-[1000px]'}>
+            <div className="space-y-5 sm:space-y-8">
+
+              {/* 모바일 TOC */}
+              {tocItems.length > 0 && (
+                <div className="xl:hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                  <button
+                    onClick={() => setTocOpen((v) => !v)}
+                    className="flex w-full items-center justify-between px-4 py-3.5 text-sm font-semibold text-gray-700 dark:text-gray-200"
+                  >
+                    <span className="flex items-center gap-2">
+                      <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h10M4 14h12M4 18h8" />
+                      </svg>
+                      목차
+                    </span>
+                    <svg className={`h-4 w-4 text-gray-400 transition-transform ${tocOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {tocOpen && (
+                    <nav className="border-t border-gray-100 px-4 py-3 dark:border-gray-700">
+                      <ul className="space-y-1.5">
+                        {tocItems.map((item) => (
+                          <li key={item.id} className={item.level === 3 ? 'ml-4' : ''}>
+                            <a
+                              href={`#${item.id}`}
+                              onClick={() => setTocOpen(false)}
+                              className="block truncate text-sm text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+                            >
+                              {item.text}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </nav>
+                  )}
+                </div>
+              )}
+
+              <section className="rounded-2xl border border-gray-200 bg-white px-4 py-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:px-6 sm:py-10 md:px-10 md:py-12">
+                <div className="markdown-body">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeHighlight]}
+                    components={markdownComponents}
+                  >
+                    {post.content}
+                  </ReactMarkdown>
+                </div>
+              </section>
+
+              <div className="rounded-2xl border border-gray-200 bg-white px-4 py-5 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:px-6">
+                <LikeButton targetType="post" targetId={post.id} initialLikeCount={post.likeCount} />
+              </div>
+              <div className="rounded-2xl border border-gray-200 bg-white px-4 py-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:px-6 sm:py-8 md:px-8">
+                <CommentSection targetType="post" targetId={post.id} />
+              </div>
+            </div>
           </div>
-          <div className="rounded-2xl border border-gray-200 bg-white px-4 py-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:px-6 sm:py-8 md:px-8">
-            <CommentSection targetType="post" targetId={post.id} />
-          </div>
+
+          {/* 데스크톱 TOC 사이드바 */}
+          {tocItems.length > 0 && (
+            <aside className="hidden xl:block xl:w-52 xl:shrink-0">
+              <div className="sticky top-36 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                <p className="mb-3 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h10M4 14h12M4 18h8" />
+                  </svg>
+                  목차
+                </p>
+                <nav>
+                  <ul className="space-y-1.5">
+                    {tocItems.map((item) => (
+                      <li key={item.id} className={item.level === 3 ? 'ml-3' : ''}>
+                        <a
+                          href={`#${item.id}`}
+                          className="block truncate text-sm text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+                        >
+                          {item.text}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              </div>
+            </aside>
+          )}
         </div>
       </main>
     </div>
