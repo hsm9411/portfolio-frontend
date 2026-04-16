@@ -7,6 +7,8 @@ import { useUnsavedWarning } from '@/hooks/useUnsavedWarning'
 import { getPostById } from '@/lib/api/posts'
 import TechStackInput from '@/components/TechStackInput'
 import ThumbnailUploader from '@/components/ThumbnailUploader'
+import FormField from '@/components/ui/FormField'
+import { inputClass } from '@/lib/styles/form'
 import api from '@/lib/api/client'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -110,67 +112,66 @@ export default function EditPostPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
 
-      {/* Sticky 액션 바 */}
+      {/* 페이지 헤더 — 취소 + 제목 */}
+      <header className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800/50">
+        <div className="mx-auto flex max-w-[1000px] items-center px-5 py-4">
+          <button
+            type="button"
+            onClick={handleCancel}
+            className="flex items-center gap-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            취소
+          </button>
+          <span className="ml-3 text-sm font-semibold text-gray-700 dark:text-gray-300">포스트 수정</span>
+          {hasChanges && (
+            <span className="ml-2 text-xs text-amber-600 dark:text-amber-400">● 저장되지 않은 변경사항</span>
+          )}
+        </div>
+      </header>
+
+      {/* Sticky 액션 바 — 편집/미리보기 + 저장 */}
       <div className="sticky top-[72px] z-40 border-b border-gray-200 bg-white/90 backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/90">
-        <div className="mx-auto flex max-w-[1000px] items-center justify-between px-5 py-3">
-          <div className="flex items-center gap-3">
+        <div className="mx-auto flex max-w-[1000px] items-center justify-end gap-2 px-5 py-2.5">
+          <div className="flex rounded-lg border border-gray-200 bg-gray-100 p-0.5 dark:border-gray-700 dark:bg-gray-800">
             <button
               type="button"
-              onClick={handleCancel}
-              className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-800 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+              onClick={() => setPreview(false)}
+              className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                !preview
+                  ? 'bg-white text-gray-900 shadow-sm dark:bg-gray-700 dark:text-white'
+                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+              }`}
             >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-              </svg>
-              취소
+              편집
             </button>
-            <div>
-              <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">포스트 수정</span>
-              {hasChanges && (
-                <span className="ml-2 text-xs text-amber-600 dark:text-amber-400">● 저장되지 않은 변경사항</span>
-              )}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <div className="flex rounded-lg border border-gray-200 bg-gray-100 p-0.5 dark:border-gray-700 dark:bg-gray-800">
-              <button
-                type="button"
-                onClick={() => setPreview(false)}
-                className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-                  !preview
-                    ? 'bg-white text-gray-900 shadow-sm dark:bg-gray-700 dark:text-white'
-                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-                }`}
-              >
-                편집
-              </button>
-              <button
-                type="button"
-                onClick={() => setPreview(true)}
-                className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-                  preview
-                    ? 'bg-white text-gray-900 shadow-sm dark:bg-gray-700 dark:text-white'
-                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-                }`}
-              >
-                미리보기
-              </button>
-            </div>
             <button
-              form="edit-post-form"
-              type="submit"
-              disabled={submitting || !hasChanges}
-              className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+              type="button"
+              onClick={() => setPreview(true)}
+              className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                preview
+                  ? 'bg-white text-gray-900 shadow-sm dark:bg-gray-700 dark:text-white'
+                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+              }`}
             >
-              {submitting ? (
-                <>
-                  <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                  저장 중...
-                </>
-              ) : hasChanges ? '저장하기' : '변경사항 없음'}
+              미리보기
             </button>
           </div>
+          <button
+            form="edit-post-form"
+            type="submit"
+            disabled={submitting || !hasChanges}
+            className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {submitting ? (
+              <>
+                <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                저장 중...
+              </>
+            ) : hasChanges ? '저장하기' : '변경사항 없음'}
+          </button>
         </div>
       </div>
 
@@ -187,18 +188,16 @@ export default function EditPostPage() {
         {!preview ? (
           <form id="edit-post-form" onSubmit={handleSubmit}>
             <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800 sm:p-8">
-
-              <Field label="제목" required>
+              <FormField label="제목" required>
                 <input
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   placeholder="포스트 제목"
-                  className={`${inputClass} text-base font-semibold`}
+                  className={`${inputClass} font-semibold`}
                 />
-              </Field>
-
-              <Field label="요약" required>
+              </FormField>
+              <FormField label="요약" required>
                 <input
                   type="text"
                   value={formData.summary}
@@ -206,17 +205,15 @@ export default function EditPostPage() {
                   placeholder="한 줄 소개"
                   className={inputClass}
                 />
-              </Field>
-
-              <Field label="썸네일 이미지">
+              </FormField>
+              <FormField label="썸네일 이미지">
                 <ThumbnailUploader
                   value={formData.thumbnailUrl}
                   onChange={(url) => setFormData({ ...formData, thumbnailUrl: url })}
                 />
-              </Field>
-
+              </FormField>
               <div className="mb-5 grid gap-5 sm:grid-cols-2">
-                <Field label="카테고리" required>
+                <FormField label="카테고리" required>
                   <select
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value as 'tutorial' | 'essay' | 'review' | 'news' })}
@@ -227,16 +224,15 @@ export default function EditPostPage() {
                     <option value="review">리뷰</option>
                     <option value="news">뉴스</option>
                   </select>
-                </Field>
-                <Field label="태그">
+                </FormField>
+                <FormField label="태그">
                   <TechStackInput
                     value={formData.tags}
                     onChange={(v) => setFormData({ ...formData, tags: v })}
                   />
-                </Field>
+                </FormField>
               </div>
-
-              <Field label="본문 (Markdown)" required>
+              <FormField label="본문 (Markdown)" required>
                 <textarea
                   value={formData.content}
                   rows={28}
@@ -247,7 +243,7 @@ export default function EditPostPage() {
                 <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
                   Markdown 문법을 지원합니다. 미리보기 탭에서 렌더링을 확인하세요.
                 </p>
-              </Field>
+              </FormField>
             </div>
           </form>
         ) : (
@@ -278,16 +274,3 @@ export default function EditPostPage() {
     </div>
   )
 }
-
-function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
-  return (
-    <div className="mb-5">
-      <label className="mb-1.5 block text-sm font-medium text-gray-600 dark:text-gray-400">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
-      {children}
-    </div>
-  )
-}
-
-const inputClass = 'w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 transition-colors focus:border-blue-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500 dark:focus:border-blue-500 dark:focus:bg-gray-800/80'
