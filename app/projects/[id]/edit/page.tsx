@@ -8,6 +8,9 @@ import { getProject } from '@/lib/api/projects'
 import TechStackInput from '@/components/TechStackInput'
 import ThumbnailUploader from '@/components/ThumbnailUploader'
 import FormField from '@/components/ui/FormField'
+import ErrorAlert from '@/components/ui/ErrorAlert'
+import Spinner from '@/components/ui/Spinner'
+import EditorBar from '@/components/EditorBar'
 import { inputClass } from '@/lib/styles/form'
 import api from '@/lib/api/client'
 
@@ -108,66 +111,21 @@ export default function EditProjectPage() {
     router.push(`/projects/${params.id}`)
   }
 
-  if (!authReady || loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-gray-200 border-t-blue-600" />
-      </div>
-    )
-  }
-
+  if (!authReady || loading) return <Spinner />
   if (!isAdmin) return null
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-
-      {/* 단일 Sticky 바 */}
-      <div className="sticky top-[72px] z-40 border-b border-gray-200 bg-white/90 backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/90">
-        <div className="mx-auto flex max-w-[1000px] items-center justify-between px-5 py-3">
-          {/* 왼쪽: 취소 + 제목 + 변경사항 */}
-          <div className="flex items-center gap-3 min-w-0">
-            <button
-              type="button"
-              onClick={handleCancel}
-              className="flex shrink-0 items-center gap-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-              </svg>
-              취소
-            </button>
-            <span className="h-4 w-px shrink-0 bg-gray-200 dark:bg-gray-700" />
-            <span className="truncate text-sm font-semibold text-gray-700 dark:text-gray-300">프로젝트 수정</span>
-            {hasChanges && (
-              <span className="shrink-0 text-xs text-amber-600 dark:text-amber-400">● 미저장</span>
-            )}
-          </div>
-          {/* 오른쪽: 저장 */}
-          <button
-            form="edit-project-form"
-            type="submit"
-            disabled={submitting || !hasChanges}
-            className="flex shrink-0 items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {submitting ? (
-              <>
-                <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                저장 중...
-              </>
-            ) : hasChanges ? '저장하기' : '변경사항 없음'}
-          </button>
-        </div>
-      </div>
+      <EditorBar
+        title="프로젝트 수정"
+        hasChanges={hasChanges}
+        submitting={submitting}
+        onCancel={handleCancel}
+        formId="edit-project-form"
+      />
 
       <main className="mx-auto max-w-[1000px] px-5 py-8">
-        {error && (
-          <div className="mb-6 flex items-start gap-3 rounded-lg border border-red-100 bg-red-50 p-4 text-sm text-red-600 dark:border-red-900/30 dark:bg-red-900/20 dark:text-red-400">
-            <svg className="mt-0.5 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            {error}
-          </div>
-        )}
+        {error && <ErrorAlert message={error} />}
 
         <form id="edit-project-form" onSubmit={handleSubmit}>
           <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800 sm:p-8">
