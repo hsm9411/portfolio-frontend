@@ -4,12 +4,14 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { useUnsavedWarning } from '@/hooks/useUnsavedWarning'
+import { useToast } from '@/hooks/useToast'
 import TechStackInput from '@/components/TechStackInput'
 import ThumbnailUploader from '@/components/ThumbnailUploader'
 import FormField from '@/components/ui/FormField'
 import ErrorAlert from '@/components/ui/ErrorAlert'
 import Spinner from '@/components/ui/Spinner'
 import EditorBar from '@/components/EditorBar'
+import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import { inputClass } from '@/lib/styles/form'
 import api from '@/lib/api/client'
 
@@ -28,9 +30,11 @@ const EMPTY_FORM = {
 export default function NewProjectPage() {
   const router = useRouter()
   const { isAdmin, authReady } = useAuth()
+  const { showToast } = useToast()
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [formData, setFormData] = useState(EMPTY_FORM)
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false)
 
   const hasChanges = JSON.stringify(formData) !== JSON.stringify(EMPTY_FORM)
   useUnsavedWarning(hasChanges)
@@ -64,6 +68,7 @@ export default function NewProjectPage() {
       if (formData.githubUrl) payload.githubUrl = formData.githubUrl
       if (formData.tags.length > 0) payload.tags = formData.tags
       await api.post('/projects', payload)
+      showToast('프로젝트가 작성되었습니다.')
       router.replace('/projects')
     } catch (err: unknown) {
       const e = err as { statusCode?: number; message?: string | string[] }
@@ -74,7 +79,10 @@ export default function NewProjectPage() {
   }
 
   const handleCancel = () => {
-    if (hasChanges && !confirm('작성을 취소할까요? 입력한 내용이 사라집니다.')) return
+    if (hasChanges) {
+      setShowCancelConfirm(true)
+      return
+    }
     router.back()
   }
 
@@ -82,6 +90,17 @@ export default function NewProjectPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <ConfirmDialog
+        open={showCancelConfirm}
+        title="작성 취소"
+        description="입력한 내용이 모두 사라집니다. 취소할까요?"
+        confirmLabel="취소하기"
+        cancelLabel="계속 작성"
+        variant="warning"
+        onConfirm={() => router.back()}
+        onCancel={() => setShowCancelConfirm(false)}
+      />
+
       <EditorBar
         title="프로젝트 작성"
         hasChanges={hasChanges}

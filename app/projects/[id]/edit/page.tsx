@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { useUnsavedWarning } from '@/hooks/useUnsavedWarning'
+import { useToast } from '@/hooks/useToast'
 import { getProject } from '@/lib/api/projects'
 import TechStackInput from '@/components/TechStackInput'
 import ThumbnailUploader from '@/components/ThumbnailUploader'
@@ -11,6 +12,7 @@ import FormField from '@/components/ui/FormField'
 import ErrorAlert from '@/components/ui/ErrorAlert'
 import Spinner from '@/components/ui/Spinner'
 import EditorBar from '@/components/EditorBar'
+import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import { inputClass } from '@/lib/styles/form'
 import api from '@/lib/api/client'
 
@@ -18,9 +20,11 @@ export default function EditProjectPage() {
   const params = useParams()
   const router = useRouter()
   const { isAdmin, authReady } = useAuth()
+  const { showToast } = useToast()
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false)
 
   const [formData, setFormData] = useState({
     title: '',
@@ -97,6 +101,7 @@ export default function EditProjectPage() {
       if (formData.tags.length > 0) payload.tags = formData.tags
 
       await api.patch(`/projects/${params.id}`, payload)
+      showToast('프로젝트가 수정되었습니다.')
       router.replace(`/projects/${params.id}`)
     } catch (err: unknown) {
       const e = err as { message?: string | string[] }
@@ -107,7 +112,10 @@ export default function EditProjectPage() {
   }
 
   const handleCancel = () => {
-    if (hasChanges && !confirm('변경사항이 저장되지 않았습니다. 취소할까요?')) return
+    if (hasChanges) {
+      setShowCancelConfirm(true)
+      return
+    }
     router.push(`/projects/${params.id}`)
   }
 
@@ -116,6 +124,17 @@ export default function EditProjectPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <ConfirmDialog
+        open={showCancelConfirm}
+        title="수정 취소"
+        description="변경사항이 저장되지 않습니다. 취소할까요?"
+        confirmLabel="취소하기"
+        cancelLabel="계속 수정"
+        variant="warning"
+        onConfirm={() => router.push(`/projects/${params.id}`)}
+        onCancel={() => setShowCancelConfirm(false)}
+      />
+
       <EditorBar
         title="프로젝트 수정"
         hasChanges={hasChanges}

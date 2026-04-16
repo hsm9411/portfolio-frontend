@@ -13,6 +13,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import Image from 'next/image'
 import api from '@/lib/api/client'
+import { useToast } from '@/hooks/useToast'
 
 interface Props {
   project: Project
@@ -28,6 +29,7 @@ const statusConfig = {
 export default function ProjectDetailClient({ project, from }: Props) {
   const router = useRouter()
   const { isAdmin } = useAuth()
+  const { showToast } = useToast()
   const [deleting, setDeleting] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
@@ -39,10 +41,11 @@ export default function ProjectDetailClient({ project, from }: Props) {
     try {
       setDeleting(true)
       await api.delete(`/projects/${project.id}`)
+      showToast('프로젝트가 삭제되었습니다.')
       router.push('/projects')
-    } catch (err) {
-      console.error('Failed to delete project:', err)
+    } catch {
       setShowDeleteConfirm(false)
+      showToast('삭제에 실패했습니다. 다시 시도해주세요.', 'error')
     } finally {
       setDeleting(false)
     }
@@ -69,7 +72,12 @@ export default function ProjectDetailClient({ project, from }: Props) {
             <div className="flex gap-3">
               <button onClick={() => setShowDeleteConfirm(false)} className="flex-1 rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700">취소</button>
               <button onClick={handleDelete} disabled={deleting} className="flex-1 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-60">
-                {deleting ? '삭제 중...' : '삭제'}
+                {deleting ? (
+                  <span className="flex items-center justify-center gap-1.5">
+                    <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    삭제 중...
+                  </span>
+                ) : '삭제'}
               </button>
             </div>
           </div>
