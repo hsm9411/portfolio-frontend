@@ -216,7 +216,7 @@ export default function BlogPostClient({ post, from }: Props) {
 
           {/* 모바일 TOC */}
           {tocItems.length > 0 && (
-            <div className="xl:hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+            <div className="min-[1440px]:hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
               <button
                 onClick={() => setTocOpen((v) => !v)}
                 className="flex w-full items-center justify-between px-4 py-3.5 text-sm font-semibold text-gray-700 dark:text-gray-200"
