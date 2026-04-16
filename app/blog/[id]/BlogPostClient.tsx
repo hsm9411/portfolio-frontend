@@ -180,88 +180,65 @@ export default function BlogPostClient({ post, from }: Props) {
         </div>
       </header>
 
-      {/* 본문 */}
-      <main className={`mx-auto px-4 py-6 sm:px-5 sm:py-10 ${tocItems.length > 0 ? 'max-w-[1000px] xl:max-w-[1280px]' : 'max-w-[1000px]'}`}>
-        <div className={tocItems.length > 0 ? 'xl:flex xl:items-start xl:gap-8' : ''}>
-
-          {/* 콘텐츠 */}
-          <div className={tocItems.length > 0 ? 'min-w-0 xl:flex-1' : 'mx-auto max-w-[1000px]'}>
-            <div className="space-y-5 sm:space-y-8">
-
-              {/* 모바일 TOC */}
-              {tocItems.length > 0 && (
-                <div className="xl:hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                  <button
-                    onClick={() => setTocOpen((v) => !v)}
-                    className="flex w-full items-center justify-between px-4 py-3.5 text-sm font-semibold text-gray-700 dark:text-gray-200"
-                  >
-                    <span className="flex items-center gap-2">
-                      <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h10M4 14h12M4 18h8" />
-                      </svg>
-                      목차
-                    </span>
-                    <svg className={`h-4 w-4 text-gray-400 transition-transform ${tocOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
-                  {tocOpen && (
-                    <nav className="border-t border-gray-100 px-4 py-3 dark:border-gray-700">
-                      <ul className="space-y-1.5">
-                        {tocItems.map((item) => (
-                          <li key={item.id} className={item.level === 3 ? 'ml-4' : ''}>
-                            <a
-                              href={`#${item.id}`}
-                              onClick={() => setTocOpen(false)}
-                              className="block truncate text-sm text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
-                            >
-                              {item.text}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    </nav>
-                  )}
-                </div>
-              )}
-
-              <section className="rounded-2xl border border-gray-200 bg-white px-4 py-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:px-6 sm:py-10 md:px-10 md:py-12">
-                <div className="markdown-body">
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    rehypePlugins={[rehypeHighlight]}
-                    components={markdownComponents}
-                  >
-                    {post.content}
-                  </ReactMarkdown>
-                </div>
-              </section>
-
-              <div className="rounded-2xl border border-gray-200 bg-white px-4 py-5 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:px-6">
-                <LikeButton targetType="post" targetId={post.id} initialLikeCount={post.likeCount} />
-              </div>
-              <div className="rounded-2xl border border-gray-200 bg-white px-4 py-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:px-6 sm:py-8 md:px-8">
-                <CommentSection targetType="post" targetId={post.id} />
-              </div>
-            </div>
+      {/* 데스크톱 TOC - fixed 포지션, 본문 레이아웃과 무관 */}
+      {tocItems.length > 0 && (
+        <aside className="hidden xl:block fixed top-36 w-48"
+          style={{ left: 'calc(50% + 520px)' }}
+        >
+          <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+            <p className="mb-3 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h10M4 14h12M4 18h8" />
+              </svg>
+              목차
+            </p>
+            <nav>
+              <ul className="space-y-1.5">
+                {tocItems.map((item) => (
+                  <li key={item.id} className={item.level === 3 ? 'ml-3' : ''}>
+                    <a
+                      href={`#${item.id}`}
+                      className="block truncate text-sm text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+                    >
+                      {item.text}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </div>
+        </aside>
+      )}
 
-          {/* 데스크톱 TOC 사이드바 */}
+      {/* 본문 — 너비 원복 */}
+      <main className="mx-auto max-w-[1000px] px-4 py-6 sm:px-5 sm:py-10">
+        <div className="space-y-5 sm:space-y-8">
+
+          {/* 모바일 TOC */}
           {tocItems.length > 0 && (
-            <aside className="hidden xl:block xl:w-52 xl:shrink-0">
-              <div className="sticky top-36 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-                <p className="mb-3 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
-                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <div className="xl:hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+              <button
+                onClick={() => setTocOpen((v) => !v)}
+                className="flex w-full items-center justify-between px-4 py-3.5 text-sm font-semibold text-gray-700 dark:text-gray-200"
+              >
+                <span className="flex items-center gap-2">
+                  <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h10M4 14h12M4 18h8" />
                   </svg>
                   목차
-                </p>
-                <nav>
+                </span>
+                <svg className={`h-4 w-4 text-gray-400 transition-transform ${tocOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {tocOpen && (
+                <nav className="border-t border-gray-100 px-4 py-3 dark:border-gray-700">
                   <ul className="space-y-1.5">
                     {tocItems.map((item) => (
-                      <li key={item.id} className={item.level === 3 ? 'ml-3' : ''}>
+                      <li key={item.id} className={item.level === 3 ? 'ml-4' : ''}>
                         <a
                           href={`#${item.id}`}
+                          onClick={() => setTocOpen(false)}
                           className="block truncate text-sm text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                         >
                           {item.text}
@@ -270,9 +247,28 @@ export default function BlogPostClient({ post, from }: Props) {
                     ))}
                   </ul>
                 </nav>
-              </div>
-            </aside>
+              )}
+            </div>
           )}
+
+          <section className="rounded-2xl border border-gray-200 bg-white px-4 py-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:px-6 sm:py-10 md:px-10 md:py-12">
+            <div className="markdown-body">
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeHighlight]}
+                components={markdownComponents}
+              >
+                {post.content}
+              </ReactMarkdown>
+            </div>
+          </section>
+
+          <div className="rounded-2xl border border-gray-200 bg-white px-4 py-5 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:px-6">
+            <LikeButton targetType="post" targetId={post.id} initialLikeCount={post.likeCount} />
+          </div>
+          <div className="rounded-2xl border border-gray-200 bg-white px-4 py-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:px-6 sm:py-8 md:px-8">
+            <CommentSection targetType="post" targetId={post.id} />
+          </div>
         </div>
       </main>
     </div>
