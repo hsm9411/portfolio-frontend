@@ -86,34 +86,33 @@ export default function NewProjectPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
 
-      {/* 페이지 헤더 — 취소 + 제목 */}
-      <header className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800/50">
-        <div className="mx-auto flex max-w-[1000px] items-center px-5 py-4">
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="flex items-center gap-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-          >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-            취소
-          </button>
-          <span className="ml-3 text-sm font-semibold text-gray-700 dark:text-gray-300">프로젝트 작성</span>
-          {hasChanges && (
-            <span className="ml-2 text-xs text-amber-600 dark:text-amber-400">● 저장되지 않은 변경사항</span>
-          )}
-        </div>
-      </header>
-
-      {/* Sticky 액션 바 — 저장 */}
+      {/* 단일 Sticky 바 */}
       <div className="sticky top-[72px] z-40 border-b border-gray-200 bg-white/90 backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/90">
-        <div className="mx-auto flex max-w-[1000px] items-center justify-end px-5 py-2.5">
+        <div className="mx-auto flex max-w-[1000px] items-center justify-between px-5 py-3">
+          {/* 왼쪽: 취소 + 제목 + 변경사항 */}
+          <div className="flex items-center gap-3 min-w-0">
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="flex shrink-0 items-center gap-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+              취소
+            </button>
+            <span className="h-4 w-px shrink-0 bg-gray-200 dark:bg-gray-700" />
+            <span className="truncate text-sm font-semibold text-gray-700 dark:text-gray-300">프로젝트 작성</span>
+            {hasChanges && (
+              <span className="shrink-0 text-xs text-amber-600 dark:text-amber-400">● 미저장</span>
+            )}
+          </div>
+          {/* 오른쪽: 저장 */}
           <button
             form="project-form"
             type="submit"
             disabled={submitting}
-            className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
+            className="flex shrink-0 items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
           >
             {submitting ? (
               <>
