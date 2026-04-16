@@ -1,7 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { getComments, createComment, type Comment } from '@/lib/api/comments'
+import { useToast } from '@/hooks/useToast'
 import { createClient } from '@/lib/supabase/client'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
@@ -13,6 +15,8 @@ interface CommentSectionProps {
 }
 
 export default function CommentSection({ targetType, targetId }: CommentSectionProps) {
+  const router = useRouter()
+  const { showToast } = useToast()
   const [comments, setComments] = useState<Comment[]>([])
   const [loading, setLoading] = useState(true)
   const [newComment, setNewComment] = useState('')
@@ -52,8 +56,9 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
       await createComment(targetType, targetId, { content: newComment.trim() })
       setNewComment('')
       await loadComments()
-    } catch (error: unknown) {
-      console.error('Failed to create comment:', error)
+      showToast('댓글이 등록되었습니다.')
+    } catch {
+      showToast('댓글 등록에 실패했습니다. 다시 시도해주세요.', 'error')
     } finally {
       setSubmitting(false)
     }
@@ -81,15 +86,25 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
           <textarea
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
-            placeholder={isAuthenticated ? '댓글을 작성해주세요...' : '로그인 후 댓글을 작성할 수 있습니다.'}
+            placeholder={isAuthenticated ? '댓글을 작성해주세요...' : '댓글을 작성하려면 로그인이 필요합니다.'}
             disabled={!isAuthenticated || submitting}
             rows={3}
             className="w-full resize-none rounded-xl bg-transparent px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60 dark:text-gray-200 dark:placeholder-gray-500"
           />
           <div className="flex items-center justify-between border-t border-gray-200 px-4 py-2.5 dark:border-gray-700">
-            <span className="text-xs text-gray-400 dark:text-gray-500">
-              {newComment.length > 0 ? `${newComment.length}자` : ''}
-            </span>
+            {!isAuthenticated ? (
+              <button
+                type="button"
+                onClick={() => router.push('/login')}
+                className="text-xs text-blue-500 underline-offset-2 hover:underline dark:text-blue-400"
+              >
+                로그인하러 가기
+              </button>
+            ) : (
+              <span className="text-xs text-gray-400 dark:text-gray-500">
+                {newComment.length > 0 ? `${newComment.length}자` : ''}
+              </span>
+            )}
             <button
               type="submit"
               disabled={!isAuthenticated || submitting || !newComment.trim()}

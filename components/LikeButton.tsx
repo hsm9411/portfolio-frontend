@@ -1,7 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { toggleLike, getLikeStatus } from '@/lib/api/likes'
+import { useToast } from '@/hooks/useToast'
 import { createClient } from '@/lib/supabase/client'
 import type { Session } from '@supabase/supabase-js'
 
@@ -12,6 +14,8 @@ interface LikeButtonProps {
 }
 
 export default function LikeButton({ targetType, targetId, initialLikeCount }: LikeButtonProps) {
+  const router = useRouter()
+  const { showToast } = useToast()
   const [liked, setLiked] = useState(false)
   const [likeCount, setLikeCount] = useState(initialLikeCount)
   const [loading, setLoading] = useState(false)
@@ -31,7 +35,7 @@ export default function LikeButton({ targetType, targetId, initialLikeCount }: L
 
   const handleToggle = async () => {
     if (!isAuthenticated) {
-      alert('좋아요는 로그인 후 이용할 수 있습니다.')
+      showToast('로그인 후 좋아요를 누를 수 있습니다.', 'warning')
       return
     }
     if (loading) return
@@ -47,6 +51,7 @@ export default function LikeButton({ targetType, targetId, initialLikeCount }: L
       // 실패 시 롤백
       setLiked((prev) => !prev)
       setLikeCount((prev) => liked ? prev + 1 : prev - 1)
+      showToast('좋아요 처리에 실패했습니다.', 'error')
     } finally {
       setLoading(false)
     }
@@ -76,7 +81,12 @@ export default function LikeButton({ targetType, targetId, initialLikeCount }: L
         <span>{likeCount.toLocaleString()}</span>
       </button>
       {!isAuthenticated && (
-        <p className="text-xs text-gray-400 dark:text-gray-500">로그인 후 좋아요를 누를 수 있습니다</p>
+        <button
+          onClick={() => router.push('/login')}
+          className="text-xs text-gray-400 underline-offset-2 hover:text-blue-500 hover:underline dark:text-gray-500 dark:hover:text-blue-400"
+        >
+          로그인하고 좋아요 누르기
+        </button>
       )}
     </div>
   )
