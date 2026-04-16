@@ -7,6 +7,11 @@ import { useUnsavedWarning } from '@/hooks/useUnsavedWarning'
 import { getProject } from '@/lib/api/projects'
 import TechStackInput from '@/components/TechStackInput'
 import ThumbnailUploader from '@/components/ThumbnailUploader'
+import FormField from '@/components/ui/FormField'
+import ErrorAlert from '@/components/ui/ErrorAlert'
+import Spinner from '@/components/ui/Spinner'
+import EditorBar from '@/components/EditorBar'
+import { inputClass } from '@/lib/styles/form'
 import api from '@/lib/api/client'
 
 export default function EditProjectPage() {
@@ -106,121 +111,99 @@ export default function EditProjectPage() {
     router.push(`/projects/${params.id}`)
   }
 
-  if (!authReady || loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600" />
-      </div>
-    )
-  }
-
+  if (!authReady || loading) return <Spinner />
   if (!isAdmin) return null
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <EditorBar
+        title="프로젝트 수정"
+        hasChanges={hasChanges}
+        submitting={submitting}
+        onCancel={handleCancel}
+        formId="edit-project-form"
+      />
 
-      {/* ── Sticky 저장 바 ── */}
-      <div className="sticky top-16 z-40 border-b border-gray-200/80 bg-white/90 backdrop-blur-md dark:border-gray-800/80 dark:bg-gray-900/90">
-        <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={handleCancel}
-              className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-              </svg>
-              취소
-            </button>
-            <div>
-              <span className="text-base font-semibold text-gray-900 dark:text-white">프로젝트 수정</span>
-              {hasChanges && (
-                <span className="ml-2 text-xs text-amber-600 dark:text-amber-400">● 저장되지 않은 변경사항</span>
-              )}
-            </div>
-          </div>
-          <button
-            form="edit-project-form"
-            type="submit"
-            disabled={submitting || !hasChanges}
-            className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {submitting ? (
-              <>
-                <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                저장 중...
-              </>
-            ) : hasChanges ? '저장하기' : '변경사항 없음'}
-          </button>
-        </div>
-      </div>
-
-      <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-        {error && (
-          <div className="mb-6 flex items-start gap-3 rounded-xl bg-red-50 p-4 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">
-            <svg className="mt-0.5 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            {error}
-          </div>
-        )}
+      <main className="mx-auto max-w-[1000px] px-5 py-8">
+        {error && <ErrorAlert message={error} />}
 
         <form id="edit-project-form" onSubmit={handleSubmit}>
-          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-8">
-
-            <Field label="제목" required>
-              <input type="text" value={formData.title}
+          <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800 sm:p-8">
+            <FormField label="제목" required>
+              <input
+                type="text"
+                value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder="프로젝트 제목" className={inputClass} />
-            </Field>
-
-            <Field label="요약" required>
-              <input type="text" value={formData.summary}
+                placeholder="프로젝트 제목"
+                className={`${inputClass} font-semibold`}
+              />
+            </FormField>
+            <FormField label="요약" required>
+              <input
+                type="text"
+                value={formData.summary}
                 onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
-                placeholder="한 줄 소개" className={inputClass} />
-            </Field>
-
-            <Field label="상세 설명" required>
-              <textarea value={formData.description} rows={10}
+                placeholder="한 줄 소개"
+                className={inputClass}
+              />
+            </FormField>
+            <FormField label="상세 설명" required>
+              <textarea
+                value={formData.description}
+                rows={10}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="프로젝트 상세 설명" className={inputClass} />
-            </Field>
-
-            <Field label="기술 스택" required>
-              <TechStackInput value={formData.techStack} onChange={(v) => setFormData({ ...formData, techStack: v })} />
-            </Field>
-
-            <Field label="태그">
-              <TechStackInput value={formData.tags} onChange={(v) => setFormData({ ...formData, tags: v })} />
-            </Field>
-
+                placeholder="프로젝트 상세 설명"
+                className={inputClass}
+              />
+            </FormField>
+            <FormField label="기술 스택" required>
+              <TechStackInput
+                value={formData.techStack}
+                onChange={(v) => setFormData({ ...formData, techStack: v })}
+              />
+            </FormField>
+            <FormField label="태그">
+              <TechStackInput
+                value={formData.tags}
+                onChange={(v) => setFormData({ ...formData, tags: v })}
+              />
+            </FormField>
             <div className="grid gap-5 sm:grid-cols-2">
-              <Field label="썸네일 이미지">
+              <FormField label="썸네일 이미지">
                 <ThumbnailUploader
                   value={formData.thumbnailUrl}
                   onChange={(url) => setFormData({ ...formData, thumbnailUrl: url })}
                 />
-              </Field>
-              <Field label="데모 URL">
-                <input type="url" value={formData.demoUrl}
-                  onChange={(e) => setFormData({ ...formData, demoUrl: e.target.value })}
-                  placeholder="https://demo.example.com" className={inputClass} />
-              </Field>
-              <Field label="GitHub URL">
-                <input type="url" value={formData.githubUrl}
-                  onChange={(e) => setFormData({ ...formData, githubUrl: e.target.value })}
-                  placeholder="https://github.com/username/repo" className={inputClass} />
-              </Field>
-              <Field label="상태">
-                <select value={formData.status}
+              </FormField>
+              <FormField label="상태">
+                <select
+                  value={formData.status}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value as 'in-progress' | 'completed' | 'archived' })}
-                  className={inputClass}>
+                  className={inputClass}
+                >
                   <option value="in-progress">진행중</option>
                   <option value="completed">완료</option>
                   <option value="archived">보관</option>
                 </select>
-              </Field>
+              </FormField>
+              <FormField label="데모 URL">
+                <input
+                  type="url"
+                  value={formData.demoUrl}
+                  onChange={(e) => setFormData({ ...formData, demoUrl: e.target.value })}
+                  placeholder="https://demo.example.com"
+                  className={inputClass}
+                />
+              </FormField>
+              <FormField label="GitHub URL">
+                <input
+                  type="url"
+                  value={formData.githubUrl}
+                  onChange={(e) => setFormData({ ...formData, githubUrl: e.target.value })}
+                  placeholder="https://github.com/username/repo"
+                  className={inputClass}
+                />
+              </FormField>
             </div>
           </div>
         </form>
@@ -228,16 +211,3 @@ export default function EditProjectPage() {
     </div>
   )
 }
-
-function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
-  return (
-    <div className="mb-5">
-      <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
-      {children}
-    </div>
-  )
-}
-
-const inputClass = 'w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm transition-colors focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:focus:border-blue-500 dark:focus:bg-gray-800'
