@@ -182,7 +182,7 @@ export default function BlogPostClient({ post, from }: Props) {
 
       {/* 데스크톱 TOC - fixed 포지션, 본문 레이아웃과 무관 */}
       {tocItems.length > 0 && (
-        <aside className="hidden xl:block fixed top-36 w-48"
+        <aside className="hidden min-[1440px]:block fixed top-36 w-48"
           style={{ left: 'calc(50% + 520px)' }}
         >
           <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
