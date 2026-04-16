@@ -19,11 +19,12 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  const pageFromUrl   = Number(searchParams.get('page'))   || 1
-  const searchFromUrl = searchParams.get('search') || ''
+  const pageFromUrl     = Number(searchParams.get('page'))     || 1
+  const searchFromUrl   = searchParams.get('search')   || ''
+  const categoryFromUrl = searchParams.get('category') || ''
 
-  // SSR initialData는 항상 page=1, 검색 없음 기준으로 받아옴
-  const isDefaultUrl = pageFromUrl === 1 && searchFromUrl === ''
+  // SSR initialData는 항상 page=1, 검색/카테고리 없음 기준으로 받아옴
+  const isDefaultUrl = pageFromUrl === 1 && searchFromUrl === '' && categoryFromUrl === ''
 
   const [posts, setPosts]             = useState<Post[]>(isDefaultUrl ? initialData.items : [])
   const [totalPages, setTotalPages]   = useState(isDefaultUrl ? initialData.totalPages : 1)
@@ -34,11 +35,12 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
   // 최초 마운트 시 SSR 데이터를 그대로 쓰는 경우 fetch 스킵
   const hasMounted = useRef(false)
 
-  const loadPosts = useCallback(async (page: number, search: string) => {
+  const loadPosts = useCallback(async (page: number, search: string, category: string) => {
     try {
       setLoading(true)
-      const params: Record<string, unknown> = { page, limit: 10 }
-      if (search) params.search = search
+      const params: { page: number; limit: number; search?: string; category?: string } = { page, limit: 10 }
+      if (search)   params.search   = search
+      if (category) params.category = category
       const response = await getPosts(params)
       setPosts(response.items)
       setTotalPages(response.totalPages)
@@ -54,26 +56,35 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
       hasMounted.current = true
       if (isDefaultUrl) return  // 최초 진입, SSR 데이터로 충분
     }
-    loadPosts(pageFromUrl, searchFromUrl)
-  }, [pageFromUrl, searchFromUrl, isDefaultUrl, loadPosts])
+    loadPosts(pageFromUrl, searchFromUrl, categoryFromUrl)
+  }, [pageFromUrl, searchFromUrl, categoryFromUrl, isDefaultUrl, loadPosts])
 
-  const updateUrl = (page: number, search: string) => {
+  const updateUrl = (page: number, search: string, category: string) => {
     const params = new URLSearchParams()
-    if (page > 1)  params.set('page',   String(page))
-    if (search)    params.set('search', search)
+    if (page > 1)  params.set('page',     String(page))
+    if (search)    params.set('search',   search)
+    if (category)  params.set('category', category)
     const qs = params.toString()
     router.push(`/blog${qs ? `?${qs}` : ''}`, { scroll: false })
   }
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
-    updateUrl(1, searchInput)
+    updateUrl(1, searchInput, categoryFromUrl)
   }
 
   const handleClear = () => {
     setSearchInput('')
-    updateUrl(1, '')
+    updateUrl(1, '', categoryFromUrl)
   }
+
+  const CATEGORIES = [
+    { value: '',         label: '전체' },
+    { value: 'tutorial', label: '튜토리얼' },
+    { value: 'essay',    label: '에세이' },
+    { value: 'review',   label: '리뷰' },
+    { value: 'news',     label: '뉴스' },
+  ]
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -95,6 +106,24 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
               포스트 작성
             </Link>
           )}
+        </div>
+
+        {/* 카테고리 필터 */}
+        <div className="mb-5 flex flex-wrap gap-2">
+          {CATEGORIES.map(({ value, label }) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => updateUrl(1, searchFromUrl, value)}
+              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+                categoryFromUrl === value
+                  ? 'bg-blue-600 text-white'
+                  : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
         </div>
 
         <form onSubmit={handleSearch} className="mb-7">
@@ -134,15 +163,22 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
         ) : posts.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-gray-200 py-24 text-center dark:border-gray-700">
             <p className="text-sm text-gray-400 dark:text-gray-500">
-              {searchFromUrl ? `"${searchFromUrl}"에 대한 결과가 없습니다.` : '포스트가 없습니다.'}
+              {searchFromUrl
+                ? `"${searchFromUrl}"에 대한 결과가 없습니다.`
+                : categoryFromUrl
+                  ? `해당 카테고리의 포스트가 없습니다.`
+                  : '포스트가 없습니다.'}
             </p>
-            {isAdmin && !searchFromUrl && (
+            {isAdmin && !searchFromUrl && !categoryFromUrl && (
               <Link href="/blog/new" className="mt-4 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
                 첫 포스트 작성하기
               </Link>
             )}
-            {searchFromUrl && (
-              <button onClick={handleClear} className="mt-4 inline-flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400">
+            {(searchFromUrl || categoryFromUrl) && (
+              <button
+                onClick={() => { setSearchInput(''); updateUrl(1, '', '') }}
+                className="mt-4 inline-flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400"
+              >
                 전체 목록으로
               </button>
             )}
@@ -160,7 +196,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
             {totalPages > 1 && (
               <div className="mt-10 flex items-center justify-center gap-2">
                 <button
-                  onClick={() => updateUrl(Math.max(1, pageFromUrl - 1), searchFromUrl)}
+                  onClick={() => updateUrl(Math.max(1, pageFromUrl - 1), searchFromUrl, categoryFromUrl)}
                   disabled={pageFromUrl === 1}
                   className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
                 >
@@ -172,7 +208,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
                   {pageFromUrl} / {totalPages}
                 </span>
                 <button
-                  onClick={() => updateUrl(Math.min(totalPages, pageFromUrl + 1), searchFromUrl)}
+                  onClick={() => updateUrl(Math.min(totalPages, pageFromUrl + 1), searchFromUrl, categoryFromUrl)}
                   disabled={pageFromUrl === totalPages}
                   className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
                 >
