@@ -56,6 +56,11 @@ export default function BlogPostClient({ post, from }: Props) {
   const markdownComponents: Components = useMemo(() => ({
     h2: ({ children }) => <h2 id={slugify(String(children))}>{children}</h2>,
     h3: ({ children }) => <h3 id={slugify(String(children))}>{children}</h3>,
+    table: ({ children }) => (
+      <div className="overflow-x-auto">
+        <table>{children}</table>
+      </div>
+    ),
   }), [])
 
   useEffect(() => {
