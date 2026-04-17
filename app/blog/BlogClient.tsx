@@ -24,9 +24,10 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
   const pageFromUrl     = Number(searchParams.get('page'))     || 1
   const searchFromUrl   = searchParams.get('search')   || ''
   const categoryFromUrl = searchParams.get('category') || ''
+  const sortFromUrl     = searchParams.get('sort')     || 'latest'
 
-  // SSR initialData는 항상 page=1, 검색/카테고리 없음 기준으로 받아옴
-  const isDefaultUrl = pageFromUrl === 1 && searchFromUrl === '' && categoryFromUrl === ''
+  // SSR initialData는 항상 page=1, 검색/카테고리/정렬 없음 기준으로 받아옴
+  const isDefaultUrl = pageFromUrl === 1 && searchFromUrl === '' && categoryFromUrl === '' && sortFromUrl === 'latest'
 
   const [posts, setPosts]             = useState<Post[]>(isDefaultUrl ? initialData.items : [])
   const [totalPages, setTotalPages]   = useState(isDefaultUrl ? initialData.totalPages : 1)
@@ -39,12 +40,18 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
   const hasMounted = useRef(false)
   const isFirstDebounce = useRef(true)
 
-  const loadPosts = useCallback(async (page: number, search: string, category: string) => {
+  const SORT_OPTIONS = [
+    { value: 'latest', label: '최신순' },
+    { value: 'views',  label: '조회수' },
+  ]
+
+  const loadPosts = useCallback(async (page: number, search: string, category: string, sort: string) => {
     try {
       setLoading(true)
-      const params: { page: number; limit: number; search?: string; category?: string } = { page, limit: 10 }
+      const params: Record<string, unknown> = { page, limit: 10 }
       if (search)   params.search   = search
       if (category) params.category = category
+      if (sort === 'views') { params.sortBy = 'view_count'; params.order = 'DESC' }
       const response = await getPosts(params)
       setPosts(response.items)
       setTotalPages(response.totalPages)
@@ -60,8 +67,8 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
       hasMounted.current = true
       if (isDefaultUrl) return  // 최초 진입, SSR 데이터로 충분
     }
-    loadPosts(pageFromUrl, searchFromUrl, categoryFromUrl)
-  }, [pageFromUrl, searchFromUrl, categoryFromUrl, isDefaultUrl, loadPosts])
+    loadPosts(pageFromUrl, searchFromUrl, categoryFromUrl, sortFromUrl)
+  }, [pageFromUrl, searchFromUrl, categoryFromUrl, sortFromUrl, isDefaultUrl, loadPosts])
 
   // debounce된 검색어가 바뀌면 URL 업데이트 (최초 마운트 시 스킵)
   useEffect(() => {
@@ -70,27 +77,28 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
       return
     }
     if (debouncedSearch === searchFromUrl) return
-    updateUrl(1, debouncedSearch, categoryFromUrl)
+    updateUrl(1, debouncedSearch, categoryFromUrl, sortFromUrl)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch])
 
-  const updateUrl = (page: number, search: string, category: string) => {
+  const updateUrl = (page: number, search: string, category: string, sort: string) => {
     const params = new URLSearchParams()
-    if (page > 1)  params.set('page',     String(page))
-    if (search)    params.set('search',   search)
-    if (category)  params.set('category', category)
+    if (page > 1)          params.set('page',     String(page))
+    if (search)            params.set('search',   search)
+    if (category)          params.set('category', category)
+    if (sort !== 'latest') params.set('sort',     sort)
     const qs = params.toString()
     router.push(`/blog${qs ? `?${qs}` : ''}`, { scroll: false })
   }
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
-    updateUrl(1, searchInput, categoryFromUrl)
+    updateUrl(1, searchInput, categoryFromUrl, sortFromUrl)
   }
 
   const handleClear = () => {
     setSearchInput('')
-    updateUrl(1, '', categoryFromUrl)
+    updateUrl(1, '', categoryFromUrl, sortFromUrl)
   }
 
   const CATEGORIES = [
@@ -129,7 +137,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
             <button
               key={value}
               type="button"
-              onClick={() => updateUrl(1, searchFromUrl, value)}
+              onClick={() => updateUrl(1, searchFromUrl, value, sortFromUrl)}
               className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                 categoryFromUrl === value
                   ? 'bg-blue-600 text-white'
@@ -143,6 +151,15 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
 
         <form onSubmit={handleSearch} className="mb-7">
           <div className="flex gap-2">
+            <select
+              value={sortFromUrl}
+              onChange={(e) => updateUrl(1, searchFromUrl, categoryFromUrl, e.target.value)}
+              className="shrink-0 rounded-lg border border-gray-200 bg-white py-2.5 pl-3 pr-8 text-sm text-gray-700 transition-colors focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+            >
+              {SORT_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
+            </select>
             <div className="relative flex-1">
               {loading && searchInput ? (
                 <div className="absolute left-3.5 top-1/2 -translate-y-1/2">
@@ -196,7 +213,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
             )}
             {(searchFromUrl || categoryFromUrl) && (
               <button
-                onClick={() => { setSearchInput(''); updateUrl(1, '', '') }}
+                onClick={() => { setSearchInput(''); updateUrl(1, '', '', sortFromUrl) }}
                 className="mt-4 inline-flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400"
               >
                 전체 목록으로
@@ -216,7 +233,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
             {totalPages > 1 && (
               <div className="mt-10 flex items-center justify-center gap-2">
                 <button
-                  onClick={() => updateUrl(Math.max(1, pageFromUrl - 1), searchFromUrl, categoryFromUrl)}
+                  onClick={() => updateUrl(Math.max(1, pageFromUrl - 1), searchFromUrl, categoryFromUrl, sortFromUrl)}
                   disabled={pageFromUrl === 1}
                   className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
                 >
@@ -228,7 +245,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
                   {pageFromUrl} / {totalPages}
                 </span>
                 <button
-                  onClick={() => updateUrl(Math.min(totalPages, pageFromUrl + 1), searchFromUrl, categoryFromUrl)}
+                  onClick={() => updateUrl(Math.min(totalPages, pageFromUrl + 1), searchFromUrl, categoryFromUrl, sortFromUrl)}
                   disabled={pageFromUrl === totalPages}
                   className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
                 >
