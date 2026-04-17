@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { getComments, createComment, deleteComment, type Comment } from '@/lib/api/comments'
+import { getComments, createComment, updateComment, deleteComment, type Comment } from '@/lib/api/comments'
 import { useToast } from '@/hooks/useToast'
 import { useAuth } from '@/hooks/useAuth'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
@@ -24,6 +24,9 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
   const [newComment, setNewComment] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editContent, setEditContent] = useState('')
+  const [editSubmitting, setEditSubmitting] = useState(false)
 
   useEffect(() => {
     loadComments()
@@ -38,6 +41,32 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
       setComments([])
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleEditStart = (comment: Comment) => {
+    setEditingId(comment.id)
+    setEditContent(comment.content)
+  }
+
+  const handleEditCancel = () => {
+    setEditingId(null)
+    setEditContent('')
+  }
+
+  const handleEditSave = async (id: string) => {
+    if (!editContent.trim()) return
+    try {
+      setEditSubmitting(true)
+      await updateComment(id, { content: editContent.trim() })
+      setEditingId(null)
+      setEditContent('')
+      await loadComments()
+      showToast('댓글이 수정되었습니다.')
+    } catch {
+      showToast('댓글 수정에 실패했습니다. 다시 시도해주세요.', 'error')
+    } finally {
+      setEditSubmitting(false)
     }
   }
 
@@ -166,7 +195,19 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
                   <span className="text-xs text-gray-400 dark:text-gray-500">
                     {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true, locale: ko })}
                   </span>
-                  {(comment.isMine || isAdmin) && (
+                  {comment.isMine && editingId !== comment.id && (
+                    <button
+                      type="button"
+                      onClick={() => handleEditStart(comment)}
+                      className="rounded p-0.5 text-gray-300 transition-colors hover:text-blue-500 dark:text-gray-600 dark:hover:text-blue-400"
+                      aria-label="댓글 수정"
+                    >
+                      <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                  )}
+                  {(comment.isMine || isAdmin) && editingId !== comment.id && (
                     <button
                       type="button"
                       onClick={() => setDeleteTargetId(comment.id)}
@@ -180,9 +221,42 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
                   )}
                 </div>
               </div>
-              <p className="whitespace-pre-wrap pl-9 text-sm leading-relaxed text-gray-700 dark:text-gray-300">
-                {comment.content}
-              </p>
+              {editingId === comment.id ? (
+                <div className="pl-9">
+                  <textarea
+                    value={editContent}
+                    onChange={(e) => setEditContent(e.target.value)}
+                    rows={3}
+                    className="w-full resize-none rounded-lg border border-blue-400 bg-white px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-blue-500 dark:bg-gray-800 dark:text-gray-200"
+                  />
+                  <div className="mt-2 flex items-center justify-end gap-2">
+                    <button
+                      type="button"
+                      onClick={handleEditCancel}
+                      className="rounded-lg px-3 py-1.5 text-xs font-medium text-gray-500 transition-colors hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                    >
+                      취소
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleEditSave(comment.id)}
+                      disabled={editSubmitting || !editContent.trim() || editContent.trim() === comment.content}
+                      className="flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {editSubmitting ? (
+                        <>
+                          <div className="h-3 w-3 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                          저장 중
+                        </>
+                      ) : '저장'}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <p className="whitespace-pre-wrap pl-9 text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+                  {comment.content}
+                </p>
+              )}
             </div>
           ))}
         </div>

@@ -4,8 +4,10 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { getProjects, type Project } from '@/lib/api/projects'
 import ProjectCard from '@/components/ProjectCard'
+import ProjectCardSkeleton from '@/components/ui/ProjectCardSkeleton'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
+import { useDebounce } from '@/hooks/useDebounce'
 
 const STATUS_FILTERS = [
   { value: 'all',         label: '전체'   },
@@ -28,23 +30,41 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
 
   const pageFromUrl   = Number(searchParams.get('page'))   || 1
   const statusFromUrl = searchParams.get('status') || 'all'
+  const searchFromUrl = searchParams.get('search') || ''
+  const sortFromUrl   = searchParams.get('sort')   || 'latest'
 
-  // SSR initialData는 항상 page=1, status=all 기준으로 받아옴
-  const isDefaultUrl = pageFromUrl === 1 && statusFromUrl === 'all'
+  // SSR initialData는 항상 page=1, status=all, search='', sort=latest 기준으로 받아옴
+  const isDefaultUrl = pageFromUrl === 1 && statusFromUrl === 'all' && searchFromUrl === '' && sortFromUrl === 'latest'
 
   const [projects, setProjects]     = useState<Project[]>(isDefaultUrl ? initialData.items : [])
   const [totalPages, setTotalPages] = useState(isDefaultUrl ? initialData.totalPages : 1)
   const [loading, setLoading]       = useState(!isDefaultUrl)
+  const [searchInput, setSearchInput] = useState(searchFromUrl)
+  const debouncedSearch = useDebounce(searchInput, 400)
   const { isAdmin } = useAuth()
 
   // 최초 마운트 시 SSR 데이터를 그대로 쓰는 경우 fetch 스킵
   const hasMounted = useRef(false)
+  const isFirstDebounce = useRef(true)
 
-  const loadProjects = useCallback(async (page: number, status: string) => {
+  const SORT_OPTIONS = [
+    { value: 'latest', label: '최신순' },
+    { value: 'views',  label: '조회수' },
+    { value: 'likes',  label: '좋아요' },
+  ]
+
+  const sortToParams = (sort: string): Record<string, string> => {
+    if (sort === 'views') return { sortBy: 'view_count',  order: 'DESC' }
+    if (sort === 'likes') return { sortBy: 'like_count',  order: 'DESC' }
+    return                       { sortBy: 'created_at', order: 'DESC' }
+  }
+
+  const loadProjects = useCallback(async (page: number, status: string, search: string, sort: string) => {
     try {
       setLoading(true)
-      const params: Record<string, unknown> = { page, limit: 9, sortBy: 'created_at', order: 'DESC' }
+      const params: Record<string, unknown> = { page, limit: 9, ...sortToParams(sort) }
       if (status !== 'all') params.status = status
+      if (search) params.search = search
       const response = await getProjects(params)
       setProjects(response.items)
       setTotalPages(response.totalPages)
@@ -60,19 +80,33 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
       hasMounted.current = true
       if (isDefaultUrl) return  // 최초 진입, SSR 데이터로 충분
     }
-    loadProjects(pageFromUrl, statusFromUrl)
-  }, [pageFromUrl, statusFromUrl, isDefaultUrl, loadProjects])
+    loadProjects(pageFromUrl, statusFromUrl, searchFromUrl, sortFromUrl)
+  }, [pageFromUrl, statusFromUrl, searchFromUrl, sortFromUrl, isDefaultUrl, loadProjects])
 
-  const updateUrl = (page: number, status: string) => {
+  // debounce된 검색어가 바뀌면 URL 업데이트
+  useEffect(() => {
+    if (isFirstDebounce.current) {
+      isFirstDebounce.current = false
+      return
+    }
+    if (debouncedSearch === searchFromUrl) return
+    updateUrl(1, statusFromUrl, debouncedSearch, sortFromUrl)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearch])
+
+  const updateUrl = (page: number, status: string, search: string, sort: string) => {
     const params = new URLSearchParams()
-    if (page > 1)         params.set('page', String(page))
-    if (status !== 'all') params.set('status', status)
+    if (page > 1)          params.set('page',   String(page))
+    if (status !== 'all')  params.set('status', status)
+    if (search)            params.set('search', search)
+    if (sort !== 'latest') params.set('sort',   sort)
     const qs = params.toString()
     router.push(`/projects${qs ? `?${qs}` : ''}`, { scroll: false })
   }
 
-  const handleStatusChange = (status: string) => updateUrl(1, status)
-  const handlePageChange   = (page: number)   => updateUrl(page, statusFromUrl)
+  const handleStatusChange = (status: string) => updateUrl(1, status, searchFromUrl, sortFromUrl)
+  const handlePageChange   = (page: number)   => updateUrl(page, statusFromUrl, searchFromUrl, sortFromUrl)
+  const handleClear        = () => { setSearchInput(''); updateUrl(1, statusFromUrl, '', sortFromUrl) }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -96,6 +130,54 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
           )}
         </div>
 
+        {/* 검색 */}
+        <div className="mb-5">
+          <div className="flex gap-2">
+            <select
+              value={sortFromUrl}
+              onChange={(e) => updateUrl(1, statusFromUrl, searchFromUrl, e.target.value)}
+              className="shrink-0 rounded-lg border border-gray-200 bg-white py-2.5 pl-3 pr-8 text-sm text-gray-700 transition-colors focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+            >
+              {SORT_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
+            </select>
+            <div className="relative flex-1">
+              {loading && searchInput ? (
+                <div className="absolute left-3.5 top-1/2 -translate-y-1/2">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-200 border-t-blue-500" />
+                </div>
+              ) : (
+                <svg className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              )}
+              <input
+                type="text"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder="프로젝트 검색..."
+                className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 transition-colors focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500 dark:focus:border-blue-500"
+              />
+            </div>
+            {(searchInput || searchFromUrl) && (
+              <button
+                type="button"
+                onClick={handleClear}
+                className="rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+              >
+                초기화
+              </button>
+            )}
+          </div>
+          {searchFromUrl && (
+            <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
+              <span className="font-semibold text-gray-700 dark:text-gray-300">{'"'}{searchFromUrl}{'"'}</span> 검색 결과
+            </p>
+          )}
+        </div>
+
+        {/* 상태 필터 */}
         <div className="mb-7 flex flex-wrap gap-2">
           {STATUS_FILTERS.map((f) => (
             <button
@@ -113,16 +195,32 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-24">
-            <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-gray-200 border-t-blue-600" />
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <ProjectCardSkeleton key={i} />
+            ))}
           </div>
         ) : projects.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-gray-200 py-24 text-center dark:border-gray-700">
-            <p className="text-sm text-gray-400 dark:text-gray-500">프로젝트가 없습니다.</p>
-            {isAdmin && (
+            <p className="text-sm text-gray-400 dark:text-gray-500">
+              {searchFromUrl
+                ? `"${searchFromUrl}"에 대한 결과가 없습니다.`
+                : statusFromUrl !== 'all'
+                  ? '해당 상태의 프로젝트가 없습니다.'
+                  : '프로젝트가 없습니다.'}
+            </p>
+            {isAdmin && !searchFromUrl && statusFromUrl === 'all' && (
               <Link href="/projects/new" className="mt-4 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
                 첫 프로젝트 작성하기
               </Link>
+            )}
+            {(searchFromUrl || statusFromUrl !== 'all') && (
+              <button
+                onClick={() => { setSearchInput(''); updateUrl(1, 'all', '', sortFromUrl) }}
+                className="mt-4 inline-flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400"
+              >
+                전체 목록으로
+              </button>
             )}
           </div>
         ) : (
