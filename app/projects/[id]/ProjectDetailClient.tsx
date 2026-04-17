@@ -226,7 +226,7 @@ export default function ProjectDetailClient({ project, from }: Props) {
             </section>
           )}
 
-          <section className="rounded-2xl bg-white px-4 py-6 shadow-sm ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700 sm:px-8 sm:py-8">
+          <section className="-mx-5 bg-white px-5 py-6 dark:bg-gray-800 sm:mx-0 sm:rounded-2xl sm:px-8 sm:py-8 sm:shadow-sm sm:ring-1 sm:ring-gray-200 dark:sm:ring-gray-700">
             <h2 className="mb-5 text-base font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">📋 Description</h2>
             <div className="markdown-body">
               <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]} components={markdownComponents}>{project.description}</ReactMarkdown>

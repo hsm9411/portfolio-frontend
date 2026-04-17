@@ -308,7 +308,7 @@ export default function BlogPostClient({ post, from }: Props) {
             </div>
           )}
 
-          <section className="rounded-2xl border border-gray-200 bg-white px-4 py-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:px-6 sm:py-10 md:px-10 md:py-12">
+          <section className="-mx-4 bg-white px-4 py-6 dark:bg-gray-800 sm:mx-0 sm:rounded-2xl sm:border sm:border-gray-200 sm:px-6 sm:py-10 sm:shadow-sm dark:sm:border-gray-700 md:px-10 md:py-12">
             <div className="markdown-body">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
