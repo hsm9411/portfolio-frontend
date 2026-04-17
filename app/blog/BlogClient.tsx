@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { getPosts, type Post } from '@/lib/api/posts'
 import PostCard from '@/components/PostCard'
+import PostCardSkeleton from '@/components/ui/PostCardSkeleton'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 
@@ -157,8 +158,10 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
         </form>
 
         {loading ? (
-          <div className="flex justify-center py-24">
-            <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-gray-200 border-t-blue-600" />
+          <div className="flex flex-col gap-4">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <PostCardSkeleton key={i} />
+            ))}
           </div>
         ) : posts.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-gray-200 py-24 text-center dark:border-gray-700">

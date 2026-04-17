@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { getProjects, type Project } from '@/lib/api/projects'
 import ProjectCard from '@/components/ProjectCard'
+import ProjectCardSkeleton from '@/components/ui/ProjectCardSkeleton'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 
@@ -113,8 +114,10 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-24">
-            <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-gray-200 border-t-blue-600" />
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <ProjectCardSkeleton key={i} />
+            ))}
           </div>
         ) : projects.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-gray-200 py-24 text-center dark:border-gray-700">
