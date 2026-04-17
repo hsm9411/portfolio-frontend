@@ -183,13 +183,14 @@ export default function ProjectDetailClient({ project, from }: Props) {
       <main className="mx-auto max-w-[1000px] px-5 py-10">
         <div className="space-y-8">
           {project.thumbnailUrl && (
-            <div className="relative aspect-video overflow-hidden rounded-2xl shadow-md">
+            <div className="relative overflow-hidden rounded-2xl bg-gray-100 shadow-md dark:bg-gray-800">
               <Image
                 src={project.thumbnailUrl}
                 alt={project.title}
-                fill
+                width={1000}
+                height={600}
                 sizes="(max-width: 1000px) 100vw, 1000px"
-                className="object-cover"
+                className="h-auto w-full object-contain"
               />
             </div>
           )}

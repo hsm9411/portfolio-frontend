@@ -25,14 +25,14 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     <div className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600">
 
       {/* 썸네일 */}
-      <div className="relative aspect-video w-full overflow-hidden">
+      <div className="relative aspect-video w-full overflow-hidden bg-gray-100 dark:bg-gray-700">
         {project.thumbnailUrl ? (
           <Image
             src={project.thumbnailUrl}
             alt={project.title}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-contain"
           />
         ) : (
           /* 플레이스홀더: 그라디언트 배경 + devicon 아이콘 */
