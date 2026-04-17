@@ -37,7 +37,7 @@ body {
    @tailwindcss/typography 호환성 이슈 우회
 ───────────────────────────────────────────── */
 .markdown-body {
-  font-size: 0.9375rem; /* 15px — 모바일 기본값 */
+  font-size: 0.875rem; /* 14px — 모바일 기본값 */
   line-height: 1.8;
   color: #374151;
   word-break: break-word;
@@ -296,7 +296,7 @@ body {
 ───────────────────────────────────────────── */
 @media (min-width: 640px) {
   .markdown-body {
-    font-size: 1rem;
+    font-size: 0.9375rem; /* 15px */
   }
 
   .markdown-body h1 { font-size: 1.875rem; }
