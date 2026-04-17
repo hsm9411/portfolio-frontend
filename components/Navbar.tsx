@@ -45,6 +45,11 @@ export default function Navbar() {
   const blurPx    = (scrollRatio * 12).toFixed(1)
   const borderOp  = (scrollRatio * 0.08).toFixed(3)
 
+  // EditorBar 등 sticky 하위 요소가 갭 없이 붙을 수 있도록 현재 높이를 CSS 변수로 노출
+  useEffect(() => {
+    document.documentElement.style.setProperty('--navbar-h', `${navHeight}px`)
+  }, [navHeight])
+
   /*
     배경색을 CSS 변수로 처리.
     globals.css에서 :root { --nav-r:255;--nav-g:255;--nav-b:255 }
