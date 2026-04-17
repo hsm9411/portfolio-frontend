@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { getComments, createComment, type Comment } from '@/lib/api/comments'
+import { getComments, createComment, deleteComment, type Comment } from '@/lib/api/comments'
 import { useToast } from '@/hooks/useToast'
-import { createClient } from '@/lib/supabase/client'
+import { useAuth } from '@/hooks/useAuth'
+import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
-import type { Session } from '@supabase/supabase-js'
 
 interface CommentSectionProps {
   targetType: 'project' | 'post'
@@ -17,18 +17,13 @@ interface CommentSectionProps {
 export default function CommentSection({ targetType, targetId }: CommentSectionProps) {
   const router = useRouter()
   const { showToast } = useToast()
+  const { user, isAdmin } = useAuth()
+  const isAuthenticated = !!user
   const [comments, setComments] = useState<Comment[]>([])
   const [loading, setLoading] = useState(true)
   const [newComment, setNewComment] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const supabase = createClient()
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
-      setIsAuthenticated(!!session)
-    }).catch(() => {})
-  }, [supabase.auth])
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null)
 
   useEffect(() => {
     loadComments()
@@ -43,6 +38,18 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
       setComments([])
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleDelete = async () => {
+    if (!deleteTargetId) return
+    try {
+      await deleteComment(deleteTargetId)
+      setDeleteTargetId(null)
+      await loadComments()
+      showToast('댓글이 삭제되었습니다.')
+    } catch {
+      showToast('댓글 삭제에 실패했습니다. 다시 시도해주세요.', 'error')
     }
   }
 
@@ -155,9 +162,23 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
                     </span>
                   )}
                 </div>
-                <span className="text-xs text-gray-400 dark:text-gray-500">
-                  {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true, locale: ko })}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-400 dark:text-gray-500">
+                    {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true, locale: ko })}
+                  </span>
+                  {(comment.isMine || isAdmin) && (
+                    <button
+                      type="button"
+                      onClick={() => setDeleteTargetId(comment.id)}
+                      className="rounded p-0.5 text-gray-300 transition-colors hover:text-red-500 dark:text-gray-600 dark:hover:text-red-400"
+                      aria-label="댓글 삭제"
+                    >
+                      <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
               </div>
               <p className="whitespace-pre-wrap pl-9 text-sm leading-relaxed text-gray-700 dark:text-gray-300">
                 {comment.content}
@@ -166,6 +187,17 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        open={!!deleteTargetId}
+        title="댓글 삭제"
+        description="이 댓글을 삭제하시겠습니까? 삭제된 댓글은 복구할 수 없습니다."
+        confirmLabel="삭제"
+        cancelLabel="취소"
+        variant="danger"
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteTargetId(null)}
+      />
     </div>
   )
 }
