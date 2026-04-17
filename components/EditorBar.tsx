@@ -23,7 +23,7 @@ export default function EditorBar({
   const hasPreviewToggle = preview !== undefined && onPreviewChange !== undefined
 
   return (
-    <div className="sticky top-[72px] z-40 border-b border-gray-200 bg-white/90 backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/90">
+    <div className="sticky z-40 border-b border-gray-200 bg-white/90 backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/90" style={{ top: 'var(--navbar-h, 72px)' }}>
       <div className="mx-auto flex max-w-[1000px] items-center justify-between px-5 py-3">
 
         {/* 왼쪽: 취소 + 구분선 + 제목 + 미저장 표시 */}
