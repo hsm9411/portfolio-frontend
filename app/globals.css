@@ -37,7 +37,7 @@ body {
    @tailwindcss/typography 호환성 이슈 우회
 ───────────────────────────────────────────── */
 .markdown-body {
-  font-size: 0.9375rem; /* 15px — 모바일 기본값 */
+  font-size: 0.875rem; /* 14px — 모바일 기본값 */
   line-height: 1.8;
   color: #374151;
   word-break: break-word;
@@ -191,12 +191,20 @@ body {
   margin: 0.3em 0;
 }
 
-/* 중첩 리스트: 레벨이 깊어질수록 들여쓰기 줄임 */
+/* 중첩 리스트: 들여쓰기 최소화 + 불릿 모양으로 계층 구분 */
 .markdown-body ul ul,
 .markdown-body ul ol,
 .markdown-body ol ul,
 .markdown-body ol ol {
-  padding-left: 1.1em;
+  padding-left: 0.75em;
+}
+
+.markdown-body ul ul {
+  list-style-type: circle;
+}
+
+.markdown-body ul ul ul {
+  list-style-type: square;
 }
 
 /* 체크박스 리스트 (GFM) */
@@ -288,7 +296,7 @@ body {
 ───────────────────────────────────────────── */
 @media (min-width: 640px) {
   .markdown-body {
-    font-size: 1rem;
+    font-size: 0.9375rem; /* 15px */
   }
 
   .markdown-body h1 { font-size: 1.875rem; }
