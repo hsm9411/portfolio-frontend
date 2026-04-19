@@ -118,6 +118,9 @@ export default function NewPostPage() {
         {!preview ? (
           <form id="new-post-form" onSubmit={handleSubmit}>
             <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800 sm:p-8">
+
+              {/* 기본 정보 */}
+              <p className="mb-5 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">기본 정보</p>
               <FormField label="제목" required>
                 <input
                   type="text"
@@ -127,22 +130,16 @@ export default function NewPostPage() {
                   className={`${inputClass} font-semibold`}
                 />
               </FormField>
-              <FormField label="요약" required>
+              <FormField label="한 줄 요약" required>
                 <input
                   type="text"
                   value={formData.summary}
                   onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
-                  placeholder="한 줄 소개"
+                  placeholder="목록/카드에 표시될 한 줄 소개"
                   className={inputClass}
                 />
               </FormField>
-              <FormField label="썸네일 이미지">
-                <ThumbnailUploader
-                  value={formData.thumbnailUrl}
-                  onChange={(url) => setFormData({ ...formData, thumbnailUrl: url })}
-                />
-              </FormField>
-              <div className="mb-5 grid gap-5 sm:grid-cols-2">
+              <div className="grid gap-5 sm:grid-cols-2">
                 <FormField label="카테고리" required>
                   <select
                     value={formData.category}
@@ -162,7 +159,18 @@ export default function NewPostPage() {
                   />
                 </FormField>
               </div>
-              <FormField label="본문 (Markdown)" required>
+              <FormField label="썸네일 이미지">
+                <ThumbnailUploader
+                  value={formData.thumbnailUrl}
+                  onChange={(url) => setFormData({ ...formData, thumbnailUrl: url })}
+                />
+              </FormField>
+
+              <div className="my-6 border-t border-gray-100 dark:border-gray-700" />
+
+              {/* 본문 */}
+              <p className="mb-5 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">본문 (Markdown)</p>
+              <FormField label="본문" required>
                 <textarea
                   value={formData.content}
                   rows={28}

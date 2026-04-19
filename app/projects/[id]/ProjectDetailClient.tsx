@@ -1,12 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { type Project } from '@/lib/api/projects'
 import { useAuth } from '@/hooks/useAuth'
 import LikeButton from '@/components/LikeButton'
 import CommentSection from '@/components/CommentSection'
 import ReactMarkdown from 'react-markdown'
+import type { Components } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 import { formatDistanceToNow } from 'date-fns'
@@ -64,6 +65,14 @@ export default function ProjectDetailClient({ project, from }: Props) {
   }
 
   const status = statusConfig[project.status as keyof typeof statusConfig] ?? statusConfig.archived
+
+  const markdownComponents: Components = useMemo(() => ({
+    table: ({ children }) => (
+      <div className="overflow-x-auto">
+        <table>{children}</table>
+      </div>
+    ),
+  }), [])
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -183,13 +192,14 @@ export default function ProjectDetailClient({ project, from }: Props) {
       <main className="mx-auto max-w-[1000px] px-5 py-10">
         <div className="space-y-8">
           {project.thumbnailUrl && (
-            <div className="relative aspect-video overflow-hidden rounded-2xl shadow-md">
+            <div className="relative overflow-hidden rounded-2xl bg-gray-100 shadow-md dark:bg-gray-800">
               <Image
                 src={project.thumbnailUrl}
                 alt={project.title}
-                fill
+                width={1000}
+                height={600}
                 sizes="(max-width: 1000px) 100vw, 1000px"
-                className="object-cover"
+                className="h-auto w-full object-contain"
               />
             </div>
           )}
@@ -216,10 +226,10 @@ export default function ProjectDetailClient({ project, from }: Props) {
             </section>
           )}
 
-          <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700 sm:p-8">
+          <section className="-mx-5 bg-white px-5 py-6 dark:bg-gray-800 sm:mx-0 sm:rounded-2xl sm:px-8 sm:py-8 sm:shadow-sm sm:ring-1 sm:ring-gray-200 dark:sm:ring-gray-700">
             <h2 className="mb-5 text-base font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">📋 Description</h2>
             <div className="markdown-body">
-              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>{project.description}</ReactMarkdown>
+              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]} components={markdownComponents}>{project.description}</ReactMarkdown>
             </div>
           </section>
 
