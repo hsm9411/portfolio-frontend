@@ -27,8 +27,8 @@ export async function getComments(
   targetType: CommentTargetType,
   targetId: string
 ): Promise<Comment[]> {
-  const response = await api.get<Comment[]>(`/comments/${targetType}/${targetId}`)
-  return response.data
+  const response = await api.get<{ items: Comment[] }>(`/comments/${targetType}/${targetId}`)
+  return response.data.items
 }
 
 /**
