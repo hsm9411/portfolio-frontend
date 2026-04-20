@@ -4,31 +4,34 @@ import type {
   CommentTargetType,
   CreateCommentRequest,
   UpdateCommentRequest,
+  PaginatedResponse,
 } from '@/lib/types/api'
 
 // ============================================
 // Re-export Types
 // ============================================
-export type { 
-  Comment, 
-  CommentTargetType, 
-  CreateCommentRequest, 
-  UpdateCommentRequest 
+export type {
+  Comment,
+  CommentTargetType,
+  CreateCommentRequest,
+  UpdateCommentRequest
 }
 
 // ============================================
 // Comments API
 // ============================================
 
-/**
- * 댓글 목록 조회 (익명 마스킹 적용)
- */
 export async function getComments(
   targetType: CommentTargetType,
-  targetId: string
-): Promise<Comment[]> {
-  const response = await api.get<{ items: Comment[] }>(`/comments/${targetType}/${targetId}`)
-  return response.data.items
+  targetId: string,
+  page = 1,
+  limit = 10
+): Promise<PaginatedResponse<Comment>> {
+  const response = await api.get<PaginatedResponse<Comment>>(
+    `/comments/${targetType}/${targetId}`,
+    { params: { page, limit } }
+  )
+  return response.data
 }
 
 /**
