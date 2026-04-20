@@ -45,6 +45,7 @@ export interface Project {
   summary: string;
   description: string; // Markdown
   thumbnailUrl?: string;
+  imageUrls?: string[];
   demoUrl?: string;
   githubUrl?: string;
   techStack: string[];
@@ -66,6 +67,7 @@ export interface CreateProjectRequest {
   summary: string;
   description: string;
   thumbnailUrl?: string;
+  imageUrls?: string[];
   demoUrl?: string;
   githubUrl?: string;
   techStack: string[];
