@@ -7,6 +7,7 @@ import { useUnsavedWarning } from '@/hooks/useUnsavedWarning'
 import { useToast } from '@/hooks/useToast'
 import TechStackInput from '@/components/TechStackInput'
 import ThumbnailUploader from '@/components/ThumbnailUploader'
+import ImageGalleryUploader from '@/components/ImageGalleryUploader'
 import FormField from '@/components/ui/FormField'
 import ErrorAlert from '@/components/ui/ErrorAlert'
 import Spinner from '@/components/ui/Spinner'
@@ -29,6 +30,7 @@ const EMPTY_FORM = {
   summary: '',
   description: '',
   thumbnailUrl: '',
+  imageUrls: [] as string[],
   demoUrl: '',
   githubUrl: '',
   techStack: [] as string[],
@@ -74,6 +76,7 @@ export default function NewProjectPage() {
         techStack: formData.techStack,
       }
       if (formData.thumbnailUrl) payload.thumbnailUrl = formData.thumbnailUrl
+      if (formData.imageUrls.length > 0) payload.imageUrls = formData.imageUrls
       if (formData.demoUrl) payload.demoUrl = formData.demoUrl
       if (formData.githubUrl) payload.githubUrl = formData.githubUrl
       if (formData.tags.length > 0) payload.tags = formData.tags
@@ -165,6 +168,17 @@ export default function NewProjectPage() {
                   />
                 </FormField>
               </div>
+
+              <div className="my-6 border-t border-gray-100 dark:border-gray-700" />
+
+              {/* 이미지 갤러리 */}
+              <p className="mb-5 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">이미지 갤러리</p>
+              <FormField label="갤러리 이미지">
+                <ImageGalleryUploader
+                  value={formData.imageUrls}
+                  onChange={(urls) => setFormData({ ...formData, imageUrls: urls })}
+                />
+              </FormField>
 
               <div className="my-6 border-t border-gray-100 dark:border-gray-700" />
 
