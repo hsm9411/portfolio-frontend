@@ -1,35 +1,7 @@
 import api from './client'
-import type {
-  User,
-  AuthResponse,
-  LoginRequest,
-  RegisterRequest,
-} from '@/lib/types/api'
+import type { User } from '@/lib/types/api'
 
-// ============================================
-// Re-export Types
-// ============================================
-export type { User, AuthResponse, LoginRequest, RegisterRequest }
-
-// ============================================
-// Auth API
-// ============================================
-
-/**
- * 회원가입 (Local)
- */
-export async function register(data: RegisterRequest): Promise<AuthResponse> {
-  const response = await api.post<AuthResponse>('/auth/register', data)
-  return response.data
-}
-
-/**
- * 로그인 (Local)
- */
-export async function login(data: LoginRequest): Promise<AuthResponse> {
-  const response = await api.post<AuthResponse>('/auth/login', data)
-  return response.data
-}
+export type { User }
 
 /**
  * 현재 사용자 정보 조회

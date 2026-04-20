@@ -33,32 +33,6 @@ export interface User {
   updatedAt: string;
 }
 
-export interface AuthResponse {
-  accessToken: string;
-  user: {
-    id: string;
-    email: string;
-    nickname: string;
-    avatarUrl: string | null;
-    isAdmin: boolean;
-  };
-}
-
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface RegisterRequest {
-  email: string;
-  password: string;
-  nickname: string;
-  bio?: string;
-  githubUrl?: string;
-  linkedinUrl?: string;
-  websiteUrl?: string;
-}
-
 // ============================================
 // Project
 // ============================================
