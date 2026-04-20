@@ -7,9 +7,6 @@ import Link from 'next/link'
 import type { Session } from '@supabase/supabase-js'
 
 function LoginForm() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const router = useRouter()
@@ -46,46 +43,6 @@ function LoginForm() {
       }
     }
   }, [searchParams])
-
-  // 로컬 로그인
-  const handleLocalLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    
-    if (!email || !password) {
-      setError('이메일과 비밀번호를 입력해주세요.')
-      return
-    }
-
-    try {
-      setLoading(true)
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
-      if (error) throw error
-
-      const nickname = data.user?.user_metadata?.nickname || data.user?.email
-      alert(`환영합니다, ${nickname}님!`)
-      
-      router.push(redirectUrl)
-      router.refresh()
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : ''
-      console.error('❌ 로그인 실패:', err)
-
-      if (message.includes('Invalid login credentials')) {
-        setError('이메일 또는 비밀번호가 올바르지 않습니다.')
-      } else if (message.includes('Email not confirmed')) {
-        setError('이메일 인증이 필요합니다. 메일함을 확인해주세요.')
-      } else {
-        setError(message || '로그인에 실패했습니다.')
-      }
-    } finally {
-      setLoading(false)
-    }
-  }
 
   // OAuth 로그인 핸들러
   const handleOAuthLogin = async (provider: 'google' | 'github' | 'kakao') => {
@@ -199,57 +156,6 @@ function LoginForm() {
             카카오톡으로 계속하기
           </button>
         </div>
-
-        {/* Divider */}
-        <div className="relative mb-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="bg-gray-50 px-2 text-gray-500 dark:bg-gray-900 dark:text-gray-400">
-              또는 이메일로 로그인
-            </span>
-          </div>
-        </div>
-
-        {/* Email/Password Form */}
-        <form onSubmit={handleLocalLogin} className="space-y-4">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              이메일
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="your@email.com"
-              className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              비밀번호
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {loading ? '로그인 중...' : '로그인'}
-          </button>
-        </form>
 
         {/* Footer */}
         <div className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
