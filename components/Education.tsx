@@ -1,12 +1,4 @@
-const educations = [
-  {
-    id: 1,
-    period: '2025.05 ~ 2025.08',
-    course: 'Intel AI Master 임베디드 과정',
-    org: '청년취업사관학교',
-    desc: '리눅스 기반 임베디드 환경에서 카메라·통신(UART/SPI/I2C) 기초, OpenCV 영상처리, OpenVINO 기반 AI 추론·최적화, Geti/OTX를 활용한 MLOps 흐름, Docker·Git 협업, LLM·RAG 시스템 기초를 학습했습니다.',
-  },
-]
+import educations from '@/lib/data/education'
 
 export default function Education() {
   return (
@@ -25,7 +17,20 @@ export default function Education() {
                 <span className="text-base font-extrabold text-gray-900 dark:text-white sm:text-xl">{edu.course}</span>
                 <span className="text-xs font-medium text-gray-400 dark:text-gray-500 sm:text-sm">{edu.period}</span>
               </div>
-              <strong className="mb-2 block text-sm font-semibold text-blue-600 dark:text-blue-400 sm:mb-3 sm:text-base">{edu.org}</strong>
+              {edu.url ? (
+                <a
+                  href={edu.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mb-2 block text-sm font-semibold text-blue-600 underline-offset-2 hover:underline dark:text-blue-400 sm:mb-3 sm:text-base"
+                >
+                  {edu.org}
+                </a>
+              ) : (
+                <strong className="mb-2 block text-sm font-semibold text-blue-600 dark:text-blue-400 sm:mb-3 sm:text-base">
+                  {edu.org}
+                </strong>
+              )}
               <p className="text-sm leading-relaxed text-gray-500 dark:text-gray-400 sm:text-[1.05rem]">{edu.desc}</p>
             </div>
           ))}

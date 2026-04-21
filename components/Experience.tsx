@@ -1,12 +1,4 @@
-const experiences = [
-  {
-    id: 1,
-    period: '2025.09 ~ 2025.10',
-    role: '일경험 인턴',
-    org: '서울현대교육재단 (Zest CNS Co., Ltd.)',
-    desc: 'Spring MVC(JSP) 기반 게시판 예제를 통해 백엔드 CRUD 흐름을 학습하고, REST API로 분리하여 React·Vue 프론트엔드와 연동하는 과정을 실습했습니다.',
-  },
-]
+import experiences from '@/lib/data/experience'
 
 export default function Experience() {
   return (
@@ -25,7 +17,20 @@ export default function Experience() {
                 <span className="text-base font-extrabold text-gray-900 dark:text-white sm:text-xl">{exp.role}</span>
                 <span className="text-xs font-medium text-gray-400 dark:text-gray-500 sm:text-sm">{exp.period}</span>
               </div>
-              <strong className="mb-2 block text-sm font-semibold text-blue-600 dark:text-blue-400 sm:mb-3 sm:text-base">{exp.org}</strong>
+              {exp.url ? (
+                <a
+                  href={exp.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mb-2 block text-sm font-semibold text-blue-600 underline-offset-2 hover:underline dark:text-blue-400 sm:mb-3 sm:text-base"
+                >
+                  {exp.org}
+                </a>
+              ) : (
+                <strong className="mb-2 block text-sm font-semibold text-blue-600 dark:text-blue-400 sm:mb-3 sm:text-base">
+                  {exp.org}
+                </strong>
+              )}
               <p className="text-sm leading-relaxed text-gray-500 dark:text-gray-400 sm:text-[1.05rem]">{exp.desc}</p>
             </div>
           ))}
