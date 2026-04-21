@@ -163,6 +163,30 @@ export interface UpdateCommentRequest {
 }
 
 // ============================================
+// Project Update (Changelog)
+// ============================================
+
+export type UpdateType = 'MANUAL' | 'GITHUB_PR';
+
+export interface ProjectUpdate {
+  id: string;
+  projectId: string;
+  updateType: UpdateType;
+  title: string;
+  content: string;
+  externalUrl: string | null;
+  createdAt: string;
+}
+
+export interface CreateProjectUpdateRequest {
+  title: string;
+  content: string;
+  externalUrl?: string;
+}
+
+export type UpdateProjectUpdateRequest = Partial<CreateProjectUpdateRequest>;
+
+// ============================================
 // Like
 // ============================================
 
