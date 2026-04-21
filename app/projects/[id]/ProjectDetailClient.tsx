@@ -15,6 +15,7 @@ import { ko } from 'date-fns/locale'
 import Image from 'next/image'
 import api from '@/lib/api/client'
 import { useToast } from '@/hooks/useToast'
+import UpdateTimeline from '@/components/UpdateTimeline'
 
 interface Props {
   project: Project
@@ -273,6 +274,8 @@ export default function ProjectDetailClient({ project, from }: Props) {
               )}
             </div>
           )}
+
+          <UpdateTimeline projectId={project.id} />
 
           {/* 실시간 영역 — 클라이언트에서 별도 fetch */}
           <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
