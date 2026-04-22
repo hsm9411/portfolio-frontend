@@ -34,7 +34,7 @@ export default async function Home() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
 
       {/* ── 히어로 ── */}
-      <section className="flex min-h-[calc(100vh-72px)] items-center justify-center border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+      <section className="flex min-h-[75vh] items-center justify-center border-b border-gray-200 bg-white sm:min-h-[calc(100vh-72px)] dark:border-gray-800 dark:bg-gray-900">
         <div className="mx-auto flex w-full max-w-[900px] flex-col items-center gap-8 px-5 pb-8 pt-8 md:flex-row md:items-center md:justify-between md:gap-16 md:pb-[5vh]">
           <div className="text-center md:text-left">
             <h1 className="mb-4 text-3xl font-black leading-tight tracking-tight text-gray-900 dark:text-white sm:text-4xl md:text-5xl">
@@ -50,12 +50,33 @@ export default async function Home() {
               또한, 효율적인 <strong className="font-semibold text-gray-800 dark:text-gray-200">협업</strong>을 위해 필요한 툴과 기술,<br className="hidden sm:block" />
               그리고 <strong className="font-semibold text-gray-800 dark:text-gray-200">개발 프로세스 체계</strong>를 경험하며 성장하고 있습니다.
             </p>
+            {/* CTA — 모바일 전용 (데스크탑은 네비바로 충분) */}
+            <div className="mt-6 flex items-center justify-center gap-4 sm:hidden">
+              <Link
+                href="/projects"
+                className="flex items-center gap-1.5 rounded-lg border border-gray-800 px-4 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-50 dark:border-gray-300 dark:text-gray-100 dark:hover:bg-gray-800"
+              >
+                프로젝트 보기
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+              <Link
+                href="/blog"
+                className="flex items-center gap-1 text-sm font-medium text-gray-400 transition-colors hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+              >
+                블로그
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
           </div>
           <div className="shrink-0">
             <img
               src="/profile.png"
               alt="Profile"
-              className="w-[180px] h-auto border border-gray-200 object-cover shadow-[12px_12px_0px_rgba(0,0,0,0.1)] dark:border-gray-700 dark:shadow-[12px_12px_0px_rgba(255,255,255,0.05)] sm:w-[210px] md:w-[240px] md:shadow-[15px_15px_0px_rgba(0,0,0,0.1)]"
+              className="h-auto w-[150px] border border-gray-200 object-cover shadow-[12px_12px_0px_rgba(0,0,0,0.1)] dark:border-gray-700 dark:shadow-[12px_12px_0px_rgba(255,255,255,0.05)] sm:w-[210px] md:w-[240px] md:shadow-[15px_15px_0px_rgba(0,0,0,0.1)]"
             />
           </div>
         </div>

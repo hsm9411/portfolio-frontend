@@ -25,8 +25,8 @@ export default function ProjectCard({ project, onTechClick }: ProjectCardProps) 
   return (
     <div className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600">
 
-      {/* 썸네일 */}
-      <div className="relative aspect-video w-full overflow-hidden bg-gray-100 dark:bg-gray-700">
+      {/* 썸네일 — 모바일에서 2:1 비율로 축소, sm 이상에서 16:9 */}
+      <div className="relative aspect-[2/1] w-full overflow-hidden bg-gray-100 sm:aspect-video dark:bg-gray-700">
         {project.thumbnailUrl ? (
           <Image
             src={project.thumbnailUrl}
@@ -79,13 +79,13 @@ export default function ProjectCard({ project, onTechClick }: ProjectCardProps) 
           </span>
         </div>
 
-        {/* 제목 — 최대 2줄, 16px × 1.4 × 2 = 44.8px → h-[46px] (여유 1px) */}
-        <h3 className="mb-2 line-clamp-2 h-[46px] overflow-hidden text-base font-bold leading-[1.4] text-gray-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">
+        {/* 제목 — 최대 2줄. sm 이상 다열 그리드에서만 고정 높이로 행 정렬 */}
+        <h3 className="mb-2 line-clamp-2 overflow-hidden text-base font-bold leading-[1.4] text-gray-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400 sm:h-[46px]">
           {project.title}
         </h3>
 
-        {/* 요약 — 최대 3줄, line-height 1.5 기준 h-[63px] */}
-        <p className="mb-3.5 line-clamp-3 h-[63px] text-sm leading-[1.5] text-gray-500 dark:text-gray-400">
+        {/* 요약 — 최대 3줄. sm 이상 다열 그리드에서만 고정 높이로 행 정렬 */}
+        <p className="mb-3.5 line-clamp-3 text-sm leading-[1.5] text-gray-500 dark:text-gray-400 sm:h-[63px]">
           {project.summary}
         </p>
 
