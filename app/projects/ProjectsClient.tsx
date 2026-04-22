@@ -118,7 +118,7 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="mx-auto max-w-[1000px] px-5 py-10">
+      <div className="mx-auto max-w-[1000px] px-4 py-8 sm:px-5 sm:py-10">
 
         <div className="mb-8 flex items-start justify-between">
           <div>
