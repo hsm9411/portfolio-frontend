@@ -132,7 +132,7 @@ export default function UpdateTimeline({ projectId }: Props) {
   const inputClass = 'w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:placeholder-gray-500 dark:focus:border-blue-500'
 
   return (
-    <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700 sm:p-8">
+    <section className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700 sm:p-8">
       {/* 헤더 */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -223,7 +223,7 @@ export default function UpdateTimeline({ projectId }: Props) {
       ) : (
         <ol className="relative border-l border-gray-200 dark:border-gray-700">
           {updates.map((item) => (
-            <li key={item.id} className="mb-8 ml-4 last:mb-0">
+            <li key={item.id} className="mb-5 ml-4 last:mb-0 sm:mb-8">
               {/* 타임라인 점 */}
               <div className="absolute -left-1.5 mt-1 h-3 w-3 rounded-full border-2 border-white bg-blue-500 dark:border-gray-800 dark:bg-blue-400" />
 

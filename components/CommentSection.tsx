@@ -197,36 +197,38 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
         </div>
       ) : (
         <>
-          <div className="space-y-3">
+          <div>
             {comments.map((comment) => (
               <div
                 key={comment.id}
-                className="rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-gray-700/50 dark:bg-gray-900"
+                className="border-b border-gray-100 py-4 last:border-b-0 dark:border-gray-800"
               >
-                <div className="mb-2 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
+                <div className="mb-2 flex items-start justify-between gap-3">
+                  <div className="flex min-w-0 items-center gap-2">
                     {/* 아바타 이니셜 */}
-                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-violet-500 text-xs font-bold text-white">
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-violet-500 text-xs font-bold text-white">
                       {comment.user.nickname.charAt(0).toUpperCase()}
                     </div>
-                    <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                      {comment.user.nickname}
-                    </span>
-                    {comment.isAnonymous && (
-                      <span className="rounded bg-gray-200 px-1.5 py-0.5 text-xs text-gray-500 dark:bg-gray-700 dark:text-gray-400">
-                        익명
+                    <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5">
+                      <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                        {comment.user.nickname}
                       </span>
-                    )}
+                      {comment.isAnonymous && (
+                        <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+                          익명
+                        </span>
+                      )}
+                      <span className="text-xs text-gray-400 dark:text-gray-500">
+                        · {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true, locale: ko })}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-400 dark:text-gray-500">
-                      {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true, locale: ko })}
-                    </span>
+                  <div className="flex shrink-0 items-center gap-1">
                     {comment.isMine && editingId !== comment.id && (
                       <button
                         type="button"
                         onClick={() => handleEditStart(comment)}
-                        className="rounded p-0.5 text-gray-300 transition-colors hover:text-blue-500 dark:text-gray-600 dark:hover:text-blue-400"
+                        className="rounded p-1 text-gray-300 transition-colors hover:text-blue-500 dark:text-gray-600 dark:hover:text-blue-400"
                         aria-label="댓글 수정"
                       >
                         <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -238,7 +240,7 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
                       <button
                         type="button"
                         onClick={() => setDeleteTargetId(comment.id)}
-                        className="rounded p-0.5 text-gray-300 transition-colors hover:text-red-500 dark:text-gray-600 dark:hover:text-red-400"
+                        className="rounded p-1 text-gray-300 transition-colors hover:text-red-500 dark:text-gray-600 dark:hover:text-red-400"
                         aria-label="댓글 삭제"
                       >
                         <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -249,7 +251,7 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
                   </div>
                 </div>
                 {editingId === comment.id ? (
-                  <div className="pl-9">
+                  <div>
                     <textarea
                       value={editContent}
                       onChange={(e) => setEditContent(e.target.value)}
@@ -280,7 +282,7 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
                     </div>
                   </div>
                 ) : (
-                  <p className="whitespace-pre-wrap pl-9 text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+                  <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-700 dark:text-gray-300">
                     {comment.content}
                   </p>
                 )}
