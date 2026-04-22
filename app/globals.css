@@ -32,6 +32,15 @@ body {
   transition: background-color 0.3s, color 0.3s;
 }
 
+/* 스크롤바 숨김 유틸 */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* ─────────────────────────────────────────────
    Markdown Body — prose 플러그인 없이 직접 정의
    @tailwindcss/typography 호환성 이슈 우회

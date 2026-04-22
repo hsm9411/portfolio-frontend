@@ -185,13 +185,13 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
           )}
         </div>
 
-        {/* 상태 필터 */}
-        <div className="mb-4 flex flex-wrap gap-2">
+        {/* 상태 필터 — 모바일 가로 스크롤 */}
+        <div className="scrollbar-hide mb-4 flex gap-2 overflow-x-auto">
           {STATUS_FILTERS.map((f) => (
             <button
               key={f.value}
               onClick={() => handleStatusChange(f.value)}
-              className={`rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors ${
+              className={`shrink-0 rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors ${
                 statusFromUrl === f.value
                   ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
                   : 'bg-white text-gray-500 ring-1 ring-inset ring-gray-200 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-gray-700'
