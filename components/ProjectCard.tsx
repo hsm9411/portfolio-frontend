@@ -8,6 +8,7 @@ import { getDeviconUrls, getTechGradient } from '@/lib/utils/devicon'
 
 interface ProjectCardProps {
   project: Project
+  onTechClick?: (tech: string) => void
 }
 
 const statusConfig = {
@@ -16,7 +17,7 @@ const statusConfig = {
   archived: { label: '보관', className: 'bg-gray-100 text-gray-500 ring-gray-500/20 dark:bg-gray-700 dark:text-gray-400 dark:ring-gray-500/30' },
 }
 
-export default function ProjectCard({ project }: ProjectCardProps) {
+export default function ProjectCard({ project, onTechClick }: ProjectCardProps) {
   const status = statusConfig[project.status as keyof typeof statusConfig] ?? statusConfig.archived
   const deviconUrls = getDeviconUrls(project.techStack, 3)
   const gradient = getTechGradient(project.techStack)
@@ -69,7 +70,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       </div>
 
       {/* 콘텐츠 — 각 영역 고정 높이로 카드 크기 통일 */}
-      <div className="flex flex-col p-5">
+      <div className="flex flex-col p-4 sm:p-5">
 
         {/* 상태 배지 — h-[22px] 고정 */}
         <div className="mb-2.5 flex h-[22px] items-center">
@@ -90,11 +91,22 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
         {/* 기술 스택 — 1줄 고정 h-[26px] */}
         <div className="mb-3.5 flex h-[26px] items-center gap-1.5">
-          {project.techStack.slice(0, 3).map((tech) => (
-            <span key={tech} className="shrink-0 rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
-              {tech}
-            </span>
-          ))}
+          {project.techStack.slice(0, 3).map((tech) =>
+            onTechClick ? (
+              <button
+                key={tech}
+                type="button"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onTechClick(tech) }}
+                className="shrink-0 rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 transition-colors hover:bg-blue-100 hover:text-blue-700 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-blue-900/40 dark:hover:text-blue-400"
+              >
+                {tech}
+              </button>
+            ) : (
+              <span key={tech} className="shrink-0 rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                {tech}
+              </span>
+            )
+          )}
           {project.techStack.length > 3 && (
             <span className="shrink-0 rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-500 dark:bg-blue-900/30 dark:text-blue-400">
               +{project.techStack.length - 3}

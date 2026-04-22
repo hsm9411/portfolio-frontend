@@ -32,9 +32,10 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
   const statusFromUrl = searchParams.get('status') || 'all'
   const searchFromUrl = searchParams.get('search') || ''
   const sortFromUrl   = searchParams.get('sort')   || 'latest'
+  const techFromUrl   = searchParams.get('tech')   || ''
 
-  // SSR initialData는 항상 page=1, status=all, search='', sort=latest 기준으로 받아옴
-  const isDefaultUrl = pageFromUrl === 1 && statusFromUrl === 'all' && searchFromUrl === '' && sortFromUrl === 'latest'
+  // SSR initialData는 항상 page=1, status=all, search='', sort=latest, tech='' 기준으로 받아옴
+  const isDefaultUrl = pageFromUrl === 1 && statusFromUrl === 'all' && searchFromUrl === '' && sortFromUrl === 'latest' && !techFromUrl
 
   const [projects, setProjects]     = useState<Project[]>(isDefaultUrl ? initialData.items : [])
   const [totalPages, setTotalPages] = useState(isDefaultUrl ? initialData.totalPages : 1)
@@ -59,15 +60,19 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
     return                       { sortBy: 'created_at', order: 'DESC' }
   }
 
-  const loadProjects = useCallback(async (page: number, status: string, search: string, sort: string) => {
+  const loadProjects = useCallback(async (page: number, status: string, search: string, sort: string, tech: string) => {
     try {
       setLoading(true)
-      const params: Record<string, unknown> = { page, limit: 9, ...sortToParams(sort) }
+      // tech 필터 활성 시 전체 fetch 후 클라이언트 필터링 (포트폴리오 규모상 충분)
+      const params: Record<string, unknown> = { page: tech ? 1 : page, limit: tech ? 100 : 9, ...sortToParams(sort) }
       if (status !== 'all') params.status = status
       if (search) params.search = search
       const response = await getProjects(params)
-      setProjects(response.items)
-      setTotalPages(response.totalPages)
+      const items = tech
+        ? response.items.filter((p) => p.techStack.some((t) => t.toLowerCase() === tech.toLowerCase()))
+        : response.items
+      setProjects(items)
+      setTotalPages(tech ? 1 : response.totalPages)
     } catch (e) {
       console.error(e)
     } finally {
@@ -80,8 +85,8 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
       hasMounted.current = true
       if (isDefaultUrl) return  // 최초 진입, SSR 데이터로 충분
     }
-    loadProjects(pageFromUrl, statusFromUrl, searchFromUrl, sortFromUrl)
-  }, [pageFromUrl, statusFromUrl, searchFromUrl, sortFromUrl, isDefaultUrl, loadProjects])
+    loadProjects(pageFromUrl, statusFromUrl, searchFromUrl, sortFromUrl, techFromUrl)
+  }, [pageFromUrl, statusFromUrl, searchFromUrl, sortFromUrl, techFromUrl, isDefaultUrl, loadProjects])
 
   // debounce된 검색어가 바뀌면 URL 업데이트
   useEffect(() => {
@@ -90,27 +95,30 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
       return
     }
     if (debouncedSearch === searchFromUrl) return
-    updateUrl(1, statusFromUrl, debouncedSearch, sortFromUrl)
+    updateUrl(1, statusFromUrl, debouncedSearch, sortFromUrl, techFromUrl)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch])
 
-  const updateUrl = (page: number, status: string, search: string, sort: string) => {
+  const updateUrl = (page: number, status: string, search: string, sort: string, tech: string) => {
     const params = new URLSearchParams()
     if (page > 1)          params.set('page',   String(page))
     if (status !== 'all')  params.set('status', status)
     if (search)            params.set('search', search)
     if (sort !== 'latest') params.set('sort',   sort)
+    if (tech)              params.set('tech',   tech)
     const qs = params.toString()
     router.push(`/projects${qs ? `?${qs}` : ''}`, { scroll: false })
   }
 
-  const handleStatusChange = (status: string) => updateUrl(1, status, searchFromUrl, sortFromUrl)
-  const handlePageChange   = (page: number)   => updateUrl(page, statusFromUrl, searchFromUrl, sortFromUrl)
-  const handleClear        = () => { setSearchInput(''); updateUrl(1, statusFromUrl, '', sortFromUrl) }
+  const handleStatusChange = (status: string) => updateUrl(1, status, searchFromUrl, sortFromUrl, techFromUrl)
+  const handlePageChange   = (page: number)   => updateUrl(page, statusFromUrl, searchFromUrl, sortFromUrl, techFromUrl)
+  const handleClear        = () => { setSearchInput(''); updateUrl(1, statusFromUrl, '', sortFromUrl, techFromUrl) }
+  const handleTechClick    = (tech: string)   => updateUrl(1, statusFromUrl, searchFromUrl, sortFromUrl, tech)
+  const handleTechClear    = () => updateUrl(1, statusFromUrl, searchFromUrl, sortFromUrl, '')
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="mx-auto max-w-[1000px] px-5 py-10">
+      <div className="mx-auto max-w-[1000px] px-4 py-8 sm:px-5 sm:py-10">
 
         <div className="mb-8 flex items-start justify-between">
           <div>
@@ -135,7 +143,7 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
           <div className="flex gap-2">
             <select
               value={sortFromUrl}
-              onChange={(e) => updateUrl(1, statusFromUrl, searchFromUrl, e.target.value)}
+              onChange={(e) => updateUrl(1, statusFromUrl, searchFromUrl, e.target.value, techFromUrl)}
               className="shrink-0 rounded-lg border border-gray-200 bg-white py-2.5 pl-3 pr-8 text-sm text-gray-700 transition-colors focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
             >
               {SORT_OPTIONS.map((o) => (
@@ -178,7 +186,7 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
         </div>
 
         {/* 상태 필터 */}
-        <div className="mb-7 flex flex-wrap gap-2">
+        <div className="mb-4 flex flex-wrap gap-2">
           {STATUS_FILTERS.map((f) => (
             <button
               key={f.value}
@@ -194,6 +202,26 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
           ))}
         </div>
 
+        {/* 기술 스택 필터 pill */}
+        {techFromUrl && (
+          <div className="mb-4 flex items-center gap-2">
+            <span className="text-xs text-gray-400 dark:text-gray-500">기술 스택</span>
+            <span className="flex items-center gap-1.5 rounded-full bg-blue-100 py-1 pl-3 pr-2 text-xs font-semibold text-blue-700 dark:bg-blue-900/40 dark:text-blue-400">
+              {techFromUrl}
+              <button
+                type="button"
+                onClick={handleTechClear}
+                className="flex h-4 w-4 items-center justify-center rounded-full hover:bg-blue-200 dark:hover:bg-blue-800"
+                aria-label="기술 스택 필터 해제"
+              >
+                <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </span>
+          </div>
+        )}
+
         {loading ? (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -203,20 +231,22 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
         ) : projects.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-gray-200 py-24 text-center dark:border-gray-700">
             <p className="text-sm text-gray-400 dark:text-gray-500">
-              {searchFromUrl
-                ? `"${searchFromUrl}"에 대한 결과가 없습니다.`
-                : statusFromUrl !== 'all'
-                  ? '해당 상태의 프로젝트가 없습니다.'
-                  : '프로젝트가 없습니다.'}
+              {techFromUrl
+                ? `"${techFromUrl}" 기술 스택을 사용한 프로젝트가 없습니다.`
+                : searchFromUrl
+                  ? `"${searchFromUrl}"에 대한 결과가 없습니다.`
+                  : statusFromUrl !== 'all'
+                    ? '해당 상태의 프로젝트가 없습니다.'
+                    : '프로젝트가 없습니다.'}
             </p>
-            {isAdmin && !searchFromUrl && statusFromUrl === 'all' && (
+            {isAdmin && !searchFromUrl && statusFromUrl === 'all' && !techFromUrl && (
               <Link href="/projects/new" className="mt-4 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
                 첫 프로젝트 작성하기
               </Link>
             )}
-            {(searchFromUrl || statusFromUrl !== 'all') && (
+            {(searchFromUrl || statusFromUrl !== 'all' || techFromUrl) && (
               <button
-                onClick={() => { setSearchInput(''); updateUrl(1, 'all', '', sortFromUrl) }}
+                onClick={() => { setSearchInput(''); updateUrl(1, 'all', '', sortFromUrl, '') }}
                 className="mt-4 inline-flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400"
               >
                 전체 목록으로
@@ -228,12 +258,12 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {projects.map((project) => (
                 <Link key={project.id} href={`/projects/${project.id}?from=list`} className="block">
-                  <ProjectCard project={project} />
+                  <ProjectCard project={project} onTechClick={handleTechClick} />
                 </Link>
               ))}
             </div>
 
-            {totalPages > 1 && (
+            {totalPages > 1 && !techFromUrl && (
               <div className="mt-10 flex items-center justify-center gap-2">
                 <button
                   onClick={() => handlePageChange(Math.max(1, pageFromUrl - 1))}
