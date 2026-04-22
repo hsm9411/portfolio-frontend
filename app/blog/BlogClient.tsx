@@ -131,14 +131,14 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
           )}
         </div>
 
-        {/* 카테고리 필터 */}
-        <div className="mb-5 flex flex-wrap gap-2">
+        {/* 카테고리 필터 — 모바일 가로 스크롤 */}
+        <div className="scrollbar-hide mb-5 flex gap-2 overflow-x-auto">
           {CATEGORIES.map(({ value, label }) => (
             <button
               key={value}
               type="button"
               onClick={() => updateUrl(1, searchFromUrl, value, sortFromUrl)}
-              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+              className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                 categoryFromUrl === value
                   ? 'bg-blue-600 text-white'
                   : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
