@@ -70,7 +70,7 @@ export default function ProjectCard({ project, onTechClick }: ProjectCardProps) 
       </div>
 
       {/* 콘텐츠 — 각 영역 고정 높이로 카드 크기 통일 */}
-      <div className="flex flex-col p-5">
+      <div className="flex flex-col p-4 sm:p-5">
 
         {/* 상태 배지 — h-[22px] 고정 */}
         <div className="mb-2.5 flex h-[22px] items-center">
