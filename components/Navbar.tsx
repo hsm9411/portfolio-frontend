@@ -141,7 +141,7 @@ export default function Navbar() {
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         aria-label="맨 위로"
-        className={`fixed bottom-8 right-8 z-40 flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-400 shadow-sm transition-all duration-300 hover:border-gray-300 hover:text-gray-600 hover:shadow-md dark:border-gray-700 dark:bg-gray-900 dark:text-gray-500 dark:hover:border-gray-500 dark:hover:text-gray-300 ${
+        className={`fixed bottom-5 right-4 z-40 flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-400 shadow-sm transition-all duration-300 hover:border-gray-300 hover:text-gray-600 hover:shadow-md sm:bottom-8 sm:right-8 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-500 dark:hover:border-gray-500 dark:hover:text-gray-300 ${
           showScrollTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3 pointer-events-none'
         }`}
       >
