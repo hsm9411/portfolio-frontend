@@ -49,6 +49,7 @@ export default function BlogPostClient({ post, from }: Props) {
   const [copied, setCopied] = useState(false)
   const [readingProgress, setReadingProgress] = useState(0)
   const [tocOpen, setTocOpen] = useState(false)
+  const [tocSheetOpen, setTocSheetOpen] = useState(false)
 
   const tocItems = useMemo(() => extractToc(post.content), [post.content])
 
@@ -267,13 +268,75 @@ export default function BlogPostClient({ post, from }: Props) {
         </aside>
       )}
 
+      {/* 모바일 TOC 플로팅 버튼 (< 640px) */}
+      {tocItems.length > 0 && (
+        <button
+          onClick={() => setTocSheetOpen(true)}
+          aria-label="목차 열기"
+          className="sm:hidden fixed bottom-5 left-4 z-40 flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3.5 py-2 text-xs font-semibold text-gray-600 shadow-md transition-colors hover:border-gray-300 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400 dark:hover:border-gray-500 dark:hover:text-gray-200"
+        >
+          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h10M4 14h12M4 18h8" />
+          </svg>
+          목차
+        </button>
+      )}
+
+      {/* 모바일 TOC 바텀시트 */}
+      {tocItems.length > 0 && (
+        <>
+          <div
+            className={`sm:hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${tocSheetOpen ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
+            onClick={() => setTocSheetOpen(false)}
+            aria-hidden="true"
+          />
+          <div
+            className={`sm:hidden fixed bottom-0 left-0 right-0 z-50 rounded-t-2xl bg-white shadow-2xl transition-transform duration-300 ease-in-out dark:bg-gray-900 ${tocSheetOpen ? 'translate-y-0' : 'translate-y-full'}`}
+          >
+            <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4 dark:border-gray-800">
+              <span className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
+                <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h10M4 14h12M4 18h8" />
+                </svg>
+                목차
+              </span>
+              <button
+                onClick={() => setTocSheetOpen(false)}
+                aria-label="목차 닫기"
+                className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+              >
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <nav className="max-h-[60vh] overflow-y-auto px-5 py-4">
+              <ul className="space-y-3">
+                {tocItems.map((item) => (
+                  <li key={item.id} className={item.level === 3 ? 'ml-4' : ''}>
+                    <a
+                      href={`#${item.id}`}
+                      onClick={() => setTocSheetOpen(false)}
+                      className="block py-0.5 text-sm text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+                    >
+                      {item.text}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+            <div className="h-[env(safe-area-inset-bottom)]" />
+          </div>
+        </>
+      )}
+
       {/* 본문 */}
       <main className="mx-auto max-w-[1000px] px-4 py-6 sm:px-5 sm:py-10">
         <div className="space-y-5 sm:space-y-8">
 
-          {/* 모바일 TOC */}
+          {/* 태블릿 TOC 아코디언 (640px~1440px) */}
           {tocItems.length > 0 && (
-            <div className="min-[1440px]:hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+            <div className="hidden sm:block min-[1440px]:hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
               <button
                 onClick={() => setTocOpen((v) => !v)}
                 className="flex w-full items-center justify-between px-4 py-3.5 text-sm font-semibold text-gray-700 dark:text-gray-200"
