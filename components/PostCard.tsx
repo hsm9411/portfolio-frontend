@@ -21,7 +21,7 @@ export default function PostCard({ post }: PostCardProps) {
   const readTime = post.readingTime ?? calcReadTime(post.content)
 
   return (
-    <article className="group flex overflow-hidden rounded-xl border border-gray-200 bg-white transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600">
+    <article className="group flex overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600">
 
       {/* 텍스트 영역 */}
       <div className="flex min-w-0 flex-1 flex-col py-3.5 pl-4 pr-3 sm:py-4 sm:pl-5 sm:pr-4">
@@ -80,7 +80,7 @@ export default function PostCard({ post }: PostCardProps) {
 
       {/* 썸네일 — 모바일에서 너비 축소, 없으면 영역 없음 */}
       {post.thumbnailUrl && (
-        <div className="relative w-[110px] shrink-0 self-stretch sm:w-[150px] md:w-[170px]">
+        <div className="relative w-[88px] shrink-0 self-stretch sm:w-[130px] md:w-[160px]">
           <Image
             src={post.thumbnailUrl}
             alt={post.title}

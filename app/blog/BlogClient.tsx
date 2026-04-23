@@ -111,7 +111,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="mx-auto max-w-[1000px] px-5 py-10">
+      <div className="mx-auto max-w-[1000px] px-4 py-6 sm:px-5 sm:py-10">
 
         <div className="mb-8 flex items-start justify-between">
           <div>
@@ -222,7 +222,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
           </div>
         ) : (
           <>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3 sm:gap-4">
               {posts.map((post) => (
                 <Link key={post.id} href={`/blog/${post.id}?from=list`} className="block">
                   <PostCard post={post} />
