@@ -34,8 +34,9 @@ export default async function Home() {
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-900">
 
       {/* ── 히어로 ── */}
-      <section className="flex min-h-[75vh] items-center justify-center border-b border-gray-200 bg-white sm:min-h-[calc(100vh-72px)] dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="mx-auto flex w-full max-w-[900px] flex-col items-center gap-8 px-5 pb-8 pt-8 md:flex-row md:items-center md:justify-between md:gap-16 md:pb-[5vh]">
+      {/* 모바일: py-16 고정 패딩, 사진 숨김 / 데스크탑(md+): 전체 높이 + 사진 우측 */}
+      <section className="flex items-center justify-center border-b border-gray-200 bg-white py-16 sm:py-20 md:min-h-[calc(100vh-72px)] md:py-0 dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="mx-auto flex w-full max-w-[900px] flex-col items-center gap-8 px-5 md:flex-row md:items-center md:justify-between md:gap-16 md:pb-[5vh]">
           <div className="text-center md:text-left">
             <h1 className="mb-4 text-3xl font-black leading-tight tracking-tight text-gray-900 dark:text-white sm:text-4xl md:text-5xl">
               안녕하세요,<br />
@@ -51,7 +52,7 @@ export default async function Home() {
               그리고 <strong className="font-semibold text-gray-800 dark:text-gray-200">개발 프로세스 체계</strong>를 경험하며 성장하고 있습니다.
             </p>
             {/* CTA — 모바일 전용 (데스크탑은 네비바로 충분) */}
-            <div className="mt-6 flex items-center justify-center gap-4 sm:hidden">
+            <div className="mt-6 flex items-center justify-center gap-4 md:hidden">
               <Link
                 href="/projects"
                 className="flex items-center gap-1.5 rounded-lg border border-gray-800 px-4 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-zinc-50 dark:border-gray-300 dark:text-gray-100 dark:hover:bg-zinc-800"
@@ -72,11 +73,12 @@ export default async function Home() {
               </Link>
             </div>
           </div>
-          <div className="shrink-0">
+          {/* 사진: 모바일에서 숨김, md+ 데스크탑에서만 표시 */}
+          <div className="hidden shrink-0 md:block">
             <img
               src="/profile.png"
               alt="Profile"
-              className="h-auto w-[150px] border border-gray-200 object-cover shadow-[12px_12px_0px_rgba(0,0,0,0.08)] dark:border-zinc-700 dark:shadow-[12px_12px_0px_rgba(255,255,255,0.04)] sm:w-[210px] md:w-[240px] md:shadow-[15px_15px_0px_rgba(0,0,0,0.08)]"
+              className="h-auto w-[240px] border border-gray-200 object-cover shadow-[15px_15px_0px_rgba(0,0,0,0.08)] dark:border-zinc-700 dark:shadow-[15px_15px_0px_rgba(255,255,255,0.04)]"
             />
           </div>
         </div>
