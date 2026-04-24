@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -65,7 +65,7 @@ export default function LikeButton({ targetType, targetId, initialLikeCount }: L
         className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${
           liked
             ? 'bg-red-50 text-red-600 ring-1 ring-red-200 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:ring-red-800 dark:hover:bg-red-900/30'
-            : 'bg-gray-100 text-gray-600 ring-1 ring-gray-200 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:ring-gray-600 dark:hover:bg-gray-600'
+            : 'bg-zinc-100 text-gray-600 ring-1 ring-gray-200 hover:bg-gray-200 dark:bg-zinc-700 dark:text-gray-300 dark:ring-zinc-600 dark:hover:bg-zinc-600'
         } ${loading ? 'scale-95 opacity-70' : 'hover:scale-105 active:scale-95'}`}
         aria-label={liked ? '좋아요 취소' : '좋아요'}
       >
@@ -83,7 +83,7 @@ export default function LikeButton({ targetType, targetId, initialLikeCount }: L
       {!isAuthenticated && (
         <button
           onClick={() => router.push('/login')}
-          className="text-xs text-gray-400 underline-offset-2 hover:text-blue-500 hover:underline dark:text-gray-500 dark:hover:text-blue-400"
+          className="text-xs text-gray-400 underline-offset-2 hover:text-indigo-500 hover:underline dark:text-gray-500 dark:hover:text-indigo-400"
         >
           로그인하고 좋아요 누르기
         </button>

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import Image from 'next/image'
 import type { Project } from '@/lib/api/projects'
@@ -13,8 +13,8 @@ interface ProjectCardProps {
 
 const statusConfig = {
   completed: { label: '완료', className: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-900/30 dark:text-emerald-400 dark:ring-emerald-500/30' },
-  'in-progress': { label: '진행중', className: 'bg-blue-50 text-blue-700 ring-blue-600/20 dark:bg-blue-900/30 dark:text-blue-400 dark:ring-blue-500/30' },
-  archived: { label: '보관', className: 'bg-gray-100 text-gray-500 ring-gray-500/20 dark:bg-gray-700 dark:text-gray-400 dark:ring-gray-500/30' },
+  'in-progress': { label: '진행중', className: 'bg-indigo-50 text-indigo-700 ring-indigo-600/20 dark:bg-indigo-900/30 dark:text-indigo-400 dark:ring-indigo-500/30' },
+  archived: { label: '보관', className: 'bg-zinc-100 text-gray-500 ring-gray-500/20 dark:bg-zinc-700 dark:text-gray-400 dark:ring-gray-500/30' },
 }
 
 export default function ProjectCard({ project, onTechClick }: ProjectCardProps) {
@@ -23,10 +23,10 @@ export default function ProjectCard({ project, onTechClick }: ProjectCardProps) 
   const gradient = getTechGradient(project.techStack)
 
   return (
-    <div className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600">
+    <div className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-md dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-zinc-600">
 
       {/* 썸네일 — 모바일에서 2:1 비율로 축소, sm 이상에서 16:9 */}
-      <div className="relative aspect-[2/1] w-full overflow-hidden bg-gray-100 sm:aspect-video dark:bg-gray-700">
+      <div className="relative aspect-[2/1] w-full overflow-hidden bg-zinc-100 sm:aspect-video dark:bg-zinc-700">
         {project.thumbnailUrl ? (
           <Image
             src={project.thumbnailUrl}
@@ -80,7 +80,7 @@ export default function ProjectCard({ project, onTechClick }: ProjectCardProps) 
         </div>
 
         {/* 제목 — 최대 2줄. sm 이상 다열 그리드에서만 고정 높이로 행 정렬 */}
-        <h3 className="mb-2 line-clamp-2 overflow-hidden text-base font-bold leading-[1.4] text-gray-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400 sm:h-[46px]">
+        <h3 className="mb-2 line-clamp-2 overflow-hidden text-base font-bold leading-[1.4] text-gray-900 transition-colors group-hover:text-indigo-600 dark:text-white dark:group-hover:text-indigo-400 sm:h-[46px]">
           {project.title}
         </h3>
 
@@ -97,25 +97,25 @@ export default function ProjectCard({ project, onTechClick }: ProjectCardProps) 
                 key={tech}
                 type="button"
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); onTechClick(tech) }}
-                className="shrink-0 rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 transition-colors hover:bg-blue-100 hover:text-blue-700 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-blue-900/40 dark:hover:text-blue-400"
+                className="shrink-0 rounded-md bg-zinc-100 px-2 py-0.5 text-xs font-medium text-gray-600 transition-colors hover:bg-indigo-100 hover:text-indigo-700 dark:bg-zinc-700 dark:text-gray-300 dark:hover:bg-indigo-900/40 dark:hover:text-indigo-400"
               >
                 {tech}
               </button>
             ) : (
-              <span key={tech} className="shrink-0 rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+              <span key={tech} className="shrink-0 rounded-md bg-zinc-100 px-2 py-0.5 text-xs font-medium text-gray-600 dark:bg-zinc-700 dark:text-gray-300">
                 {tech}
               </span>
             )
           )}
           {project.techStack.length > 3 && (
-            <span className="shrink-0 rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-500 dark:bg-blue-900/30 dark:text-blue-400">
+            <span className="shrink-0 rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-500 dark:bg-indigo-900/30 dark:text-indigo-400">
               +{project.techStack.length - 3}
             </span>
           )}
         </div>
 
         {/* 메타 정보 */}
-        <div className="flex items-center justify-between border-t border-gray-100 pt-3 dark:border-gray-700">
+        <div className="flex items-center justify-between border-t border-gray-100 pt-3 dark:border-zinc-700">
           <div className="flex items-center gap-3.5 text-xs text-gray-400 dark:text-gray-500">
             <span className="flex items-center gap-1">
               <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

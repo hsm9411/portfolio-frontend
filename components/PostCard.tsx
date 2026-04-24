@@ -1,4 +1,4 @@
-import Image from 'next/image'
+﻿import Image from 'next/image'
 import type { Post } from '@/lib/api/posts'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
@@ -17,14 +17,14 @@ const categoryConfig: Record<string, { label: string; className: string }> = {
 const calcReadTime = (content: string) => Math.max(1, Math.ceil(content.length / 500))
 
 export default function PostCard({ post }: PostCardProps) {
-  const category = categoryConfig[post.category] ?? { label: post.category, className: 'bg-gray-100 text-gray-600 ring-gray-500/20 dark:bg-gray-700 dark:text-gray-400' }
+  const category = categoryConfig[post.category] ?? { label: post.category, className: 'bg-zinc-100 text-gray-600 ring-gray-500/20 dark:bg-zinc-700 dark:text-gray-400' }
   const readTime = post.readingTime ?? calcReadTime(post.content)
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600 sm:flex-row">
+    <article className="group flex flex-row overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-md dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-zinc-600">
 
       {/* 텍스트 영역 */}
-      <div className="flex min-w-0 flex-1 flex-col p-4 sm:py-4 sm:pl-5 sm:pr-4">
+      <div className="flex min-w-0 flex-1 flex-col p-3.5 sm:py-4 sm:pl-5 sm:pr-4">
 
         {/* 카테고리 + 태그 */}
         <div className="flex items-center gap-1.5 overflow-hidden">
@@ -32,7 +32,7 @@ export default function PostCard({ post }: PostCardProps) {
             {category.label}
           </span>
           {post.tags.slice(0, 2).map((tag) => (
-            <span key={tag} className="shrink-0 rounded-md bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-500 dark:bg-gray-700 dark:text-gray-400 sm:px-2 sm:text-xs">
+            <span key={tag} className="shrink-0 rounded-md bg-zinc-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-500 dark:bg-zinc-700 dark:text-gray-400 sm:px-2 sm:text-xs">
               #{tag}
             </span>
           ))}
@@ -42,7 +42,7 @@ export default function PostCard({ post }: PostCardProps) {
         </div>
 
         {/* 제목 */}
-        <h2 className="mt-1.5 line-clamp-2 text-sm font-bold leading-[1.4] text-gray-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400 sm:mt-2 sm:text-base">
+        <h2 className="mt-1.5 line-clamp-2 text-sm font-bold leading-[1.4] text-gray-900 transition-colors group-hover:text-indigo-600 dark:text-white dark:group-hover:text-indigo-400 sm:mt-2 sm:text-base">
           {post.title}
         </h2>
 
@@ -52,7 +52,7 @@ export default function PostCard({ post }: PostCardProps) {
         </p>
 
         {/* 메타 */}
-        <div className="mt-auto flex items-center gap-x-3 pt-2 text-[10px] text-gray-400 dark:text-gray-500 sm:gap-x-4 sm:text-xs">
+        <div className="mt-auto flex items-center gap-x-2.5 pt-2 text-[10px] text-gray-400 dark:text-gray-500 sm:gap-x-4 sm:text-xs">
           <span className="flex items-center gap-1">
             <svg className="h-3 w-3 sm:h-3.5 sm:w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -78,14 +78,14 @@ export default function PostCard({ post }: PostCardProps) {
         </div>
       </div>
 
-      {/* 썸네일 — 모바일: 상단 전체 너비(2:1), sm+: 오른쪽 사이드 */}
+      {/* 썸네일 — 모바일/데스크탑 모두 우측 사이드 */}
       {post.thumbnailUrl && (
-        <div className="relative aspect-[2/1] w-full shrink-0 overflow-hidden sm:order-last sm:aspect-auto sm:w-[130px] sm:self-stretch md:w-[160px]">
+        <div className="relative order-last w-[96px] shrink-0 self-stretch overflow-hidden sm:w-[130px] md:w-[160px]">
           <Image
             src={post.thumbnailUrl}
             alt={post.title}
             fill
-            sizes="(max-width: 640px) 100vw, 160px"
+            sizes="(max-width: 640px) 96px, 160px"
             className="object-cover"
           />
         </div>

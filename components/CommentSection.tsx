@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -142,9 +142,9 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
       <form onSubmit={handleSubmit} className="mb-8">
         <div className={`rounded-xl border transition-colors ${
           isAuthenticated
-            ? 'border-gray-200 focus-within:border-blue-400 dark:border-gray-700 dark:focus-within:border-blue-500'
-            : 'border-gray-200 dark:border-gray-700'
-        } bg-gray-50 dark:bg-gray-900`}>
+            ? 'border-gray-200 focus-within:border-indigo-400 dark:border-zinc-700 dark:focus-within:border-indigo-500'
+            : 'border-gray-200 dark:border-zinc-700'
+        } bg-zinc-50 dark:bg-zinc-900`}>
           <textarea
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
@@ -153,12 +153,12 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
             rows={3}
             className="w-full resize-none rounded-xl bg-transparent px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60 dark:text-gray-200 dark:placeholder-gray-500"
           />
-          <div className="flex items-center justify-between border-t border-gray-200 px-4 py-2.5 dark:border-gray-700">
+          <div className="flex items-center justify-between border-t border-gray-200 px-4 py-2.5 dark:border-zinc-700">
             {!isAuthenticated ? (
               <button
                 type="button"
                 onClick={() => router.push('/login')}
-                className="text-xs text-blue-500 underline-offset-2 hover:underline dark:text-blue-400"
+                className="text-xs text-indigo-500 underline-offset-2 hover:underline dark:text-indigo-400"
               >
                 로그인하러 가기
               </button>
@@ -170,7 +170,7 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
             <button
               type="submit"
               disabled={!isAuthenticated || submitting || !newComment.trim()}
-              className="flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {submitting ? (
                 <>
@@ -186,10 +186,10 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
       {/* 댓글 목록 */}
       {loading ? (
         <div className="flex justify-center py-8">
-          <div className="h-7 w-7 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600" />
+          <div className="h-7 w-7 animate-spin rounded-full border-4 border-gray-200 border-t-indigo-600" />
         </div>
       ) : comments.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-gray-200 py-10 text-center dark:border-gray-700">
+        <div className="rounded-xl border border-dashed border-gray-200 py-10 text-center dark:border-zinc-700">
           <svg className="mx-auto mb-3 h-10 w-10 text-gray-300 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
           </svg>
@@ -201,12 +201,12 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
             {comments.map((comment) => (
               <div
                 key={comment.id}
-                className="border-b border-gray-100 py-4 last:border-b-0 dark:border-gray-800"
+                className="border-b border-gray-100 py-4 last:border-b-0 dark:border-zinc-800"
               >
                 <div className="mb-2 flex items-start justify-between gap-3">
                   <div className="flex min-w-0 items-center gap-2">
                     {/* 아바타 이니셜 */}
-                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-violet-500 text-xs font-bold text-white">
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 text-xs font-bold text-white">
                       {comment.user.nickname.charAt(0).toUpperCase()}
                     </div>
                     <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5">
@@ -214,7 +214,7 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
                         {comment.user.nickname}
                       </span>
                       {comment.isAnonymous && (
-                        <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+                        <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] text-gray-500 dark:bg-zinc-700 dark:text-gray-400">
                           익명
                         </span>
                       )}
@@ -228,7 +228,7 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
                       <button
                         type="button"
                         onClick={() => handleEditStart(comment)}
-                        className="rounded p-1 text-gray-300 transition-colors hover:text-blue-500 dark:text-gray-600 dark:hover:text-blue-400"
+                        className="rounded p-1 text-gray-300 transition-colors hover:text-indigo-500 dark:text-gray-600 dark:hover:text-indigo-400"
                         aria-label="댓글 수정"
                       >
                         <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -256,13 +256,13 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
                       value={editContent}
                       onChange={(e) => setEditContent(e.target.value)}
                       rows={3}
-                      className="w-full resize-none rounded-lg border border-blue-400 bg-white px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-blue-500 dark:bg-gray-800 dark:text-gray-200"
+                      className="w-full resize-none rounded-lg border border-indigo-400 bg-white px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-indigo-500 dark:bg-zinc-800 dark:text-gray-200"
                     />
                     <div className="mt-2 flex items-center justify-end gap-2">
                       <button
                         type="button"
                         onClick={handleEditCancel}
-                        className="rounded-lg px-3 py-1.5 text-xs font-medium text-gray-500 transition-colors hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                        className="rounded-lg px-3 py-1.5 text-xs font-medium text-gray-500 transition-colors hover:bg-zinc-100 dark:text-gray-400 dark:hover:bg-zinc-700"
                       >
                         취소
                       </button>
@@ -270,7 +270,7 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
                         type="button"
                         onClick={() => handleEditSave(comment.id)}
                         disabled={editSubmitting || !editContent.trim() || editContent.trim() === comment.content}
-                        className="flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         {editSubmitting ? (
                           <>
@@ -297,11 +297,11 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
                 type="button"
                 onClick={loadMore}
                 disabled={loadingMore}
-                className="flex items-center gap-2 rounded-lg border border-gray-200 px-5 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800"
+                className="flex items-center gap-2 rounded-lg border border-gray-200 px-5 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-700 dark:text-gray-400 dark:hover:bg-zinc-800"
               >
                 {loadingMore ? (
                   <>
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600" />
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-indigo-600" />
                     불러오는 중
                   </>
                 ) : (

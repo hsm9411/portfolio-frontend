@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useRef, useState } from 'react'
 import emailjs from '@emailjs/browser'
@@ -32,7 +32,7 @@ export default function Contact() {
   }
 
   return (
-    <section className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+    <section className="border-b border-gray-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
       <div className="mx-auto max-w-[1000px] px-4 py-12 sm:px-5 md:py-20">
         <h2 className="mb-3 text-center text-2xl font-black tracking-tight text-gray-900 dark:text-white md:mb-4 md:text-3xl">
           Contact
@@ -47,26 +47,26 @@ export default function Contact() {
             name="user_name"
             placeholder="이름 (Name)"
             required
-            className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition-colors focus:border-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-blue-400 sm:py-[15px] sm:text-base"
+            className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition-colors focus:border-indigo-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-indigo-400 sm:py-[15px] sm:text-base"
           />
           <input
             type="email"
             name="user_email"
             placeholder="이메일 (Email)"
             required
-            className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition-colors focus:border-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-blue-400 sm:py-[15px] sm:text-base"
+            className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition-colors focus:border-indigo-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-indigo-400 sm:py-[15px] sm:text-base"
           />
           <textarea
             name="message"
             placeholder="내용을 입력해주세요 (Message)"
             required
             rows={6}
-            className="w-full resize-y rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition-colors focus:border-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-blue-400 sm:py-[15px] sm:text-base"
+            className="w-full resize-y rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition-colors focus:border-indigo-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-indigo-400 sm:py-[15px] sm:text-base"
           />
           <button
             type="submit"
             disabled={status === 'sending'}
-            className="w-full rounded-lg bg-gray-900 py-3 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-50 dark:bg-gray-100 dark:text-gray-900 sm:py-[15px] sm:text-[1.05rem]"
+            className="w-full rounded-lg bg-gray-900 py-3 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-50 dark:bg-zinc-100 dark:text-gray-900 sm:py-[15px] sm:text-[1.05rem]"
           >
             {status === 'sending' ? '전송 중...' : '메일 보내기'}
           </button>

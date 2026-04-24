@@ -1,4 +1,4 @@
-interface ConfirmDialogProps {
+﻿interface ConfirmDialogProps {
   open: boolean
   title: string
   description: string
@@ -24,7 +24,7 @@ export default function ConfirmDialog({
   const confirmBtnClass = {
     danger: 'bg-red-600 hover:bg-red-700 text-white',
     warning: 'bg-amber-500 hover:bg-amber-600 text-white',
-    default: 'bg-blue-600 hover:bg-blue-700 text-white',
+    default: 'bg-indigo-600 hover:bg-indigo-700 text-white',
   }[variant]
 
   const iconMap = {
@@ -51,7 +51,7 @@ export default function ConfirmDialog({
       onClick={onCancel}
     >
       <div
-        className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl dark:bg-gray-800 sm:p-6"
+        className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl dark:bg-zinc-800 sm:p-6"
         onClick={(e) => e.stopPropagation()}
       >
         {iconMap && <div className="mb-4">{iconMap}</div>}
@@ -60,7 +60,7 @@ export default function ConfirmDialog({
         <div className="flex gap-2.5 sm:gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 rounded-xl border border-gray-200 px-4 py-2 text-xs font-semibold text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700 sm:py-2.5 sm:text-sm"
+            className="flex-1 rounded-xl border border-gray-200 px-4 py-2 text-xs font-semibold text-gray-700 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-gray-300 dark:hover:bg-zinc-700 sm:py-2.5 sm:text-sm"
           >
             {cancelLabel}
           </button>

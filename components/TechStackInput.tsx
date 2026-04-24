@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 
@@ -146,17 +146,17 @@ export default function TechStackInput({ value, onChange }: TechStackInputProps)
     <div>
       <div className="relative">
         {/* Selected Tags */}
-        <div className="flex min-h-[46px] flex-wrap gap-2 rounded-lg border border-gray-300 bg-white p-2 dark:border-gray-600 dark:bg-gray-700">
+        <div className="flex min-h-[46px] flex-wrap gap-2 rounded-lg border border-gray-300 bg-white p-2 dark:border-zinc-600 dark:bg-zinc-700">
           {value.map((tech, index) => (
             <span
               key={index}
-              className="flex items-center gap-1 rounded-md bg-blue-100 px-3 py-1.5 text-sm font-medium text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+              className="flex items-center gap-1 rounded-md bg-indigo-100 px-3 py-1.5 text-sm font-medium text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300"
             >
               {tech}
               <button
                 type="button"
                 onClick={() => removeTechStack(index)}
-                className="ml-1 rounded hover:bg-blue-200 dark:hover:bg-blue-800"
+                className="ml-1 rounded hover:bg-indigo-200 dark:hover:bg-indigo-800"
               >
                 ×
               </button>
@@ -178,13 +178,13 @@ export default function TechStackInput({ value, onChange }: TechStackInputProps)
 
         {/* Autocomplete Suggestions */}
         {suggestions.length > 0 && (
-          <div className="absolute z-10 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-600 dark:bg-gray-800">
+          <div className="absolute z-10 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-lg dark:border-zinc-600 dark:bg-zinc-800">
             {suggestions.map((tech, index) => (
               <button
                 key={index}
                 type="button"
                 onClick={() => addTechStack(tech)}
-                className="w-full px-4 py-2.5 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg"
+                className="w-full px-4 py-2.5 text-left text-sm hover:bg-zinc-100 dark:hover:bg-zinc-700 first:rounded-t-lg last:rounded-b-lg"
               >
                 {tech}
               </button>
@@ -203,7 +203,7 @@ export default function TechStackInput({ value, onChange }: TechStackInputProps)
                 key={tech}
                 type="button"
                 onClick={() => addTechStack(tech)}
-                className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-700 dark:text-gray-300 dark:hover:bg-zinc-600"
               >
                 + {tech}
               </button>
