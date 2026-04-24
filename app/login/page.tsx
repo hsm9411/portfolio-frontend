@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, Suspense } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -84,7 +84,7 @@ function LoginForm() {
           </p>
           <Link
             href={redirectUrl}
-            className="mt-4 inline-block text-blue-600 hover:text-blue-700"
+            className="mt-4 inline-block text-teal-600 hover:text-teal-700"
           >
             지금 이동하기 →
           </Link>
@@ -189,7 +189,7 @@ export default function LoginPage() {
   return (
     <Suspense fallback={
       <div className="flex min-h-screen items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-teal-600"></div>
       </div>
     }>
       <LoginForm />

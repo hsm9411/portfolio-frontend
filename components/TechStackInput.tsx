@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 
@@ -150,13 +150,13 @@ export default function TechStackInput({ value, onChange }: TechStackInputProps)
           {value.map((tech, index) => (
             <span
               key={index}
-              className="flex items-center gap-1 rounded-md bg-blue-100 px-3 py-1.5 text-sm font-medium text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+              className="flex items-center gap-1 rounded-md bg-teal-100 px-3 py-1.5 text-sm font-medium text-teal-800 dark:bg-teal-900/30 dark:text-teal-300"
             >
               {tech}
               <button
                 type="button"
                 onClick={() => removeTechStack(index)}
-                className="ml-1 rounded hover:bg-blue-200 dark:hover:bg-blue-800"
+                className="ml-1 rounded hover:bg-teal-200 dark:hover:bg-teal-800"
               >
                 ×
               </button>

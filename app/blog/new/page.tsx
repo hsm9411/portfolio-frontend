@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -189,7 +189,7 @@ export default function NewPostPage() {
             {formData.tags.length > 0 && (
               <div className="mb-5 flex flex-wrap gap-2">
                 {formData.tags.map((tag) => (
-                  <span key={tag} className="rounded-md bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700 ring-1 ring-blue-600/20 dark:bg-blue-900/30 dark:text-blue-300">
+                  <span key={tag} className="rounded-md bg-teal-50 px-2.5 py-1 text-xs font-semibold text-teal-700 ring-1 ring-teal-600/20 dark:bg-teal-900/30 dark:text-teal-300">
                     #{tag}
                   </span>
                 ))}

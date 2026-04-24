@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -121,7 +121,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
           {isAdmin && (
             <Link
               href="/blog/new"
-              className="flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+              className="flex items-center gap-1.5 rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-teal-700"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -140,7 +140,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
               onClick={() => updateUrl(1, searchFromUrl, value, sortFromUrl)}
               className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                 categoryFromUrl === value
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-teal-600 text-white'
                   : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
               }`}
             >
@@ -154,7 +154,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
             <select
               value={sortFromUrl}
               onChange={(e) => updateUrl(1, searchFromUrl, categoryFromUrl, e.target.value)}
-              className="shrink-0 rounded-lg border border-gray-200 bg-white py-2.5 pl-3 pr-8 text-sm text-gray-700 transition-colors focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+              className="shrink-0 rounded-lg border border-gray-200 bg-white py-2.5 pl-3 pr-8 text-sm text-gray-700 transition-colors focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
             >
               {SORT_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
@@ -163,7 +163,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
             <div className="relative flex-1">
               {loading && searchInput ? (
                 <div className="absolute left-3.5 top-1/2 -translate-y-1/2">
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-200 border-t-blue-500" />
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-200 border-t-teal-500" />
                 </div>
               ) : (
                 <svg className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -175,7 +175,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="제목 또는 내용으로 검색..."
-                className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 transition-colors focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500 dark:focus:border-blue-500"
+                className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 transition-colors focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500 dark:focus:border-teal-500"
               />
             </div>
             {(searchInput || searchFromUrl) && (
@@ -207,7 +207,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
                   : '포스트가 없습니다.'}
             </p>
             {isAdmin && !searchFromUrl && !categoryFromUrl && (
-              <Link href="/blog/new" className="mt-4 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
+              <Link href="/blog/new" className="mt-4 inline-flex items-center gap-2 rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700">
                 첫 포스트 작성하기
               </Link>
             )}

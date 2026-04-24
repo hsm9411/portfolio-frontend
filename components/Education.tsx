@@ -1,4 +1,4 @@
-import educations from '@/lib/data/education'
+﻿import educations from '@/lib/data/education'
 
 export default function Education() {
   return (
@@ -11,7 +11,7 @@ export default function Education() {
           {educations.map((edu) => (
             <div
               key={edu.id}
-              className="rounded-lg border border-gray-200 border-l-[5px] border-l-gray-800 bg-transparent p-4 transition-colors duration-200 hover:border-gray-400 hover:border-l-blue-500 dark:border-gray-700 dark:border-l-gray-200 dark:hover:border-gray-500 dark:hover:border-l-blue-400 sm:p-6 md:p-8"
+              className="rounded-lg border border-gray-200 border-l-[5px] border-l-gray-800 bg-transparent p-4 transition-colors duration-200 hover:border-gray-400 hover:border-l-teal-500 dark:border-gray-700 dark:border-l-gray-200 dark:hover:border-gray-500 dark:hover:border-l-teal-400 sm:p-6 md:p-8"
             >
               <div className="mb-1 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                 <span className="text-base font-extrabold text-gray-900 dark:text-white sm:text-xl">{edu.course}</span>
@@ -22,12 +22,12 @@ export default function Education() {
                   href={edu.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mb-2 block text-sm font-semibold text-blue-600 underline-offset-2 hover:underline dark:text-blue-400 sm:mb-3 sm:text-base"
+                  className="mb-2 block text-sm font-semibold text-teal-600 underline-offset-2 hover:underline dark:text-teal-400 sm:mb-3 sm:text-base"
                 >
                   {edu.org}
                 </a>
               ) : (
-                <strong className="mb-2 block text-sm font-semibold text-blue-600 dark:text-blue-400 sm:mb-3 sm:text-base">
+                <strong className="mb-2 block text-sm font-semibold text-teal-600 dark:text-teal-400 sm:mb-3 sm:text-base">
                   {edu.org}
                 </strong>
               )}

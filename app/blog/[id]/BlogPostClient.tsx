@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
@@ -109,7 +109,7 @@ export default function BlogPostClient({ post, from }: Props) {
       {/* 읽기 진행바 */}
       <div className="fixed left-0 top-0 z-50 h-[3px] w-full bg-transparent">
         <div
-          className="h-full bg-blue-500 transition-[width] duration-100 ease-out dark:bg-blue-400"
+          className="h-full bg-teal-500 transition-[width] duration-100 ease-out dark:bg-teal-400"
           style={{ width: `${readingProgress}%` }}
         />
       </div>
@@ -209,7 +209,7 @@ export default function BlogPostClient({ post, from }: Props) {
           {post.tags.length > 0 && (
             <div className="mb-4 flex flex-wrap gap-1.5 sm:mb-5 sm:gap-2">
               {post.tags.map((tag) => (
-                <span key={tag} className="rounded-md bg-blue-50 px-2 py-0.5 text-[10px] font-semibold text-blue-700 ring-1 ring-blue-600/20 dark:bg-blue-900/30 dark:text-blue-300 dark:ring-blue-500/30 sm:px-2.5 sm:py-1 sm:text-xs">#{tag}</span>
+                <span key={tag} className="rounded-md bg-teal-50 px-2 py-0.5 text-[10px] font-semibold text-teal-700 ring-1 ring-teal-600/20 dark:bg-teal-900/30 dark:text-teal-300 dark:ring-teal-500/30 sm:px-2.5 sm:py-1 sm:text-xs">#{tag}</span>
               ))}
             </div>
           )}
@@ -256,7 +256,7 @@ export default function BlogPostClient({ post, from }: Props) {
                   <li key={item.id} className={item.level === 3 ? 'ml-3' : ''}>
                     <a
                       href={`#${item.id}`}
-                      className="block truncate text-sm text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+                      className="block truncate text-sm text-gray-600 hover:text-teal-600 dark:text-gray-400 dark:hover:text-teal-400"
                     >
                       {item.text}
                     </a>
@@ -317,7 +317,7 @@ export default function BlogPostClient({ post, from }: Props) {
                     <a
                       href={`#${item.id}`}
                       onClick={() => setTocSheetOpen(false)}
-                      className="block py-0.5 text-sm text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+                      className="block py-0.5 text-sm text-gray-600 transition-colors hover:text-teal-600 dark:text-gray-400 dark:hover:text-teal-400"
                     >
                       {item.text}
                     </a>
@@ -359,7 +359,7 @@ export default function BlogPostClient({ post, from }: Props) {
                         <a
                           href={`#${item.id}`}
                           onClick={() => setTocOpen(false)}
-                          className="block truncate text-sm text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+                          className="block truncate text-sm text-gray-600 hover:text-teal-600 dark:text-gray-400 dark:hover:text-teal-400"
                         >
                           {item.text}
                         </a>

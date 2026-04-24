@@ -1,4 +1,4 @@
-interface ConfirmDialogProps {
+﻿interface ConfirmDialogProps {
   open: boolean
   title: string
   description: string
@@ -24,7 +24,7 @@ export default function ConfirmDialog({
   const confirmBtnClass = {
     danger: 'bg-red-600 hover:bg-red-700 text-white',
     warning: 'bg-amber-500 hover:bg-amber-600 text-white',
-    default: 'bg-blue-600 hover:bg-blue-700 text-white',
+    default: 'bg-teal-600 hover:bg-teal-700 text-white',
   }[variant]
 
   const iconMap = {

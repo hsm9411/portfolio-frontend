@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useMemo } from 'react'
 import ReactMarkdown from 'react-markdown'
@@ -129,7 +129,7 @@ export default function UpdateTimeline({ projectId }: Props) {
     ),
   }), [])
 
-  const inputClass = 'w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:placeholder-gray-500 dark:focus:border-blue-500'
+  const inputClass = 'w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:placeholder-gray-500 dark:focus:border-teal-500'
 
   return (
     <section className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700 sm:p-8">
@@ -159,8 +159,8 @@ export default function UpdateTimeline({ projectId }: Props) {
 
       {/* 추가 폼 */}
       {isAdmin && showAddForm && (
-        <form onSubmit={handleAdd} className="mb-6 rounded-xl border border-blue-200 bg-blue-50/50 p-4 dark:border-blue-800/50 dark:bg-blue-900/10">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">새 업데이트</p>
+        <form onSubmit={handleAdd} className="mb-6 rounded-xl border border-teal-200 bg-teal-50/50 p-4 dark:border-teal-800/50 dark:bg-teal-900/10">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-teal-600 dark:text-teal-400">새 업데이트</p>
           <div className="space-y-2.5">
             <input
               type="text"
@@ -195,7 +195,7 @@ export default function UpdateTimeline({ projectId }: Props) {
             <button
               type="submit"
               disabled={addSubmitting || !addTitle.trim() || !addContent.trim()}
-              className="flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex items-center gap-1.5 rounded-lg bg-teal-600 px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {addSubmitting ? (
                 <>
@@ -211,7 +211,7 @@ export default function UpdateTimeline({ projectId }: Props) {
       {/* 타임라인 목록 */}
       {loading ? (
         <div className="flex justify-center py-8">
-          <div className="h-7 w-7 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600" />
+          <div className="h-7 w-7 animate-spin rounded-full border-4 border-gray-200 border-t-teal-600" />
         </div>
       ) : updates.length === 0 ? (
         <div className="rounded-xl border border-dashed border-gray-200 py-10 text-center dark:border-gray-700">
@@ -225,11 +225,11 @@ export default function UpdateTimeline({ projectId }: Props) {
           {updates.map((item) => (
             <li key={item.id} className="mb-5 ml-4 last:mb-0 sm:mb-8">
               {/* 타임라인 점 */}
-              <div className="absolute -left-1.5 mt-1 h-3 w-3 rounded-full border-2 border-white bg-blue-500 dark:border-gray-800 dark:bg-blue-400" />
+              <div className="absolute -left-1.5 mt-1 h-3 w-3 rounded-full border-2 border-white bg-teal-500 dark:border-gray-800 dark:bg-teal-400" />
 
               {editingId === item.id ? (
                 /* 수정 폼 */
-                <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-4 dark:border-blue-800/50 dark:bg-blue-900/10">
+                <div className="rounded-xl border border-teal-200 bg-teal-50/50 p-4 dark:border-teal-800/50 dark:bg-teal-900/10">
                   <div className="space-y-2.5">
                     <input
                       type="text"
@@ -268,7 +268,7 @@ export default function UpdateTimeline({ projectId }: Props) {
                         !editContent.trim() ||
                         (editTitle.trim() === item.title && editContent.trim() === item.content && editExternalUrl.trim() === (item.externalUrl ?? ''))
                       }
-                      className="flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="flex items-center gap-1.5 rounded-lg bg-teal-600 px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {editSubmitting ? (
                         <>
@@ -308,7 +308,7 @@ export default function UpdateTimeline({ projectId }: Props) {
                           <button
                             type="button"
                             onClick={() => handleEditStart(item)}
-                            className="rounded p-0.5 text-gray-300 transition-colors hover:text-blue-500 dark:text-gray-600 dark:hover:text-blue-400"
+                            className="rounded p-0.5 text-gray-300 transition-colors hover:text-teal-500 dark:text-gray-600 dark:hover:text-teal-400"
                             aria-label="수정"
                           >
                             <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

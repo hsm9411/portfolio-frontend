@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -122,18 +122,18 @@ export default function ImageGalleryUploader({ value, onChange }: ImageGalleryUp
           onClick={() => !uploading && inputRef.current?.click()}
           className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed py-6 transition-colors ${
             dragOver
-              ? 'border-blue-400 bg-blue-50 dark:border-blue-500 dark:bg-blue-900/20'
+              ? 'border-teal-400 bg-teal-50 dark:border-teal-500 dark:bg-teal-900/20'
               : 'border-gray-200 bg-gray-50 hover:border-gray-300 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:hover:border-gray-600 dark:hover:bg-gray-800'
           }`}
         >
           {uploading ? (
             <>
-              <div className="h-7 w-7 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600" />
+              <div className="h-7 w-7 animate-spin rounded-full border-4 border-gray-300 border-t-teal-600" />
               <p className="mt-2 text-sm text-gray-500">업로드 중...</p>
             </>
           ) : (
             <>
-              <svg className={`h-8 w-8 ${dragOver ? 'text-blue-500' : 'text-gray-300 dark:text-gray-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className={`h-8 w-8 ${dragOver ? 'text-teal-500' : 'text-gray-300 dark:text-gray-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
               <p className="mt-2 text-sm font-medium text-gray-600 dark:text-gray-400">

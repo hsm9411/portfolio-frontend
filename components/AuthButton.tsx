@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { createClient } from '@/lib/supabase/client'
 import { useEffect, useState, useRef } from 'react'
@@ -75,7 +75,7 @@ export default function AuthButton() {
               className="h-7 w-7 rounded-full object-cover ring-1 ring-gray-200 dark:ring-white/10"
             />
           ) : (
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-[11px] font-bold text-white">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-teal-600 text-[11px] font-bold text-white">
               {displayName.charAt(0).toUpperCase()}
             </div>
           )}

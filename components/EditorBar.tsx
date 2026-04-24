@@ -1,4 +1,4 @@
-interface EditorBarProps {
+﻿interface EditorBarProps {
   title: string
   hasChanges: boolean
   submitting: boolean
@@ -77,7 +77,7 @@ export default function EditorBar({
             form={formId}
             type="submit"
             disabled={submitting || !hasChanges}
-            className="flex shrink-0 items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex shrink-0 items-center gap-2 rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {submitting ? (
               <>

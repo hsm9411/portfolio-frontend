@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect } from 'react'
 import Link from 'next/link'
@@ -32,7 +32,7 @@ export default function GlobalError({ error, reset }: Props) {
         <div className="flex justify-center gap-3">
           <button
             onClick={reset}
-            className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+            className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-teal-700"
           >
             다시 시도
           </button>

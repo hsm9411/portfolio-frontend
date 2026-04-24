@@ -1,4 +1,4 @@
-import skills from '@/lib/data/skills'
+﻿import skills from '@/lib/data/skills'
 
 export default function Skills() {
   return (
@@ -11,10 +11,10 @@ export default function Skills() {
           {skills.map(({ icon: Icon, title, items }) => (
             <div
               key={title}
-              className="rounded-xl border border-gray-200 bg-white p-4 transition-all duration-200 hover:-translate-y-1 hover:border-blue-400 hover:shadow-md dark:border-gray-700 dark:bg-gray-800/60 dark:hover:border-blue-500 sm:p-6"
+              className="rounded-xl border border-gray-200 bg-white p-4 transition-all duration-200 hover:-translate-y-1 hover:border-teal-400 hover:shadow-md dark:border-gray-700 dark:bg-gray-800/60 dark:hover:border-teal-500 sm:p-6"
             >
               <div className="mb-3 flex items-center gap-3 border-b border-gray-100 pb-3 dark:border-gray-700 sm:mb-4">
-                <Icon className="text-lg text-blue-600 dark:text-blue-400 sm:text-xl" />
+                <Icon className="text-lg text-teal-600 dark:text-teal-400 sm:text-xl" />
                 <h3 className="text-sm font-bold text-gray-900 dark:text-white sm:text-base">{title}</h3>
               </div>
               <ul className="space-y-1.5 sm:space-y-2">

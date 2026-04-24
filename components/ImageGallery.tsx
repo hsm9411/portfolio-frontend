@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import Image from 'next/image'
@@ -138,7 +138,7 @@ export default function ImageGallery({ thumbnailUrl, imageUrls = [], title }: Im
                 onClick={() => { setSelectedIdx(idx); openLightbox(idx) }}
                 className={`relative h-[72px] w-[108px] shrink-0 overflow-hidden rounded-lg transition-all duration-200 focus:outline-none ${
                   idx === selectedIdx
-                    ? 'ring-2 ring-blue-500 ring-offset-1 ring-offset-gray-100 dark:ring-offset-gray-900'
+                    ? 'ring-2 ring-teal-500 ring-offset-1 ring-offset-gray-100 dark:ring-offset-gray-900'
                     : 'opacity-50 hover:opacity-80'
                 }`}
                 aria-label={`이미지 ${idx + 1} 보기`}

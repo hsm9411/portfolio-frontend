@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -83,7 +83,7 @@ export default function LikeButton({ targetType, targetId, initialLikeCount }: L
       {!isAuthenticated && (
         <button
           onClick={() => router.push('/login')}
-          className="text-xs text-gray-400 underline-offset-2 hover:text-blue-500 hover:underline dark:text-gray-500 dark:hover:text-blue-400"
+          className="text-xs text-gray-400 underline-offset-2 hover:text-teal-500 hover:underline dark:text-gray-500 dark:hover:text-teal-400"
         >
           로그인하고 좋아요 누르기
         </button>
