@@ -172,7 +172,7 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
               <button
                 type="button"
                 onClick={handleClear}
-                className="rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-400 dark:hover:bg-gray-700"
+                className="rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-400 dark:hover:bg-zinc-700"
               >
                 초기화
               </button>
@@ -194,7 +194,7 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
               className={`shrink-0 rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors ${
                 statusFromUrl === f.value
                   ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
-                  : 'bg-white text-gray-500 ring-1 ring-inset ring-gray-200 hover:bg-zinc-50 dark:bg-zinc-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-gray-700'
+                  : 'bg-white text-gray-500 ring-1 ring-inset ring-gray-200 hover:bg-zinc-50 dark:bg-zinc-800 dark:text-gray-400 dark:ring-zinc-700 dark:hover:bg-zinc-700'
               }`}
             >
               {f.label}

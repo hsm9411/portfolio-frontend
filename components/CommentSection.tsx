@@ -262,7 +262,7 @@ export default function CommentSection({ targetType, targetId }: CommentSectionP
                       <button
                         type="button"
                         onClick={handleEditCancel}
-                        className="rounded-lg px-3 py-1.5 text-xs font-medium text-gray-500 transition-colors hover:bg-zinc-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                        className="rounded-lg px-3 py-1.5 text-xs font-medium text-gray-500 transition-colors hover:bg-zinc-100 dark:text-gray-400 dark:hover:bg-zinc-700"
                       >
                         취소
                       </button>

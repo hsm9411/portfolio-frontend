@@ -132,7 +132,7 @@ export default function UpdateTimeline({ projectId }: Props) {
   const inputClass = 'w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-gray-200 dark:placeholder-gray-500 dark:focus:border-indigo-500'
 
   return (
-    <section className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-gray-200 dark:bg-zinc-800 dark:ring-gray-700 sm:p-8">
+    <section className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-gray-200 dark:bg-zinc-800 dark:ring-zinc-700 sm:p-8">
       {/* 헤더 */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -147,7 +147,7 @@ export default function UpdateTimeline({ projectId }: Props) {
           <button
             type="button"
             onClick={() => setShowAddForm(true)}
-            className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-gray-300 dark:hover:bg-gray-700"
+            className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-gray-300 dark:hover:bg-zinc-700"
           >
             <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -188,7 +188,7 @@ export default function UpdateTimeline({ projectId }: Props) {
             <button
               type="button"
               onClick={() => { setShowAddForm(false); setAddTitle(''); setAddContent(''); setAddExternalUrl('') }}
-              className="rounded-lg px-3 py-1.5 text-xs font-medium text-gray-500 transition-colors hover:bg-zinc-100 dark:text-gray-400 dark:hover:bg-gray-700"
+              className="rounded-lg px-3 py-1.5 text-xs font-medium text-gray-500 transition-colors hover:bg-zinc-100 dark:text-gray-400 dark:hover:bg-zinc-700"
             >
               취소
             </button>
@@ -255,7 +255,7 @@ export default function UpdateTimeline({ projectId }: Props) {
                     <button
                       type="button"
                       onClick={handleEditCancel}
-                      className="rounded-lg px-3 py-1.5 text-xs font-medium text-gray-500 transition-colors hover:bg-zinc-100 dark:text-gray-400 dark:hover:bg-gray-700"
+                      className="rounded-lg px-3 py-1.5 text-xs font-medium text-gray-500 transition-colors hover:bg-zinc-100 dark:text-gray-400 dark:hover:bg-zinc-700"
                     >
                       취소
                     </button>
@@ -290,7 +290,7 @@ export default function UpdateTimeline({ projectId }: Props) {
                           href={item.externalUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1 rounded-md bg-zinc-100 px-2 py-0.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-200 dark:bg-zinc-700 dark:text-gray-400 dark:hover:bg-gray-600"
+                          className="flex items-center gap-1 rounded-md bg-zinc-100 px-2 py-0.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-200 dark:bg-zinc-700 dark:text-gray-400 dark:hover:bg-zinc-600"
                         >
                           <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />

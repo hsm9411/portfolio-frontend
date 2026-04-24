@@ -128,7 +128,7 @@ export default function BlogPostClient({ post, from }: Props) {
               <span className="font-medium text-gray-900 dark:text-white">{'"'}{post.title}{'"'}</span>을(를) 삭제합니다. 이 작업은 되돌릴 수 없습니다.
             </p>
             <div className="flex gap-2.5 sm:gap-3">
-              <button onClick={() => setShowDeleteConfirm(false)} className="flex-1 rounded-xl border border-gray-200 px-4 py-2 text-xs font-semibold text-gray-700 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-gray-300 dark:hover:bg-gray-700 sm:py-2.5 sm:text-sm">취소</button>
+              <button onClick={() => setShowDeleteConfirm(false)} className="flex-1 rounded-xl border border-gray-200 px-4 py-2 text-xs font-semibold text-gray-700 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-gray-300 dark:hover:bg-zinc-700 sm:py-2.5 sm:text-sm">취소</button>
               <button onClick={handleDelete} disabled={deleting} className="flex-1 rounded-xl bg-red-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-60 sm:py-2.5 sm:text-sm">
                 {deleting ? (
                   <span className="flex items-center justify-center gap-1.5">
@@ -162,7 +162,7 @@ export default function BlogPostClient({ post, from }: Props) {
                 className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium shadow-sm transition-colors ${
                   copied
                     ? 'border-green-200 bg-green-50 text-green-600 dark:border-green-800 dark:bg-green-900/20 dark:text-green-400'
-                    : 'border-gray-200 bg-white text-gray-700 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                    : 'border-gray-200 bg-white text-gray-700 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-300 dark:hover:bg-zinc-700'
                 }`}
               >
                 {copied ? (
@@ -185,7 +185,7 @@ export default function BlogPostClient({ post, from }: Props) {
                 <>
                   <button
                     onClick={() => router.push(`/blog/${post.id}/edit`)}
-                    className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                    className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-300 dark:hover:bg-zinc-700"
                   >
                     <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -371,7 +371,7 @@ export default function BlogPostClient({ post, from }: Props) {
             </div>
           )}
 
-          <section className="-mx-4 bg-white px-4 py-6 dark:bg-zinc-800 sm:mx-0 sm:rounded-2xl sm:border sm:border-gray-200 sm:px-6 sm:py-10 sm:shadow-sm dark:sm:border-gray-700 md:px-10 md:py-12">
+          <section className="-mx-4 bg-white px-4 py-6 dark:bg-zinc-800 sm:mx-0 sm:rounded-2xl sm:border sm:border-gray-200 sm:px-6 sm:py-10 sm:shadow-sm dark:sm:border-zinc-700 md:px-10 md:py-12">
             <div className="markdown-body">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}

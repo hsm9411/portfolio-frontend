@@ -168,7 +168,7 @@ export default function ThumbnailUploader({ value, onChange, className = '' }: T
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="또는 이미지 URL 직접 입력"
-          className="w-full rounded-xl border border-gray-200 bg-zinc-50 px-4 py-2 text-xs text-gray-600 transition-colors focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-gray-400 dark:focus:bg-gray-800"
+          className="w-full rounded-xl border border-gray-200 bg-zinc-50 px-4 py-2 text-xs text-gray-600 transition-colors focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-gray-400 dark:focus:bg-zinc-800"
         />
       </div>
 

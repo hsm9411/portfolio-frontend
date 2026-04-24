@@ -92,7 +92,7 @@ export default function ProjectDetailClient({ project, from }: Props) {
               <span className="font-medium text-gray-900 dark:text-white">{'"'}{project.title}{'"'}</span>을(를) 삭제합니다. 이 작업은 되돌릴 수 없습니다.
             </p>
             <div className="flex gap-3">
-              <button onClick={() => setShowDeleteConfirm(false)} className="flex-1 rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-gray-300 dark:hover:bg-gray-700">취소</button>
+              <button onClick={() => setShowDeleteConfirm(false)} className="flex-1 rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-gray-300 dark:hover:bg-zinc-700">취소</button>
               <button onClick={handleDelete} disabled={deleting} className="flex-1 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-60">
                 {deleting ? (
                   <span className="flex items-center justify-center gap-1.5">
@@ -123,7 +123,7 @@ export default function ProjectDetailClient({ project, from }: Props) {
                 className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium shadow-sm transition-colors ${
                   copied
                     ? 'border-green-200 bg-green-50 text-green-600 dark:border-green-800 dark:bg-green-900/20 dark:text-green-400'
-                    : 'border-gray-200 bg-white text-gray-700 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                    : 'border-gray-200 bg-white text-gray-700 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-300 dark:hover:bg-zinc-700'
                 }`}
               >
                 {copied ? (
@@ -144,7 +144,7 @@ export default function ProjectDetailClient({ project, from }: Props) {
               </button>
               {isAdmin && (
                 <>
-                  <button onClick={() => router.push(`/projects/${project.id}/edit`)} className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-300 dark:hover:bg-gray-700">
+                  <button onClick={() => router.push(`/projects/${project.id}/edit`)} className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-300 dark:hover:bg-zinc-700">
                     <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
@@ -201,7 +201,7 @@ export default function ProjectDetailClient({ project, from }: Props) {
           )}
 
           {project.techStack?.length > 0 && (
-            <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 dark:bg-zinc-800 dark:ring-gray-700">
+            <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 dark:bg-zinc-800 dark:ring-zinc-700">
               <h2 className="mb-4 text-base font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">🛠 Tech Stack</h2>
               <div className="flex flex-wrap gap-2">
                 {project.techStack.map((tech) => (
@@ -212,7 +212,7 @@ export default function ProjectDetailClient({ project, from }: Props) {
           )}
 
           {project.tags?.length > 0 && (
-            <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 dark:bg-zinc-800 dark:ring-gray-700">
+            <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 dark:bg-zinc-800 dark:ring-zinc-700">
               <h2 className="mb-4 text-base font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">🏷 Tags</h2>
               <div className="flex flex-wrap gap-2">
                 {project.tags.map((tag) => (
@@ -222,7 +222,7 @@ export default function ProjectDetailClient({ project, from }: Props) {
             </section>
           )}
 
-          <section className="-mx-5 bg-white px-5 py-6 dark:bg-zinc-800 sm:mx-0 sm:rounded-2xl sm:px-8 sm:py-8 sm:shadow-sm sm:ring-1 sm:ring-gray-200 dark:sm:ring-gray-700">
+          <section className="-mx-5 bg-white px-5 py-6 dark:bg-zinc-800 sm:mx-0 sm:rounded-2xl sm:px-8 sm:py-8 sm:shadow-sm sm:ring-1 sm:ring-gray-200 dark:sm:ring-zinc-700">
             <h2 className="mb-5 text-base font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">📋 Description</h2>
             <div className="markdown-body">
               <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]} components={markdownComponents}>{project.description}</ReactMarkdown>
@@ -238,7 +238,7 @@ export default function ProjectDetailClient({ project, from }: Props) {
                 </a>
               )}
               {project.githubUrl && (
-                <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-gray-700 dark:bg-zinc-700 dark:hover:bg-gray-600">
+                <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-gray-700 dark:bg-zinc-700 dark:hover:bg-zinc-600">
                   <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" /></svg>
                   GitHub
                 </a>
@@ -249,10 +249,10 @@ export default function ProjectDetailClient({ project, from }: Props) {
           <UpdateTimeline projectId={project.id} />
 
           {/* 실시간 영역 — 클라이언트에서 별도 fetch */}
-          <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 dark:bg-zinc-800 dark:ring-gray-700">
+          <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 dark:bg-zinc-800 dark:ring-zinc-700">
             <LikeButton targetType="project" targetId={project.id} initialLikeCount={project.likeCount} />
           </div>
-          <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 dark:bg-zinc-800 dark:ring-gray-700 sm:p-8">
+          <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 dark:bg-zinc-800 dark:ring-zinc-700 sm:p-8">
             <CommentSection targetType="project" targetId={project.id} />
           </div>
         </div>

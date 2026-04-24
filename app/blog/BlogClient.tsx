@@ -141,7 +141,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
               className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                 categoryFromUrl === value
                   ? 'bg-indigo-600 text-white'
-                  : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                  : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-300 dark:hover:bg-zinc-700'
               }`}
             >
               {label}
@@ -179,7 +179,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
               />
             </div>
             {(searchInput || searchFromUrl) && (
-              <button type="button" onClick={handleClear} className="rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-400 dark:hover:bg-gray-700">
+              <button type="button" onClick={handleClear} className="rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-400 dark:hover:bg-zinc-700">
                 초기화
               </button>
             )}

@@ -146,7 +146,7 @@ export default function TechStackInput({ value, onChange }: TechStackInputProps)
     <div>
       <div className="relative">
         {/* Selected Tags */}
-        <div className="flex min-h-[46px] flex-wrap gap-2 rounded-lg border border-gray-300 bg-white p-2 dark:border-gray-600 dark:bg-zinc-700">
+        <div className="flex min-h-[46px] flex-wrap gap-2 rounded-lg border border-gray-300 bg-white p-2 dark:border-zinc-600 dark:bg-zinc-700">
           {value.map((tech, index) => (
             <span
               key={index}
@@ -178,13 +178,13 @@ export default function TechStackInput({ value, onChange }: TechStackInputProps)
 
         {/* Autocomplete Suggestions */}
         {suggestions.length > 0 && (
-          <div className="absolute z-10 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-600 dark:bg-zinc-800">
+          <div className="absolute z-10 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-lg dark:border-zinc-600 dark:bg-zinc-800">
             {suggestions.map((tech, index) => (
               <button
                 key={index}
                 type="button"
                 onClick={() => addTechStack(tech)}
-                className="w-full px-4 py-2.5 text-left text-sm hover:bg-zinc-100 dark:hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg"
+                className="w-full px-4 py-2.5 text-left text-sm hover:bg-zinc-100 dark:hover:bg-zinc-700 first:rounded-t-lg last:rounded-b-lg"
               >
                 {tech}
               </button>
@@ -203,7 +203,7 @@ export default function TechStackInput({ value, onChange }: TechStackInputProps)
                 key={tech}
                 type="button"
                 onClick={() => addTechStack(tech)}
-                className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-zinc-50 dark:border-gray-600 dark:bg-zinc-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-700 dark:text-gray-300 dark:hover:bg-zinc-600"
               >
                 + {tech}
               </button>
