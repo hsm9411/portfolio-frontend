@@ -83,7 +83,7 @@ export default function LikeButton({ targetType, targetId, initialLikeCount }: L
       {!isAuthenticated && (
         <button
           onClick={() => router.push('/login')}
-          className="text-xs text-gray-400 underline-offset-2 hover:text-teal-500 hover:underline dark:text-gray-500 dark:hover:text-teal-400"
+          className="text-xs text-gray-400 underline-offset-2 hover:text-indigo-500 hover:underline dark:text-gray-500 dark:hover:text-indigo-400"
         >
           로그인하고 좋아요 누르기
         </button>

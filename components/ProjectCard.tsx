@@ -13,7 +13,7 @@ interface ProjectCardProps {
 
 const statusConfig = {
   completed: { label: '완료', className: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-900/30 dark:text-emerald-400 dark:ring-emerald-500/30' },
-  'in-progress': { label: '진행중', className: 'bg-teal-50 text-teal-700 ring-teal-600/20 dark:bg-teal-900/30 dark:text-teal-400 dark:ring-teal-500/30' },
+  'in-progress': { label: '진행중', className: 'bg-indigo-50 text-indigo-700 ring-indigo-600/20 dark:bg-indigo-900/30 dark:text-indigo-400 dark:ring-indigo-500/30' },
   archived: { label: '보관', className: 'bg-gray-100 text-gray-500 ring-gray-500/20 dark:bg-gray-700 dark:text-gray-400 dark:ring-gray-500/30' },
 }
 
@@ -80,7 +80,7 @@ export default function ProjectCard({ project, onTechClick }: ProjectCardProps) 
         </div>
 
         {/* 제목 — 최대 2줄. sm 이상 다열 그리드에서만 고정 높이로 행 정렬 */}
-        <h3 className="mb-2 line-clamp-2 overflow-hidden text-base font-bold leading-[1.4] text-gray-900 transition-colors group-hover:text-teal-600 dark:text-white dark:group-hover:text-teal-400 sm:h-[46px]">
+        <h3 className="mb-2 line-clamp-2 overflow-hidden text-base font-bold leading-[1.4] text-gray-900 transition-colors group-hover:text-indigo-600 dark:text-white dark:group-hover:text-indigo-400 sm:h-[46px]">
           {project.title}
         </h3>
 
@@ -97,7 +97,7 @@ export default function ProjectCard({ project, onTechClick }: ProjectCardProps) 
                 key={tech}
                 type="button"
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); onTechClick(tech) }}
-                className="shrink-0 rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 transition-colors hover:bg-teal-100 hover:text-teal-700 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-teal-900/40 dark:hover:text-teal-400"
+                className="shrink-0 rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 transition-colors hover:bg-indigo-100 hover:text-indigo-700 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-indigo-900/40 dark:hover:text-indigo-400"
               >
                 {tech}
               </button>
@@ -108,7 +108,7 @@ export default function ProjectCard({ project, onTechClick }: ProjectCardProps) 
             )
           )}
           {project.techStack.length > 3 && (
-            <span className="shrink-0 rounded-md bg-teal-50 px-2 py-0.5 text-xs font-semibold text-teal-500 dark:bg-teal-900/30 dark:text-teal-400">
+            <span className="shrink-0 rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-500 dark:bg-indigo-900/30 dark:text-indigo-400">
               +{project.techStack.length - 3}
             </span>
           )}

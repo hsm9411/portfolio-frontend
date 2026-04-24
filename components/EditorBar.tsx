@@ -23,7 +23,7 @@ export default function EditorBar({
   const hasPreviewToggle = preview !== undefined && onPreviewChange !== undefined
 
   return (
-    <div className="sticky z-40 border-b border-gray-200 bg-white/90 backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/90" style={{ top: 'var(--navbar-h, 72px)' }}>
+    <div className="sticky z-40 border-b border-gray-200 bg-white/90 backdrop-blur-md dark:border-gray-800 dark:bg-zinc-900/90" style={{ top: 'var(--navbar-h, 72px)' }}>
       <div className="mx-auto flex max-w-[1000px] items-center justify-between px-5 py-3">
 
         {/* 왼쪽: 취소 + 구분선 + 제목 + 미저장 표시 */}
@@ -77,7 +77,7 @@ export default function EditorBar({
             form={formId}
             type="submit"
             disabled={submitting || !hasChanges}
-            className="flex shrink-0 items-center gap-2 rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex shrink-0 items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {submitting ? (
               <>

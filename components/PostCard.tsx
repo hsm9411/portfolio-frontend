@@ -42,7 +42,7 @@ export default function PostCard({ post }: PostCardProps) {
         </div>
 
         {/* 제목 */}
-        <h2 className="mt-1.5 line-clamp-2 text-sm font-bold leading-[1.4] text-gray-900 transition-colors group-hover:text-teal-600 dark:text-white dark:group-hover:text-teal-400 sm:mt-2 sm:text-base">
+        <h2 className="mt-1.5 line-clamp-2 text-sm font-bold leading-[1.4] text-gray-900 transition-colors group-hover:text-indigo-600 dark:text-white dark:group-hover:text-indigo-400 sm:mt-2 sm:text-base">
           {post.title}
         </h2>
 

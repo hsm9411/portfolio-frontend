@@ -89,7 +89,7 @@ export default function NewPostPage() {
   if (!authReady || !isAdmin) return <Spinner />
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-900">
       <ConfirmDialog
         open={showCancelConfirm}
         title="작성 취소"
@@ -189,7 +189,7 @@ export default function NewPostPage() {
             {formData.tags.length > 0 && (
               <div className="mb-5 flex flex-wrap gap-2">
                 {formData.tags.map((tag) => (
-                  <span key={tag} className="rounded-md bg-teal-50 px-2.5 py-1 text-xs font-semibold text-teal-700 ring-1 ring-teal-600/20 dark:bg-teal-900/30 dark:text-teal-300">
+                  <span key={tag} className="rounded-md bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700 ring-1 ring-indigo-600/20 dark:bg-indigo-900/30 dark:text-indigo-300">
                     #{tag}
                   </span>
                 ))}

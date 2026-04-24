@@ -32,7 +32,7 @@ export default function Contact() {
   }
 
   return (
-    <section className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+    <section className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-zinc-900">
       <div className="mx-auto max-w-[1000px] px-4 py-12 sm:px-5 md:py-20">
         <h2 className="mb-3 text-center text-2xl font-black tracking-tight text-gray-900 dark:text-white md:mb-4 md:text-3xl">
           Contact
@@ -47,21 +47,21 @@ export default function Contact() {
             name="user_name"
             placeholder="이름 (Name)"
             required
-            className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition-colors focus:border-teal-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-teal-400 sm:py-[15px] sm:text-base"
+            className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition-colors focus:border-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-indigo-400 sm:py-[15px] sm:text-base"
           />
           <input
             type="email"
             name="user_email"
             placeholder="이메일 (Email)"
             required
-            className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition-colors focus:border-teal-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-teal-400 sm:py-[15px] sm:text-base"
+            className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition-colors focus:border-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-indigo-400 sm:py-[15px] sm:text-base"
           />
           <textarea
             name="message"
             placeholder="내용을 입력해주세요 (Message)"
             required
             rows={6}
-            className="w-full resize-y rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition-colors focus:border-teal-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-teal-400 sm:py-[15px] sm:text-base"
+            className="w-full resize-y rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition-colors focus:border-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-indigo-400 sm:py-[15px] sm:text-base"
           />
           <button
             type="submit"

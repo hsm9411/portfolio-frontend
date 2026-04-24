@@ -104,13 +104,13 @@ export function getDeviconUrls(techStack: string[], max = 3): string[] {
  */
 export function getTechGradient(techStack: string[]): string {
   const gradients = [
-    'from-teal-500 to-violet-600',
-    'from-emerald-500 to-teal-600',
+    'from-indigo-500 to-violet-600',
+    'from-emerald-500 to-indigo-600',
     'from-orange-500 to-amber-600',
     'from-pink-500 to-rose-600',
-    'from-cyan-500 to-teal-600',
+    'from-cyan-500 to-indigo-600',
     'from-violet-500 to-purple-600',
-    'from-teal-500 to-green-600',
+    'from-indigo-500 to-green-600',
     'from-red-500 to-orange-600',
   ]
   const seed = techStack.join('').split('').reduce((acc, c) => acc + c.charCodeAt(0), 0)

@@ -21,7 +21,7 @@ import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 
 const STATUS_CONFIG = {
-  'in-progress': { label: '진행중', className: 'bg-teal-50 text-teal-700 ring-teal-600/20 dark:bg-teal-900/30 dark:text-teal-400 dark:ring-teal-500/30' },
+  'in-progress': { label: '진행중', className: 'bg-indigo-50 text-indigo-700 ring-indigo-600/20 dark:bg-indigo-900/30 dark:text-indigo-400 dark:ring-indigo-500/30' },
   completed:     { label: '완료',   className: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-900/30 dark:text-emerald-400 dark:ring-emerald-500/30' },
   archived:      { label: '보관',   className: 'bg-gray-100 text-gray-600 ring-gray-500/20 dark:bg-gray-700 dark:text-gray-400 dark:ring-gray-500/30' },
 }
@@ -131,7 +131,7 @@ export default function EditProjectPage() {
   if (!isAdmin) return null
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-900">
       <ConfirmDialog
         open={showCancelConfirm}
         title="수정 취소"
@@ -288,7 +288,7 @@ export default function EditProjectPage() {
             {formData.techStack.length > 0 && (
               <div className="mb-6 flex flex-wrap gap-2">
                 {formData.techStack.map((tech) => (
-                  <span key={tech} className="rounded-lg bg-teal-50 px-3 py-1.5 text-sm font-semibold text-teal-700 ring-1 ring-teal-600/20 dark:bg-teal-900/30 dark:text-teal-300 dark:ring-teal-500/30">
+                  <span key={tech} className="rounded-lg bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-700 ring-1 ring-indigo-600/20 dark:bg-indigo-900/30 dark:text-indigo-300 dark:ring-indigo-500/30">
                     {tech}
                   </span>
                 ))}

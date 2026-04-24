@@ -117,7 +117,7 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
   const handleTechClear    = () => updateUrl(1, statusFromUrl, searchFromUrl, sortFromUrl, '')
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-900">
       <div className="mx-auto max-w-[1000px] px-4 py-8 sm:px-5 sm:py-10">
 
         <div className="mb-8 flex items-start justify-between">
@@ -128,7 +128,7 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
           {isAdmin && (
             <Link
               href="/projects/new"
-              className="flex items-center gap-1.5 rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-teal-700"
+              className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-700"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -144,7 +144,7 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
             <select
               value={sortFromUrl}
               onChange={(e) => updateUrl(1, statusFromUrl, searchFromUrl, e.target.value, techFromUrl)}
-              className="shrink-0 rounded-lg border border-gray-200 bg-white py-2.5 pl-3 pr-8 text-sm text-gray-700 transition-colors focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+              className="shrink-0 rounded-lg border border-gray-200 bg-white py-2.5 pl-3 pr-8 text-sm text-gray-700 transition-colors focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
             >
               {SORT_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
@@ -153,7 +153,7 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
             <div className="relative flex-1">
               {loading && searchInput ? (
                 <div className="absolute left-3.5 top-1/2 -translate-y-1/2">
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-200 border-t-teal-500" />
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-200 border-t-indigo-500" />
                 </div>
               ) : (
                 <svg className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -165,14 +165,14 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="프로젝트 검색..."
-                className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 transition-colors focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500 dark:focus:border-teal-500"
+                className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 transition-colors focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500 dark:focus:border-indigo-500"
               />
             </div>
             {(searchInput || searchFromUrl) && (
               <button
                 type="button"
                 onClick={handleClear}
-                className="rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+                className="rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-zinc-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
               >
                 초기화
               </button>
@@ -194,7 +194,7 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
               className={`shrink-0 rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors ${
                 statusFromUrl === f.value
                   ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
-                  : 'bg-white text-gray-500 ring-1 ring-inset ring-gray-200 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-gray-700'
+                  : 'bg-white text-gray-500 ring-1 ring-inset ring-gray-200 hover:bg-zinc-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-gray-700'
               }`}
             >
               {f.label}
@@ -206,12 +206,12 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
         {techFromUrl && (
           <div className="mb-4 flex items-center gap-2">
             <span className="text-xs text-gray-400 dark:text-gray-500">기술 스택</span>
-            <span className="flex items-center gap-1.5 rounded-full bg-teal-100 py-1 pl-3 pr-2 text-xs font-semibold text-teal-700 dark:bg-teal-900/40 dark:text-teal-400">
+            <span className="flex items-center gap-1.5 rounded-full bg-indigo-100 py-1 pl-3 pr-2 text-xs font-semibold text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-400">
               {techFromUrl}
               <button
                 type="button"
                 onClick={handleTechClear}
-                className="flex h-4 w-4 items-center justify-center rounded-full hover:bg-teal-200 dark:hover:bg-teal-800"
+                className="flex h-4 w-4 items-center justify-center rounded-full hover:bg-indigo-200 dark:hover:bg-indigo-800"
                 aria-label="기술 스택 필터 해제"
               >
                 <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -240,14 +240,14 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
                     : '프로젝트가 없습니다.'}
             </p>
             {isAdmin && !searchFromUrl && statusFromUrl === 'all' && !techFromUrl && (
-              <Link href="/projects/new" className="mt-4 inline-flex items-center gap-2 rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700">
+              <Link href="/projects/new" className="mt-4 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
                 첫 프로젝트 작성하기
               </Link>
             )}
             {(searchFromUrl || statusFromUrl !== 'all' || techFromUrl) && (
               <button
                 onClick={() => { setSearchInput(''); updateUrl(1, 'all', '', sortFromUrl, '') }}
-                className="mt-4 inline-flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400"
+                className="mt-4 inline-flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-zinc-50 dark:border-gray-700 dark:text-gray-400"
               >
                 전체 목록으로
               </button>
@@ -268,7 +268,7 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
                 <button
                   onClick={() => handlePageChange(Math.max(1, pageFromUrl - 1))}
                   disabled={pageFromUrl === 1}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-zinc-50 disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -280,7 +280,7 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
                 <button
                   onClick={() => handlePageChange(Math.min(totalPages, pageFromUrl + 1))}
                   disabled={pageFromUrl === totalPages}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-zinc-50 disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />

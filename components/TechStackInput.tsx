@@ -150,13 +150,13 @@ export default function TechStackInput({ value, onChange }: TechStackInputProps)
           {value.map((tech, index) => (
             <span
               key={index}
-              className="flex items-center gap-1 rounded-md bg-teal-100 px-3 py-1.5 text-sm font-medium text-teal-800 dark:bg-teal-900/30 dark:text-teal-300"
+              className="flex items-center gap-1 rounded-md bg-indigo-100 px-3 py-1.5 text-sm font-medium text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300"
             >
               {tech}
               <button
                 type="button"
                 onClick={() => removeTechStack(index)}
-                className="ml-1 rounded hover:bg-teal-200 dark:hover:bg-teal-800"
+                className="ml-1 rounded hover:bg-indigo-200 dark:hover:bg-indigo-800"
               >
                 ×
               </button>
@@ -203,7 +203,7 @@ export default function TechStackInput({ value, onChange }: TechStackInputProps)
                 key={tech}
                 type="button"
                 onClick={() => addTechStack(tech)}
-                className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-zinc-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
               >
                 + {tech}
               </button>

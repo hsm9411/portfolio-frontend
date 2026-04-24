@@ -24,7 +24,7 @@ export default function ConfirmDialog({
   const confirmBtnClass = {
     danger: 'bg-red-600 hover:bg-red-700 text-white',
     warning: 'bg-amber-500 hover:bg-amber-600 text-white',
-    default: 'bg-teal-600 hover:bg-teal-700 text-white',
+    default: 'bg-indigo-600 hover:bg-indigo-700 text-white',
   }[variant]
 
   const iconMap = {
@@ -60,7 +60,7 @@ export default function ConfirmDialog({
         <div className="flex gap-2.5 sm:gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 rounded-xl border border-gray-200 px-4 py-2 text-xs font-semibold text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700 sm:py-2.5 sm:text-sm"
+            className="flex-1 rounded-xl border border-gray-200 px-4 py-2 text-xs font-semibold text-gray-700 transition-colors hover:bg-zinc-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700 sm:py-2.5 sm:text-sm"
           >
             {cancelLabel}
           </button>

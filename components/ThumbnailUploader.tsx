@@ -135,18 +135,18 @@ export default function ThumbnailUploader({ value, onChange, className = '' }: T
           onClick={() => !uploading && inputRef.current?.click()}
           className={`flex aspect-video w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed transition-colors ${
             dragOver
-              ? 'border-teal-400 bg-teal-50 dark:border-teal-500 dark:bg-teal-900/20'
-              : 'border-gray-200 bg-gray-50 hover:border-gray-300 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:hover:border-gray-600 dark:hover:bg-gray-800'
+              ? 'border-indigo-400 bg-indigo-50 dark:border-indigo-500 dark:bg-indigo-900/20'
+              : 'border-gray-200 bg-zinc-50 hover:border-gray-300 hover:bg-gray-100 dark:border-gray-700 dark:bg-zinc-900 dark:hover:border-gray-600 dark:hover:bg-gray-800'
           }`}
         >
           {uploading ? (
             <>
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-teal-600" />
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-indigo-600" />
               <p className="mt-3 text-sm text-gray-500">업로드 중...</p>
             </>
           ) : (
             <>
-              <svg className={`h-10 w-10 ${dragOver ? 'text-teal-500' : 'text-gray-300 dark:text-gray-600'}`}
+              <svg className={`h-10 w-10 ${dragOver ? 'text-indigo-500' : 'text-gray-300 dark:text-gray-600'}`}
                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
@@ -168,7 +168,7 @@ export default function ThumbnailUploader({ value, onChange, className = '' }: T
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="또는 이미지 URL 직접 입력"
-          className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 text-xs text-gray-600 transition-colors focus:border-teal-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400 dark:focus:bg-gray-800"
+          className="w-full rounded-xl border border-gray-200 bg-zinc-50 px-4 py-2 text-xs text-gray-600 transition-colors focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-700 dark:bg-zinc-900 dark:text-gray-400 dark:focus:bg-gray-800"
         />
       </div>
 

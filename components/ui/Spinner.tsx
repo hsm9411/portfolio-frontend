@@ -7,8 +7,8 @@ export default function Spinner({ size = 'md' }: SpinnerProps) {
     ? 'h-8 w-8 border-[3px]'
     : 'h-10 w-10 border-4'
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
-      <div className={`${cls} animate-spin rounded-full border-gray-200 border-t-teal-600`} />
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-900">
+      <div className={`${cls} animate-spin rounded-full border-gray-200 border-t-indigo-600`} />
     </div>
   )
 }

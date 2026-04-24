@@ -141,7 +141,7 @@ export default function Navbar() {
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         aria-label="맨 위로"
-        className={`fixed bottom-5 right-4 z-40 flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-400 shadow-sm transition-all duration-300 hover:border-gray-300 hover:text-gray-600 hover:shadow-md sm:bottom-8 sm:right-8 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-500 dark:hover:border-gray-500 dark:hover:text-gray-300 ${
+        className={`fixed bottom-5 right-4 z-40 flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-400 shadow-sm transition-all duration-300 hover:border-gray-300 hover:text-gray-600 hover:shadow-md sm:bottom-8 sm:right-8 dark:border-gray-700 dark:bg-zinc-900 dark:text-gray-500 dark:hover:border-gray-500 dark:hover:text-gray-300 ${
           showScrollTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3 pointer-events-none'
         }`}
       >
@@ -161,7 +161,7 @@ export default function Navbar() {
 
       {/* Mobile Panel */}
       <div
-        className={`fixed inset-y-0 right-0 z-50 flex w-72 flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out dark:bg-gray-900 md:hidden ${
+        className={`fixed inset-y-0 right-0 z-50 flex w-72 flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out dark:bg-zinc-900 md:hidden ${
           mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -189,8 +189,8 @@ export default function Navbar() {
                 onClick={() => setMobileMenuOpen(false)}
                 className={`flex items-center gap-3 rounded-xl px-4 py-3.5 text-[0.9rem] font-semibold transition-colors ${
                   isActive(href)
-                    ? 'bg-teal-50 text-teal-600 dark:bg-teal-900/30 dark:text-teal-400'
-                    : 'text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-800'
+                    ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400'
+                    : 'text-gray-600 hover:bg-zinc-50 dark:text-gray-400 dark:hover:bg-gray-800'
                 }`}
               >
                 {label}

@@ -104,12 +104,12 @@ export default function BlogPostClient({ post, from }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-900">
 
       {/* 읽기 진행바 */}
       <div className="fixed left-0 top-0 z-50 h-[3px] w-full bg-transparent">
         <div
-          className="h-full bg-teal-500 transition-[width] duration-100 ease-out dark:bg-teal-400"
+          className="h-full bg-indigo-500 transition-[width] duration-100 ease-out dark:bg-indigo-400"
           style={{ width: `${readingProgress}%` }}
         />
       </div>
@@ -128,7 +128,7 @@ export default function BlogPostClient({ post, from }: Props) {
               <span className="font-medium text-gray-900 dark:text-white">{'"'}{post.title}{'"'}</span>을(를) 삭제합니다. 이 작업은 되돌릴 수 없습니다.
             </p>
             <div className="flex gap-2.5 sm:gap-3">
-              <button onClick={() => setShowDeleteConfirm(false)} className="flex-1 rounded-xl border border-gray-200 px-4 py-2 text-xs font-semibold text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700 sm:py-2.5 sm:text-sm">취소</button>
+              <button onClick={() => setShowDeleteConfirm(false)} className="flex-1 rounded-xl border border-gray-200 px-4 py-2 text-xs font-semibold text-gray-700 transition-colors hover:bg-zinc-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700 sm:py-2.5 sm:text-sm">취소</button>
               <button onClick={handleDelete} disabled={deleting} className="flex-1 rounded-xl bg-red-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-60 sm:py-2.5 sm:text-sm">
                 {deleting ? (
                   <span className="flex items-center justify-center gap-1.5">
@@ -162,7 +162,7 @@ export default function BlogPostClient({ post, from }: Props) {
                 className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium shadow-sm transition-colors ${
                   copied
                     ? 'border-green-200 bg-green-50 text-green-600 dark:border-green-800 dark:bg-green-900/20 dark:text-green-400'
-                    : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                    : 'border-gray-200 bg-white text-gray-700 hover:bg-zinc-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                 }`}
               >
                 {copied ? (
@@ -185,7 +185,7 @@ export default function BlogPostClient({ post, from }: Props) {
                 <>
                   <button
                     onClick={() => router.push(`/blog/${post.id}/edit`)}
-                    className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                    className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm transition-colors hover:bg-zinc-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                   >
                     <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -209,7 +209,7 @@ export default function BlogPostClient({ post, from }: Props) {
           {post.tags.length > 0 && (
             <div className="mb-4 flex flex-wrap gap-1.5 sm:mb-5 sm:gap-2">
               {post.tags.map((tag) => (
-                <span key={tag} className="rounded-md bg-teal-50 px-2 py-0.5 text-[10px] font-semibold text-teal-700 ring-1 ring-teal-600/20 dark:bg-teal-900/30 dark:text-teal-300 dark:ring-teal-500/30 sm:px-2.5 sm:py-1 sm:text-xs">#{tag}</span>
+                <span key={tag} className="rounded-md bg-indigo-50 px-2 py-0.5 text-[10px] font-semibold text-indigo-700 ring-1 ring-indigo-600/20 dark:bg-indigo-900/30 dark:text-indigo-300 dark:ring-indigo-500/30 sm:px-2.5 sm:py-1 sm:text-xs">#{tag}</span>
               ))}
             </div>
           )}
@@ -256,7 +256,7 @@ export default function BlogPostClient({ post, from }: Props) {
                   <li key={item.id} className={item.level === 3 ? 'ml-3' : ''}>
                     <a
                       href={`#${item.id}`}
-                      className="block truncate text-sm text-gray-600 hover:text-teal-600 dark:text-gray-400 dark:hover:text-teal-400"
+                      className="block truncate text-sm text-gray-600 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400"
                     >
                       {item.text}
                     </a>
@@ -273,7 +273,7 @@ export default function BlogPostClient({ post, from }: Props) {
         <button
           onClick={() => setTocSheetOpen(true)}
           aria-label="목차 열기"
-          className="sm:hidden fixed bottom-5 left-4 z-40 flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3.5 py-2 text-xs font-semibold text-gray-600 shadow-md transition-colors hover:border-gray-300 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400 dark:hover:border-gray-500 dark:hover:text-gray-200"
+          className="sm:hidden fixed bottom-5 left-4 z-40 flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3.5 py-2 text-xs font-semibold text-gray-600 shadow-md transition-colors hover:border-gray-300 hover:text-gray-800 dark:border-gray-700 dark:bg-zinc-900 dark:text-gray-400 dark:hover:border-gray-500 dark:hover:text-gray-200"
         >
           <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h10M4 14h12M4 18h8" />
@@ -291,7 +291,7 @@ export default function BlogPostClient({ post, from }: Props) {
             aria-hidden="true"
           />
           <div
-            className={`sm:hidden fixed bottom-0 left-0 right-0 z-50 rounded-t-2xl bg-white shadow-2xl transition-transform duration-300 ease-in-out dark:bg-gray-900 ${tocSheetOpen ? 'translate-y-0' : 'translate-y-full'}`}
+            className={`sm:hidden fixed bottom-0 left-0 right-0 z-50 rounded-t-2xl bg-white shadow-2xl transition-transform duration-300 ease-in-out dark:bg-zinc-900 ${tocSheetOpen ? 'translate-y-0' : 'translate-y-full'}`}
           >
             <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4 dark:border-gray-800">
               <span className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
@@ -317,7 +317,7 @@ export default function BlogPostClient({ post, from }: Props) {
                     <a
                       href={`#${item.id}`}
                       onClick={() => setTocSheetOpen(false)}
-                      className="block py-0.5 text-sm text-gray-600 transition-colors hover:text-teal-600 dark:text-gray-400 dark:hover:text-teal-400"
+                      className="block py-0.5 text-sm text-gray-600 transition-colors hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400"
                     >
                       {item.text}
                     </a>
@@ -359,7 +359,7 @@ export default function BlogPostClient({ post, from }: Props) {
                         <a
                           href={`#${item.id}`}
                           onClick={() => setTocOpen(false)}
-                          className="block truncate text-sm text-gray-600 hover:text-teal-600 dark:text-gray-400 dark:hover:text-teal-400"
+                          className="block truncate text-sm text-gray-600 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400"
                         >
                           {item.text}
                         </a>
