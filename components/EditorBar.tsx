@@ -23,7 +23,7 @@ export default function EditorBar({
   const hasPreviewToggle = preview !== undefined && onPreviewChange !== undefined
 
   return (
-    <div className="sticky z-40 border-b border-gray-200 bg-white/90 backdrop-blur-md dark:border-gray-800 dark:bg-zinc-900/90" style={{ top: 'var(--navbar-h, 72px)' }}>
+    <div className="sticky z-40 border-b border-gray-200 bg-white/90 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-900/90" style={{ top: 'var(--navbar-h, 72px)' }}>
       <div className="mx-auto flex max-w-[1000px] items-center justify-between px-5 py-3">
 
         {/* 왼쪽: 취소 + 구분선 + 제목 + 미저장 표시 */}
@@ -38,7 +38,7 @@ export default function EditorBar({
             </svg>
             취소
           </button>
-          <span className="h-4 w-px shrink-0 bg-gray-200 dark:bg-gray-700" />
+          <span className="h-4 w-px shrink-0 bg-gray-200 dark:bg-zinc-700" />
           <span className="truncate text-sm font-semibold text-gray-700 dark:text-gray-300">{title}</span>
           {hasChanges && (
             <span className="shrink-0 text-xs text-amber-600 dark:text-amber-400">● 미저장</span>
@@ -48,13 +48,13 @@ export default function EditorBar({
         {/* 오른쪽: 편집/미리보기 토글(선택) + 저장 버튼 */}
         <div className="flex shrink-0 items-center gap-2">
           {hasPreviewToggle && (
-            <div className="flex rounded-lg border border-gray-200 bg-gray-100 p-0.5 dark:border-gray-700 dark:bg-gray-800">
+            <div className="flex rounded-lg border border-gray-200 bg-zinc-100 p-0.5 dark:border-zinc-700 dark:bg-zinc-800">
               <button
                 type="button"
                 onClick={() => onPreviewChange(false)}
                 className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
                   !preview
-                    ? 'bg-white text-gray-900 shadow-sm dark:bg-gray-700 dark:text-white'
+                    ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-white'
                     : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                 }`}
               >
@@ -65,7 +65,7 @@ export default function EditorBar({
                 onClick={() => onPreviewChange(true)}
                 className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
                   preview
-                    ? 'bg-white text-gray-900 shadow-sm dark:bg-gray-700 dark:text-white'
+                    ? 'bg-white text-gray-900 shadow-sm dark:bg-zinc-700 dark:text-white'
                     : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                 }`}
               >

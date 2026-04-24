@@ -47,7 +47,7 @@ export default function AuthButton() {
 
   // 로딩 중: 자리 유지용 스켈레톤
   if (loading) {
-    return <div className="h-7 w-7 animate-pulse rounded-full bg-gray-200 dark:bg-gray-700" />
+    return <div className="h-7 w-7 animate-pulse rounded-full bg-gray-200 dark:bg-zinc-700" />
   }
 
   // 로그인 상태: 아바타만

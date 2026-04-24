@@ -89,7 +89,7 @@ export default function ImageGallery({ thumbnailUrl, imageUrls = [], title }: Im
   return (
     <>
       {/* ── 갤러리 본체 ── */}
-      <div className="overflow-hidden rounded-2xl bg-gray-100 shadow-md dark:bg-zinc-900">
+      <div className="overflow-hidden rounded-2xl bg-zinc-100 shadow-md dark:bg-zinc-900">
 
         {/* 대표 이미지 */}
         <button
@@ -98,7 +98,7 @@ export default function ImageGallery({ thumbnailUrl, imageUrls = [], title }: Im
           className="group relative block w-full cursor-zoom-in focus:outline-none"
           aria-label="이미지 크게 보기"
         >
-          <div className="relative aspect-video w-full bg-gray-100 dark:bg-zinc-900">
+          <div className="relative aspect-video w-full bg-zinc-100 dark:bg-zinc-900">
             <Image
               src={allImages[selectedIdx]}
               alt={`${title} 이미지 ${selectedIdx + 1}`}

@@ -117,7 +117,7 @@ export default function NewPostPage() {
 
         {!preview ? (
           <form id="new-post-form" onSubmit={handleSubmit}>
-            <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800 sm:p-8">
+            <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-800 sm:p-8">
 
               {/* 기본 정보 */}
               <p className="mb-5 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">기본 정보</p>
@@ -166,7 +166,7 @@ export default function NewPostPage() {
                 />
               </FormField>
 
-              <div className="my-6 border-t border-gray-100 dark:border-gray-700" />
+              <div className="my-6 border-t border-gray-100 dark:border-zinc-700" />
 
               {/* 본문 */}
               <p className="mb-5 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">본문 (Markdown)</p>
@@ -185,7 +185,7 @@ export default function NewPostPage() {
             </div>
           </form>
         ) : (
-          <div className="rounded-xl border border-gray-200 bg-white p-8 dark:border-gray-700 dark:bg-gray-800 sm:p-12">
+          <div className="rounded-xl border border-gray-200 bg-white p-8 dark:border-zinc-700 dark:bg-zinc-800 sm:p-12">
             {formData.tags.length > 0 && (
               <div className="mb-5 flex flex-wrap gap-2">
                 {formData.tags.map((tag) => (

@@ -90,7 +90,7 @@ export default function ImageGalleryUploader({ value, onChange }: ImageGalleryUp
       {value.length > 0 && (
         <div className="mb-3 grid grid-cols-3 gap-2 sm:grid-cols-4">
           {value.map((url, idx) => (
-            <div key={url} className="group relative aspect-square overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800">
+            <div key={url} className="group relative aspect-square overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-800">
               <Image
                 src={url}
                 alt={`갤러리 이미지 ${idx + 1}`}
@@ -123,7 +123,7 @@ export default function ImageGalleryUploader({ value, onChange }: ImageGalleryUp
           className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed py-6 transition-colors ${
             dragOver
               ? 'border-indigo-400 bg-indigo-50 dark:border-indigo-500 dark:bg-indigo-900/20'
-              : 'border-gray-200 bg-zinc-50 hover:border-gray-300 hover:bg-gray-100 dark:border-gray-700 dark:bg-zinc-900 dark:hover:border-gray-600 dark:hover:bg-gray-800'
+              : 'border-gray-200 bg-zinc-50 hover:border-gray-300 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:border-zinc-600 dark:hover:bg-zinc-800'
           }`}
         >
           {uploading ? (

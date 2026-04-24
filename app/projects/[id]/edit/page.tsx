@@ -23,7 +23,7 @@ import rehypeHighlight from 'rehype-highlight'
 const STATUS_CONFIG = {
   'in-progress': { label: '진행중', className: 'bg-indigo-50 text-indigo-700 ring-indigo-600/20 dark:bg-indigo-900/30 dark:text-indigo-400 dark:ring-indigo-500/30' },
   completed:     { label: '완료',   className: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-900/30 dark:text-emerald-400 dark:ring-emerald-500/30' },
-  archived:      { label: '보관',   className: 'bg-gray-100 text-gray-600 ring-gray-500/20 dark:bg-gray-700 dark:text-gray-400 dark:ring-gray-500/30' },
+  archived:      { label: '보관',   className: 'bg-zinc-100 text-gray-600 ring-gray-500/20 dark:bg-zinc-700 dark:text-gray-400 dark:ring-gray-500/30' },
 }
 
 export default function EditProjectPage() {
@@ -158,7 +158,7 @@ export default function EditProjectPage() {
 
         {!preview ? (
           <form id="edit-project-form" onSubmit={handleSubmit}>
-            <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800 sm:p-8">
+            <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-800 sm:p-8">
 
               {/* 기본 정보 */}
               <p className="mb-5 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">기본 정보</p>
@@ -200,7 +200,7 @@ export default function EditProjectPage() {
                 </FormField>
               </div>
 
-              <div className="my-6 border-t border-gray-100 dark:border-gray-700" />
+              <div className="my-6 border-t border-gray-100 dark:border-zinc-700" />
 
               {/* 이미지 갤러리 */}
               <p className="mb-5 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">이미지 갤러리</p>
@@ -211,7 +211,7 @@ export default function EditProjectPage() {
                 />
               </FormField>
 
-              <div className="my-6 border-t border-gray-100 dark:border-gray-700" />
+              <div className="my-6 border-t border-gray-100 dark:border-zinc-700" />
 
               {/* 상세 설명 */}
               <p className="mb-5 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">상세 설명 (Markdown)</p>
@@ -228,7 +228,7 @@ export default function EditProjectPage() {
                 </p>
               </FormField>
 
-              <div className="my-6 border-t border-gray-100 dark:border-gray-700" />
+              <div className="my-6 border-t border-gray-100 dark:border-zinc-700" />
 
               {/* 기술 & 태그 */}
               <p className="mb-5 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">기술 & 태그</p>
@@ -245,7 +245,7 @@ export default function EditProjectPage() {
                 />
               </FormField>
 
-              <div className="my-6 border-t border-gray-100 dark:border-gray-700" />
+              <div className="my-6 border-t border-gray-100 dark:border-zinc-700" />
 
               {/* 링크 */}
               <p className="mb-5 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">링크</p>
@@ -273,7 +273,7 @@ export default function EditProjectPage() {
             </div>
           </form>
         ) : (
-          <div className="rounded-xl border border-gray-200 bg-white p-8 dark:border-gray-700 dark:bg-gray-800 sm:p-12">
+          <div className="rounded-xl border border-gray-200 bg-white p-8 dark:border-zinc-700 dark:bg-zinc-800 sm:p-12">
             <div className="mb-4">
               <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-inset ${STATUS_CONFIG[formData.status].className}`}>
                 {STATUS_CONFIG[formData.status].label}

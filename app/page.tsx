@@ -107,7 +107,7 @@ export default async function Home() {
             </div>
 
             {projectsData.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-gray-200 py-10 text-center dark:border-gray-700 sm:py-14">
+              <div className="rounded-2xl border border-dashed border-gray-200 py-10 text-center dark:border-zinc-700 sm:py-14">
                 <p className="text-sm text-gray-400">아직 프로젝트가 없습니다.</p>
               </div>
             ) : (
@@ -140,7 +140,7 @@ export default async function Home() {
             </div>
 
             {postsData.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-gray-200 py-10 text-center dark:border-gray-700 sm:py-14">
+              <div className="rounded-2xl border border-dashed border-gray-200 py-10 text-center dark:border-zinc-700 sm:py-14">
                 <p className="text-sm text-gray-400">아직 포스트가 없습니다.</p>
               </div>
             ) : (

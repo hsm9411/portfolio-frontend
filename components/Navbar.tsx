@@ -97,14 +97,14 @@ export default function Navbar() {
               ))}
             </ul>
 
-            <div className="h-4 w-px bg-gray-200 dark:bg-gray-700" />
+            <div className="h-4 w-px bg-gray-200 dark:bg-zinc-700" />
 
             {mounted && (
               <button
                 onClick={toggleTheme}
                 aria-label="Toggle Dark Mode"
                 title={theme === 'light' ? '다크모드로 전환' : '라이트모드로 전환'}
-                className="flex items-center justify-center rounded-full border border-gray-200 p-[7px] text-gray-400 transition-all duration-200 hover:rotate-[15deg] hover:border-gray-300 hover:text-gray-600 dark:border-gray-700 dark:text-gray-500 dark:hover:border-gray-500 dark:hover:text-gray-300"
+                className="flex items-center justify-center rounded-full border border-gray-200 p-[7px] text-gray-400 transition-all duration-200 hover:rotate-[15deg] hover:border-gray-300 hover:text-gray-600 dark:border-zinc-700 dark:text-gray-500 dark:hover:border-zinc-500 dark:hover:text-gray-300"
               >
                 {theme === 'light' ? <FaMoon size={13} /> : <FaSun size={13} />}
               </button>
@@ -118,7 +118,7 @@ export default function Navbar() {
               <button
                 onClick={toggleTheme}
                 aria-label="Toggle Dark Mode"
-                className="flex items-center justify-center rounded-full border border-gray-200 p-[7px] text-gray-400 dark:border-gray-700 dark:text-gray-500"
+                className="flex items-center justify-center rounded-full border border-gray-200 p-[7px] text-gray-400 dark:border-zinc-700 dark:text-gray-500"
               >
                 {theme === 'light' ? <FaMoon size={13} /> : <FaSun size={13} />}
               </button>
@@ -126,7 +126,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(true)}
-              className="flex items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+              className="flex items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-zinc-100 dark:text-gray-400 dark:hover:bg-zinc-800"
               aria-label="메뉴 열기"
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -141,7 +141,7 @@ export default function Navbar() {
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         aria-label="맨 위로"
-        className={`fixed bottom-5 right-4 z-40 flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-400 shadow-sm transition-all duration-300 hover:border-gray-300 hover:text-gray-600 hover:shadow-md sm:bottom-8 sm:right-8 dark:border-gray-700 dark:bg-zinc-900 dark:text-gray-500 dark:hover:border-gray-500 dark:hover:text-gray-300 ${
+        className={`fixed bottom-5 right-4 z-40 flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-400 shadow-sm transition-all duration-300 hover:border-gray-300 hover:text-gray-600 hover:shadow-md sm:bottom-8 sm:right-8 dark:border-zinc-700 dark:bg-zinc-900 dark:text-gray-500 dark:hover:border-zinc-500 dark:hover:text-gray-300 ${
           showScrollTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3 pointer-events-none'
         }`}
       >
@@ -165,14 +165,14 @@ export default function Navbar() {
           mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        <div className="flex items-center justify-between border-b border-gray-100 px-6 py-5 dark:border-gray-800">
+        <div className="flex items-center justify-between border-b border-gray-100 px-6 py-5 dark:border-zinc-800">
           <Link href="/" className="text-lg font-bold text-gray-900 dark:text-white" onClick={() => setMobileMenuOpen(false)}>
             Portfolio
           </Link>
           <button
             type="button"
             onClick={() => setMobileMenuOpen(false)}
-            className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 dark:text-gray-500 dark:hover:bg-gray-800"
+            className="rounded-lg p-2 text-gray-400 hover:bg-zinc-100 dark:text-gray-500 dark:hover:bg-zinc-800"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -190,7 +190,7 @@ export default function Navbar() {
                 className={`flex items-center gap-3 rounded-xl px-4 py-3.5 text-[0.9rem] font-semibold transition-colors ${
                   isActive(href)
                     ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400'
-                    : 'text-gray-600 hover:bg-zinc-50 dark:text-gray-400 dark:hover:bg-gray-800'
+                    : 'text-gray-600 hover:bg-zinc-50 dark:text-gray-400 dark:hover:bg-zinc-800'
                 }`}
               >
                 {label}
@@ -199,7 +199,7 @@ export default function Navbar() {
           </div>
         </nav>
 
-        <div className="border-t border-gray-100 px-6 py-5 dark:border-gray-800">
+        <div className="border-t border-gray-100 px-6 py-5 dark:border-zinc-800">
           <AuthButton />
         </div>
       </div>

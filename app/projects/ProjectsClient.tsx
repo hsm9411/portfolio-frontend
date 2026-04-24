@@ -144,7 +144,7 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
             <select
               value={sortFromUrl}
               onChange={(e) => updateUrl(1, statusFromUrl, searchFromUrl, e.target.value, techFromUrl)}
-              className="shrink-0 rounded-lg border border-gray-200 bg-white py-2.5 pl-3 pr-8 text-sm text-gray-700 transition-colors focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+              className="shrink-0 rounded-lg border border-gray-200 bg-white py-2.5 pl-3 pr-8 text-sm text-gray-700 transition-colors focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-300"
             >
               {SORT_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
@@ -165,14 +165,14 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="프로젝트 검색..."
-                className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 transition-colors focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500 dark:focus:border-indigo-500"
+                className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 transition-colors focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:placeholder-gray-500 dark:focus:border-indigo-500"
               />
             </div>
             {(searchInput || searchFromUrl) && (
               <button
                 type="button"
                 onClick={handleClear}
-                className="rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-zinc-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+                className="rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-400 dark:hover:bg-gray-700"
               >
                 초기화
               </button>
@@ -194,7 +194,7 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
               className={`shrink-0 rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors ${
                 statusFromUrl === f.value
                   ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
-                  : 'bg-white text-gray-500 ring-1 ring-inset ring-gray-200 hover:bg-zinc-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-gray-700'
+                  : 'bg-white text-gray-500 ring-1 ring-inset ring-gray-200 hover:bg-zinc-50 dark:bg-zinc-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-gray-700'
               }`}
             >
               {f.label}
@@ -229,7 +229,7 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
             ))}
           </div>
         ) : projects.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-gray-200 py-24 text-center dark:border-gray-700">
+          <div className="rounded-2xl border border-dashed border-gray-200 py-24 text-center dark:border-zinc-700">
             <p className="text-sm text-gray-400 dark:text-gray-500">
               {techFromUrl
                 ? `"${techFromUrl}" 기술 스택을 사용한 프로젝트가 없습니다.`
@@ -247,7 +247,7 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
             {(searchFromUrl || statusFromUrl !== 'all' || techFromUrl) && (
               <button
                 onClick={() => { setSearchInput(''); updateUrl(1, 'all', '', sortFromUrl, '') }}
-                className="mt-4 inline-flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-zinc-50 dark:border-gray-700 dark:text-gray-400"
+                className="mt-4 inline-flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-zinc-50 dark:border-zinc-700 dark:text-gray-400"
               >
                 전체 목록으로
               </button>
@@ -268,7 +268,7 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
                 <button
                   onClick={() => handlePageChange(Math.max(1, pageFromUrl - 1))}
                   disabled={pageFromUrl === 1}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-zinc-50 disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-zinc-50 disabled:opacity-40 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-400"
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -280,7 +280,7 @@ export default function ProjectsClient({ initialData }: { initialData: InitialDa
                 <button
                   onClick={() => handlePageChange(Math.min(totalPages, pageFromUrl + 1))}
                   disabled={pageFromUrl === totalPages}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-zinc-50 disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-zinc-50 disabled:opacity-40 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-400"
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
