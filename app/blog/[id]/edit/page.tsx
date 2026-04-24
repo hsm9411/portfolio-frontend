@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
@@ -114,7 +114,7 @@ export default function EditPostPage() {
   if (!isAdmin) return null
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-900">
       <ConfirmDialog
         open={showCancelConfirm}
         title="수정 취소"
@@ -141,7 +141,7 @@ export default function EditPostPage() {
 
         {!preview ? (
           <form id="edit-post-form" onSubmit={handleSubmit}>
-            <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800 sm:p-8">
+            <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-800 sm:p-8">
 
               {/* 기본 정보 */}
               <p className="mb-5 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">기본 정보</p>
@@ -190,7 +190,7 @@ export default function EditPostPage() {
                 />
               </FormField>
 
-              <div className="my-6 border-t border-gray-100 dark:border-gray-700" />
+              <div className="my-6 border-t border-gray-100 dark:border-zinc-700" />
 
               {/* 본문 */}
               <p className="mb-5 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">본문 (Markdown)</p>
@@ -209,11 +209,11 @@ export default function EditPostPage() {
             </div>
           </form>
         ) : (
-          <div className="rounded-xl border border-gray-200 bg-white p-8 dark:border-gray-700 dark:bg-gray-800 sm:p-12">
+          <div className="rounded-xl border border-gray-200 bg-white p-8 dark:border-zinc-700 dark:bg-zinc-800 sm:p-12">
             {formData.tags.length > 0 && (
               <div className="mb-5 flex flex-wrap gap-2">
                 {formData.tags.map((tag) => (
-                  <span key={tag} className="rounded-md bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700 ring-1 ring-blue-600/20 dark:bg-blue-900/30 dark:text-blue-300">
+                  <span key={tag} className="rounded-md bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700 ring-1 ring-indigo-600/20 dark:bg-indigo-900/30 dark:text-indigo-300">
                     #{tag}
                   </span>
                 ))}

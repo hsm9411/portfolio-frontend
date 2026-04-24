@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { fetchProjects } from '@/lib/api/server'
 import ProjectsClient from './ProjectsClient'
@@ -24,8 +24,8 @@ export default async function ProjectsPage() {
 
   return (
     <Suspense fallback={
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-gray-200 border-t-blue-600" />
+      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-900">
+        <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-gray-200 border-t-indigo-600" />
       </div>
     }>
       <ProjectsClient initialData={initialData} />

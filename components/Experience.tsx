@@ -1,8 +1,8 @@
-import experiences from '@/lib/data/experience'
+﻿import experiences from '@/lib/data/experience'
 
 export default function Experience() {
   return (
-    <section className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+    <section className="border-b border-gray-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
       <div className="mx-auto max-w-[1000px] px-4 py-12 sm:px-5 md:py-20">
         <h2 className="mb-8 text-center text-2xl font-black tracking-tight text-gray-900 dark:text-white md:mb-12 md:text-3xl">
           Experience
@@ -11,7 +11,7 @@ export default function Experience() {
           {experiences.map((exp) => (
             <div
               key={exp.id}
-              className="rounded-lg border border-gray-200 border-l-[5px] border-l-gray-800 bg-transparent p-4 transition-colors duration-200 hover:border-gray-400 hover:border-l-blue-500 dark:border-gray-700 dark:border-l-gray-200 dark:hover:border-gray-500 dark:hover:border-l-blue-400 sm:p-6 md:p-8"
+              className="rounded-lg border border-gray-200 border-l-[5px] border-l-gray-800 bg-transparent p-4 transition-colors duration-200 hover:border-gray-400 hover:border-l-indigo-500 dark:border-zinc-700 dark:border-l-gray-200 dark:hover:border-zinc-500 dark:hover:border-l-indigo-400 sm:p-6 md:p-8"
             >
               <div className="mb-1 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                 <span className="text-base font-extrabold text-gray-900 dark:text-white sm:text-xl">{exp.role}</span>
@@ -22,12 +22,12 @@ export default function Experience() {
                   href={exp.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mb-2 block text-sm font-semibold text-blue-600 underline-offset-2 hover:underline dark:text-blue-400 sm:mb-3 sm:text-base"
+                  className="mb-2 block text-sm font-semibold text-indigo-600 underline-offset-2 hover:underline dark:text-indigo-400 sm:mb-3 sm:text-base"
                 >
                   {exp.org}
                 </a>
               ) : (
-                <strong className="mb-2 block text-sm font-semibold text-blue-600 dark:text-blue-400 sm:mb-3 sm:text-base">
+                <strong className="mb-2 block text-sm font-semibold text-indigo-600 dark:text-indigo-400 sm:mb-3 sm:text-base">
                   {exp.org}
                 </strong>
               )}

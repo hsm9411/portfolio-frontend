@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -20,9 +20,9 @@ import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 
 const STATUS_CONFIG = {
-  'in-progress': { label: '진행중', className: 'bg-blue-50 text-blue-700 ring-blue-600/20 dark:bg-blue-900/30 dark:text-blue-400 dark:ring-blue-500/30' },
+  'in-progress': { label: '진행중', className: 'bg-indigo-50 text-indigo-700 ring-indigo-600/20 dark:bg-indigo-900/30 dark:text-indigo-400 dark:ring-indigo-500/30' },
   completed:     { label: '완료',   className: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-900/30 dark:text-emerald-400 dark:ring-emerald-500/30' },
-  archived:      { label: '보관',   className: 'bg-gray-100 text-gray-600 ring-gray-500/20 dark:bg-gray-700 dark:text-gray-400 dark:ring-gray-500/30' },
+  archived:      { label: '보관',   className: 'bg-zinc-100 text-gray-600 ring-gray-500/20 dark:bg-zinc-700 dark:text-gray-400 dark:ring-gray-500/30' },
 }
 
 const EMPTY_FORM = {
@@ -99,7 +99,7 @@ export default function NewProjectPage() {
   if (!authReady || !isAdmin) return <Spinner />
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-900">
       <ConfirmDialog
         open={showCancelConfirm}
         title="작성 취소"
@@ -127,7 +127,7 @@ export default function NewProjectPage() {
 
         {!preview ? (
           <form id="project-form" onSubmit={handleSubmit}>
-            <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800 sm:p-8">
+            <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-800 sm:p-8">
 
               {/* 기본 정보 */}
               <p className="mb-5 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">기본 정보</p>
@@ -169,7 +169,7 @@ export default function NewProjectPage() {
                 </FormField>
               </div>
 
-              <div className="my-6 border-t border-gray-100 dark:border-gray-700" />
+              <div className="my-6 border-t border-gray-100 dark:border-zinc-700" />
 
               {/* 이미지 갤러리 */}
               <p className="mb-5 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">이미지 갤러리</p>
@@ -180,7 +180,7 @@ export default function NewProjectPage() {
                 />
               </FormField>
 
-              <div className="my-6 border-t border-gray-100 dark:border-gray-700" />
+              <div className="my-6 border-t border-gray-100 dark:border-zinc-700" />
 
               {/* 상세 설명 */}
               <p className="mb-5 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">상세 설명 (Markdown)</p>
@@ -197,7 +197,7 @@ export default function NewProjectPage() {
                 </p>
               </FormField>
 
-              <div className="my-6 border-t border-gray-100 dark:border-gray-700" />
+              <div className="my-6 border-t border-gray-100 dark:border-zinc-700" />
 
               {/* 기술 & 태그 */}
               <p className="mb-5 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">기술 & 태그</p>
@@ -214,7 +214,7 @@ export default function NewProjectPage() {
                 />
               </FormField>
 
-              <div className="my-6 border-t border-gray-100 dark:border-gray-700" />
+              <div className="my-6 border-t border-gray-100 dark:border-zinc-700" />
 
               {/* 링크 */}
               <p className="mb-5 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">링크</p>
@@ -242,7 +242,7 @@ export default function NewProjectPage() {
             </div>
           </form>
         ) : (
-          <div className="rounded-xl border border-gray-200 bg-white p-8 dark:border-gray-700 dark:bg-gray-800 sm:p-12">
+          <div className="rounded-xl border border-gray-200 bg-white p-8 dark:border-zinc-700 dark:bg-zinc-800 sm:p-12">
             <div className="mb-4">
               <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-inset ${STATUS_CONFIG[formData.status].className}`}>
                 {STATUS_CONFIG[formData.status].label}
@@ -257,7 +257,7 @@ export default function NewProjectPage() {
             {formData.techStack.length > 0 && (
               <div className="mb-6 flex flex-wrap gap-2">
                 {formData.techStack.map((tech) => (
-                  <span key={tech} className="rounded-lg bg-blue-50 px-3 py-1.5 text-sm font-semibold text-blue-700 ring-1 ring-blue-600/20 dark:bg-blue-900/30 dark:text-blue-300 dark:ring-blue-500/30">
+                  <span key={tech} className="rounded-lg bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-700 ring-1 ring-indigo-600/20 dark:bg-indigo-900/30 dark:text-indigo-300 dark:ring-indigo-500/30">
                     {tech}
                   </span>
                 ))}

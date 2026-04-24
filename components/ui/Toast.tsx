@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
 import { ToastContext, useToastState, type Toast } from '@/hooks/useToast'
@@ -39,7 +39,7 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: () => void }) 
 
   return (
     <div
-      className={`relative flex w-full max-w-sm items-start gap-3 overflow-hidden rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-lg transition-all duration-300 dark:border-gray-700 dark:bg-gray-800 ${
+      className={`relative flex w-full max-w-sm items-start gap-3 overflow-hidden rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-lg transition-all duration-300 dark:border-zinc-700 dark:bg-zinc-800 ${
         visible ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
       }`}
     >

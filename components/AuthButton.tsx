@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { createClient } from '@/lib/supabase/client'
 import { useEffect, useState, useRef } from 'react'
@@ -47,7 +47,7 @@ export default function AuthButton() {
 
   // 로딩 중: 자리 유지용 스켈레톤
   if (loading) {
-    return <div className="h-7 w-7 animate-pulse rounded-full bg-gray-200 dark:bg-gray-700" />
+    return <div className="h-7 w-7 animate-pulse rounded-full bg-gray-200 dark:bg-zinc-700" />
   }
 
   // 로그인 상태: 아바타만
@@ -75,14 +75,14 @@ export default function AuthButton() {
               className="h-7 w-7 rounded-full object-cover ring-1 ring-gray-200 dark:ring-white/10"
             />
           ) : (
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-[11px] font-bold text-white">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-600 text-[11px] font-bold text-white">
               {displayName.charAt(0).toUpperCase()}
             </div>
           )}
         </button>
 
         {open && (
-          <div className="absolute right-0 mt-2.5 w-52 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-lg dark:border-white/[0.08] dark:bg-gray-900">
+          <div className="absolute right-0 mt-2.5 w-52 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-lg dark:border-white/[0.08] dark:bg-zinc-900">
             <div className="border-b border-gray-100 px-4 py-3 dark:border-white/[0.06]">
               <p className="text-xs font-semibold text-gray-900 dark:text-white">{displayName}</p>
               <p className="mt-0.5 truncate text-[11px] text-gray-400 dark:text-gray-500">{user.email}</p>

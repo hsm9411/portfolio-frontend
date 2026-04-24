@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { fetchProjects, fetchPosts } from '@/lib/api/server'
 import { type Project } from '@/lib/api/projects'
 import { type Post } from '@/lib/api/posts'
@@ -31,11 +31,12 @@ export default async function Home() {
   ])
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-900">
 
       {/* ── 히어로 ── */}
-      <section className="flex min-h-[75vh] items-center justify-center border-b border-gray-200 bg-white sm:min-h-[calc(100vh-72px)] dark:border-gray-800 dark:bg-gray-900">
-        <div className="mx-auto flex w-full max-w-[900px] flex-col items-center gap-8 px-5 pb-8 pt-8 md:flex-row md:items-center md:justify-between md:gap-16 md:pb-[5vh]">
+      {/* 모바일: py-16 고정 패딩, 사진 숨김 / 데스크탑(md+): 전체 높이 + 사진 우측 */}
+      <section className="flex items-center justify-center border-b border-gray-200 bg-white py-16 sm:py-20 md:min-h-[calc(100vh-72px)] md:py-0 dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="mx-auto flex w-full max-w-[900px] flex-col items-center gap-8 px-5 md:flex-row md:items-center md:justify-between md:gap-16 md:pb-[5vh]">
           <div className="text-center md:text-left">
             <h1 className="mb-4 text-3xl font-black leading-tight tracking-tight text-gray-900 dark:text-white sm:text-4xl md:text-5xl">
               안녕하세요,<br />
@@ -51,10 +52,10 @@ export default async function Home() {
               그리고 <strong className="font-semibold text-gray-800 dark:text-gray-200">개발 프로세스 체계</strong>를 경험하며 성장하고 있습니다.
             </p>
             {/* CTA — 모바일 전용 (데스크탑은 네비바로 충분) */}
-            <div className="mt-6 flex items-center justify-center gap-4 sm:hidden">
+            <div className="mt-6 flex items-center justify-center gap-4 md:hidden">
               <Link
                 href="/projects"
-                className="flex items-center gap-1.5 rounded-lg border border-gray-800 px-4 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-50 dark:border-gray-300 dark:text-gray-100 dark:hover:bg-gray-800"
+                className="flex items-center gap-1.5 rounded-lg border border-gray-800 px-4 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-zinc-50 dark:border-gray-300 dark:text-gray-100 dark:hover:bg-zinc-800"
               >
                 프로젝트 보기
                 <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -72,11 +73,12 @@ export default async function Home() {
               </Link>
             </div>
           </div>
-          <div className="shrink-0">
+          {/* 사진: 모바일에서 숨김, md+ 데스크탑에서만 표시 */}
+          <div className="hidden shrink-0 md:block">
             <img
               src="/profile.png"
               alt="Profile"
-              className="h-auto w-[150px] border border-gray-200 object-cover shadow-[12px_12px_0px_rgba(0,0,0,0.1)] dark:border-gray-700 dark:shadow-[12px_12px_0px_rgba(255,255,255,0.05)] sm:w-[210px] md:w-[240px] md:shadow-[15px_15px_0px_rgba(0,0,0,0.1)]"
+              className="h-auto w-[240px] border border-gray-200 object-cover shadow-[15px_15px_0px_rgba(0,0,0,0.08)] dark:border-zinc-700 dark:shadow-[15px_15px_0px_rgba(255,255,255,0.04)]"
             />
           </div>
         </div>
@@ -97,7 +99,7 @@ export default async function Home() {
               </div>
               <Link
                 href="/projects"
-                className="flex items-center gap-1 text-xs font-medium text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 sm:text-sm"
+                className="flex items-center gap-1 text-xs font-medium text-indigo-600 transition-colors hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 sm:text-sm"
               >
                 전체보기
                 <svg className="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -107,7 +109,7 @@ export default async function Home() {
             </div>
 
             {projectsData.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-gray-200 py-10 text-center dark:border-gray-700 sm:py-14">
+              <div className="rounded-2xl border border-dashed border-gray-200 py-10 text-center dark:border-zinc-700 sm:py-14">
                 <p className="text-sm text-gray-400">아직 프로젝트가 없습니다.</p>
               </div>
             ) : (
@@ -130,7 +132,7 @@ export default async function Home() {
               </div>
               <Link
                 href="/blog"
-                className="flex items-center gap-1 text-xs font-medium text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 sm:text-sm"
+                className="flex items-center gap-1 text-xs font-medium text-indigo-600 transition-colors hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 sm:text-sm"
               >
                 전체보기
                 <svg className="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -140,7 +142,7 @@ export default async function Home() {
             </div>
 
             {postsData.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-gray-200 py-10 text-center dark:border-gray-700 sm:py-14">
+              <div className="rounded-2xl border border-dashed border-gray-200 py-10 text-center dark:border-zinc-700 sm:py-14">
                 <p className="text-sm text-gray-400">아직 포스트가 없습니다.</p>
               </div>
             ) : (
@@ -162,7 +164,7 @@ export default async function Home() {
       <Contact />
 
       {/* Footer */}
-      <footer className="mt-12 border-t border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 sm:mt-16">
+      <footer className="mt-12 border-t border-gray-200 bg-white dark:border-zinc-800 dark:bg-zinc-900 sm:mt-16">
         <div className="mx-auto max-w-[1000px] px-4 py-6 sm:px-5 sm:py-8">
           <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-between">
             <p className="text-sm font-semibold text-gray-500 dark:text-gray-400">hsm9411</p>

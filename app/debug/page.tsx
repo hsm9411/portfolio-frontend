@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import type { Session } from '@supabase/supabase-js'
@@ -82,7 +82,7 @@ export default function DebugPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-zinc-50 p-8">
       <div className="mx-auto max-w-6xl">
         <h1 className="mb-8 text-3xl font-bold">🔍 디버그 페이지</h1>
 
@@ -90,7 +90,7 @@ export default function DebugPage() {
         <div className="mb-8 flex flex-wrap gap-4">
           <button
             onClick={checkSession}
-            className="rounded-lg bg-blue-600 px-6 py-3 text-white hover:bg-blue-700"
+            className="rounded-lg bg-indigo-600 px-6 py-3 text-white hover:bg-indigo-700"
           >
             세션 확인
           </button>
@@ -167,9 +167,9 @@ export default function DebugPage() {
         </div>
 
         {/* 안내 */}
-        <div className="mt-8 rounded-lg border-l-4 border-blue-500 bg-blue-50 p-6">
-          <h3 className="mb-2 font-bold text-blue-900">💡 사용 방법</h3>
-          <ol className="list-inside list-decimal space-y-1 text-sm text-blue-800">
+        <div className="mt-8 rounded-lg border-l-4 border-indigo-500 bg-indigo-50 p-6">
+          <h3 className="mb-2 font-bold text-indigo-900">💡 사용 방법</h3>
+          <ol className="list-inside list-decimal space-y-1 text-sm text-indigo-800">
             <li>먼저 {'"'}세션 확인{'"'} 버튼으로 로그인 상태 확인</li>
             <li>{'"'}Public API 테스트{'"'}로 인증 없이 작동하는 API 테스트</li>
             <li>{'"'}인증 API 테스트{'"'}로 관리자 권한이 필요한 API 테스트</li>

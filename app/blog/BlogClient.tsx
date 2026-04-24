@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -110,8 +110,8 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="mx-auto max-w-[1000px] px-5 py-10">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-900">
+      <div className="mx-auto max-w-[1000px] px-4 py-6 sm:px-5 sm:py-10">
 
         <div className="mb-8 flex items-start justify-between">
           <div>
@@ -121,7 +121,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
           {isAdmin && (
             <Link
               href="/blog/new"
-              className="flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+              className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-700"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -140,8 +140,8 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
               onClick={() => updateUrl(1, searchFromUrl, value, sortFromUrl)}
               className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                 categoryFromUrl === value
-                  ? 'bg-blue-600 text-white'
-                  : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                  ? 'bg-indigo-600 text-white'
+                  : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-300 dark:hover:bg-zinc-700'
               }`}
             >
               {label}
@@ -154,7 +154,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
             <select
               value={sortFromUrl}
               onChange={(e) => updateUrl(1, searchFromUrl, categoryFromUrl, e.target.value)}
-              className="shrink-0 rounded-lg border border-gray-200 bg-white py-2.5 pl-3 pr-8 text-sm text-gray-700 transition-colors focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+              className="shrink-0 rounded-lg border border-gray-200 bg-white py-2.5 pl-3 pr-8 text-sm text-gray-700 transition-colors focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-300"
             >
               {SORT_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
@@ -163,7 +163,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
             <div className="relative flex-1">
               {loading && searchInput ? (
                 <div className="absolute left-3.5 top-1/2 -translate-y-1/2">
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-200 border-t-blue-500" />
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-200 border-t-indigo-500" />
                 </div>
               ) : (
                 <svg className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -175,11 +175,11 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="제목 또는 내용으로 검색..."
-                className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 transition-colors focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500 dark:focus:border-blue-500"
+                className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 transition-colors focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:placeholder-gray-500 dark:focus:border-indigo-500"
               />
             </div>
             {(searchInput || searchFromUrl) && (
-              <button type="button" onClick={handleClear} className="rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700">
+              <button type="button" onClick={handleClear} className="rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-400 dark:hover:bg-zinc-700">
                 초기화
               </button>
             )}
@@ -198,7 +198,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
             ))}
           </div>
         ) : posts.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-gray-200 py-24 text-center dark:border-gray-700">
+          <div className="rounded-2xl border border-dashed border-gray-200 py-24 text-center dark:border-zinc-700">
             <p className="text-sm text-gray-400 dark:text-gray-500">
               {searchFromUrl
                 ? `"${searchFromUrl}"에 대한 결과가 없습니다.`
@@ -207,14 +207,14 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
                   : '포스트가 없습니다.'}
             </p>
             {isAdmin && !searchFromUrl && !categoryFromUrl && (
-              <Link href="/blog/new" className="mt-4 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
+              <Link href="/blog/new" className="mt-4 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
                 첫 포스트 작성하기
               </Link>
             )}
             {(searchFromUrl || categoryFromUrl) && (
               <button
                 onClick={() => { setSearchInput(''); updateUrl(1, '', '', sortFromUrl) }}
-                className="mt-4 inline-flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400"
+                className="mt-4 inline-flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-zinc-50 dark:border-zinc-700 dark:text-gray-400"
               >
                 전체 목록으로
               </button>
@@ -222,7 +222,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
           </div>
         ) : (
           <>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3 sm:gap-4">
               {posts.map((post) => (
                 <Link key={post.id} href={`/blog/${post.id}?from=list`} className="block">
                   <PostCard post={post} />
@@ -235,7 +235,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
                 <button
                   onClick={() => updateUrl(Math.max(1, pageFromUrl - 1), searchFromUrl, categoryFromUrl, sortFromUrl)}
                   disabled={pageFromUrl === 1}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-zinc-50 disabled:opacity-40 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-400"
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -247,7 +247,7 @@ export default function BlogClient({ initialData }: { initialData: InitialData }
                 <button
                   onClick={() => updateUrl(Math.min(totalPages, pageFromUrl + 1), searchFromUrl, categoryFromUrl, sortFromUrl)}
                   disabled={pageFromUrl === totalPages}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-50 disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-zinc-50 disabled:opacity-40 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-400"
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />

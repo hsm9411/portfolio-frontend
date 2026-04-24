@@ -3,7 +3,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #ffffff;
+  --background: #fafafa;
   --foreground: #171717;
 
   --nav-r: 255; --nav-g: 255; --nav-b: 255;
@@ -11,10 +11,10 @@
 }
 
 .dark {
-  --background: #111827;
+  --background: #18181b;
   --foreground: #f3f4f6;
 
-  --nav-r: 17; --nav-g: 24; --nav-b: 39;
+  --nav-r: 24; --nav-g: 24; --nav-b: 27;
   --nav-border-r: 255; --nav-border-g: 255; --nav-border-b: 255;
 }
 
@@ -95,17 +95,17 @@ body {
 
 /* 링크 */
 .markdown-body a {
-  color: #2563eb;
+  color: #4f46e5;
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
 .markdown-body a:hover {
-  color: #1d4ed8;
+  color: #4338ca;
 }
 
 .dark .markdown-body a {
-  color: #60a5fa;
+  color: #818cf8;
 }
 
 /* 강조 */
@@ -157,18 +157,18 @@ body {
 
 /* 인용구 */
 .markdown-body blockquote {
-  border-left: 4px solid #3b82f6;
-  background-color: #eff6ff;
-  color: #1e40af;
+  border-left: 4px solid #6366f1;
+  background-color: #eef2ff;
+  color: #3730a3;
   margin: 1.5em 0;
   padding: 0.75em 1em;
   border-radius: 0 0.5rem 0.5rem 0;
 }
 
 .dark .markdown-body blockquote {
-  background-color: rgba(59, 130, 246, 0.1);
-  color: #93c5fd;
-  border-left-color: #60a5fa;
+  background-color: rgba(99, 102, 241, 0.1);
+  color: #a5b4fc;
+  border-left-color: #818cf8;
 }
 
 .markdown-body blockquote p {
@@ -219,7 +219,7 @@ body {
 /* 체크박스 리스트 (GFM) */
 .markdown-body input[type="checkbox"] {
   margin-right: 0.5em;
-  accent-color: #2563eb;
+  accent-color: #4f46e5;
 }
 
 /* 구분선 */
