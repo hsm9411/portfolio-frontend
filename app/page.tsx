@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 import ProjectCard from '@/components/ProjectCard'
 import PostCard from '@/components/PostCard'
 import Link from 'next/link'
+import Image from 'next/image'
 import Skills from '@/components/Skills'
 import Experience from '@/components/Experience'
 import Education from '@/components/Education'
@@ -37,12 +38,15 @@ export default async function Home() {
       {/* 모바일: 원형 사진(96px) 위 + 압축 본문 / 데스크탑(md+): 전체 높이 + 사각 사진 우측 */}
       <section className="flex items-center justify-center border-b border-gray-200 bg-white py-14 sm:py-20 md:min-h-[calc(100vh-72px)] md:py-0 dark:border-zinc-800 dark:bg-zinc-900">
         <div className="mx-auto flex w-full max-w-[900px] flex-col items-center gap-6 px-5 md:flex-row md:items-center md:justify-between md:gap-16 md:pb-[5vh]">
-          {/* 모바일 전용 사진: 96px 원형 */}
+          {/* 모바일 전용 사진: 112px 원형, Next/Image 최적화 + object-top으로 얼굴 보존 */}
           <div className="md:hidden">
-            <img
+            <Image
               src="/profile.png"
               alt="Profile"
-              className="h-24 w-24 rounded-full border border-zinc-200 object-cover dark:border-zinc-700"
+              width={112}
+              height={112}
+              priority
+              className="h-28 w-28 rounded-full border border-zinc-200 object-cover object-top dark:border-zinc-700"
             />
           </div>
 
@@ -51,13 +55,14 @@ export default async function Home() {
               안녕하세요,<br />
               개발자 하성민입니다.
             </h1>
-            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.15em] text-indigo-600 dark:text-indigo-400 sm:text-sm md:mb-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-indigo-600 dark:text-indigo-400 sm:text-sm md:mb-5">
               Web · Systems Developer
             </p>
-            <p className="text-sm leading-relaxed text-gray-500 dark:text-gray-400 sm:text-base">
+            {/* 본문 한 줄 — 모바일에선 숨기고 데스크탑(md+)에서만 표시 */}
+            <p className="mt-4 hidden text-sm leading-relaxed text-gray-500 dark:text-gray-400 sm:text-base md:block">
               <strong className="font-semibold text-gray-800 dark:text-gray-200">웹·시스템 개발</strong>에 필요한{' '}
               <strong className="font-semibold text-gray-800 dark:text-gray-200">CS</strong>와{' '}
-              <strong className="font-semibold text-gray-800 dark:text-gray-200">협업 프로세스</strong>를<br className="hidden sm:block" />
+              <strong className="font-semibold text-gray-800 dark:text-gray-200">협업 프로세스</strong>를{' '}
               학습하며 성장하고 있습니다.
             </p>
             {/* CTA — 모바일 전용 (데스크탑은 네비바로 충분) */}
