@@ -35,10 +35,10 @@ export default async function Home() {
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-900">
 
       {/* ── 히어로 ── */}
-      {/* 모바일: 원형 사진(96px) 위 + 압축 본문 / 데스크탑(md+): 전체 높이 + 사각 사진 우측 */}
-      <section className="flex items-center justify-center border-b border-gray-200 bg-white py-14 sm:py-20 md:min-h-[calc(100vh-72px)] md:py-0 dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="mx-auto flex w-full max-w-[900px] flex-col items-center gap-6 px-5 md:flex-row md:items-center md:justify-between md:gap-16 md:pb-[5vh]">
-          {/* 모바일 전용 사진: 112px 원형, Next/Image 최적화 + object-top으로 얼굴 보존 */}
+      {/* 모바일: 원형 사진(112px) 위 + 위계가 분리된 인사/이름 / 데스크탑(md+): 전체 높이 + 사각 사진 우측 */}
+      <section className="flex items-center justify-center border-b border-gray-200 bg-white py-10 sm:py-16 md:min-h-[calc(100vh-72px)] md:py-0 dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="mx-auto flex w-full max-w-[900px] flex-col items-center gap-5 px-5 md:flex-row md:items-center md:justify-between md:gap-16 md:pb-[5vh]">
+          {/* 모바일 전용 사진: 112px 원형 */}
           <div className="md:hidden">
             <Image
               src="/profile.png"
@@ -51,11 +51,15 @@ export default async function Home() {
           </div>
 
           <div className="text-center md:text-left">
-            <h1 className="mb-3 text-3xl font-black leading-tight tracking-tight text-gray-900 dark:text-white sm:text-4xl md:mb-4 md:text-5xl">
-              안녕하세요,<br />
-              개발자 하성민입니다.
+            {/* 모바일 전용 인사 — 가벼운 무게로 위계 분리 */}
+            <p className="mb-1.5 text-sm font-medium text-gray-500 dark:text-gray-400 md:hidden">
+              안녕하세요,
+            </p>
+            <h1 className="text-2xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white sm:text-[28px] md:mb-4 md:text-5xl md:font-black">
+              <span className="hidden md:inline">안녕하세요,<br /></span>
+              개발자 <span className="text-indigo-600 dark:text-indigo-400">하성민</span>입니다.
             </h1>
-            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-indigo-600 dark:text-indigo-400 sm:text-sm md:mb-5">
+            <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-indigo-600/90 dark:text-indigo-400/90 sm:text-xs md:mt-3 md:mb-5 md:text-sm md:text-indigo-600 md:dark:text-indigo-400">
               Web · Systems Developer
             </p>
             {/* 본문 한 줄 — 모바일에선 숨기고 데스크탑(md+)에서만 표시 */}
@@ -66,7 +70,7 @@ export default async function Home() {
               학습하며 성장하고 있습니다.
             </p>
             {/* CTA — 모바일 전용 (데스크탑은 네비바로 충분) */}
-            <div className="mt-6 flex items-center justify-center gap-4 md:hidden">
+            <div className="mt-5 flex items-center justify-center gap-4 md:hidden">
               <Link
                 href="/projects"
                 className="flex items-center gap-1.5 rounded-lg border border-gray-800 px-4 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-zinc-50 dark:border-gray-300 dark:text-gray-100 dark:hover:bg-zinc-800"
