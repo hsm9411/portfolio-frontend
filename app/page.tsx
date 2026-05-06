@@ -34,22 +34,31 @@ export default async function Home() {
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-900">
 
       {/* ── 히어로 ── */}
-      {/* 모바일: py-16 고정 패딩, 사진 숨김 / 데스크탑(md+): 전체 높이 + 사진 우측 */}
-      <section className="flex items-center justify-center border-b border-gray-200 bg-white py-16 sm:py-20 md:min-h-[calc(100vh-72px)] md:py-0 dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="mx-auto flex w-full max-w-[900px] flex-col items-center gap-8 px-5 md:flex-row md:items-center md:justify-between md:gap-16 md:pb-[5vh]">
+      {/* 모바일: 원형 사진(96px) 위 + 압축 본문 / 데스크탑(md+): 전체 높이 + 사각 사진 우측 */}
+      <section className="flex items-center justify-center border-b border-gray-200 bg-white py-14 sm:py-20 md:min-h-[calc(100vh-72px)] md:py-0 dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="mx-auto flex w-full max-w-[900px] flex-col items-center gap-6 px-5 md:flex-row md:items-center md:justify-between md:gap-16 md:pb-[5vh]">
+          {/* 모바일 전용 사진: 96px 원형 */}
+          <div className="md:hidden">
+            <img
+              src="/profile.png"
+              alt="Profile"
+              className="h-24 w-24 rounded-full border border-zinc-200 object-cover dark:border-zinc-700"
+            />
+          </div>
+
           <div className="text-center md:text-left">
-            <h1 className="mb-4 text-3xl font-black leading-tight tracking-tight text-gray-900 dark:text-white sm:text-4xl md:text-5xl">
+            <h1 className="mb-3 text-3xl font-black leading-tight tracking-tight text-gray-900 dark:text-white sm:text-4xl md:mb-4 md:text-5xl">
               안녕하세요,<br />
               개발자 하성민입니다.
             </h1>
-            <p className="text-sm leading-relaxed text-gray-500 dark:text-gray-400 sm:text-base">
-              최근에는 <strong className="font-semibold text-gray-800 dark:text-gray-200">웹개발</strong>과{' '}
-              <strong className="font-semibold text-gray-800 dark:text-gray-200">시스템 개발</strong>에 필요한 기능을 구현하기 위해<br className="hidden sm:block" />
-              다양한 <strong className="font-semibold text-gray-800 dark:text-gray-200">CS 개념</strong>과 기술들에 관심을 가지고 학습하고 있습니다.
+            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.15em] text-indigo-600 dark:text-indigo-400 sm:text-sm md:mb-5">
+              Web · Systems Developer
             </p>
-            <p className="mt-3 text-sm leading-relaxed text-gray-500 dark:text-gray-400 sm:mt-4 sm:text-base">
-              또한, 효율적인 <strong className="font-semibold text-gray-800 dark:text-gray-200">협업</strong>을 위해 필요한 툴과 기술,<br className="hidden sm:block" />
-              그리고 <strong className="font-semibold text-gray-800 dark:text-gray-200">개발 프로세스 체계</strong>를 경험하며 성장하고 있습니다.
+            <p className="text-sm leading-relaxed text-gray-500 dark:text-gray-400 sm:text-base">
+              <strong className="font-semibold text-gray-800 dark:text-gray-200">웹·시스템 개발</strong>에 필요한{' '}
+              <strong className="font-semibold text-gray-800 dark:text-gray-200">CS</strong>와{' '}
+              <strong className="font-semibold text-gray-800 dark:text-gray-200">협업 프로세스</strong>를<br className="hidden sm:block" />
+              학습하며 성장하고 있습니다.
             </p>
             {/* CTA — 모바일 전용 (데스크탑은 네비바로 충분) */}
             <div className="mt-6 flex items-center justify-center gap-4 md:hidden">
@@ -73,7 +82,8 @@ export default async function Home() {
               </Link>
             </div>
           </div>
-          {/* 사진: 모바일에서 숨김, md+ 데스크탑에서만 표시 */}
+
+          {/* 데스크탑 전용 사진: 240px 사각 + 그림자 */}
           <div className="hidden shrink-0 md:block">
             <img
               src="/profile.png"
