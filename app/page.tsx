@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 import ProjectCard from '@/components/ProjectCard'
 import PostCard from '@/components/PostCard'
 import Link from 'next/link'
+import Image from 'next/image'
 import Skills from '@/components/Skills'
 import Experience from '@/components/Experience'
 import Education from '@/components/Education'
@@ -34,25 +35,42 @@ export default async function Home() {
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-900">
 
       {/* ── 히어로 ── */}
-      {/* 모바일: py-16 고정 패딩, 사진 숨김 / 데스크탑(md+): 전체 높이 + 사진 우측 */}
-      <section className="flex items-center justify-center border-b border-gray-200 bg-white py-16 sm:py-20 md:min-h-[calc(100vh-72px)] md:py-0 dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="mx-auto flex w-full max-w-[900px] flex-col items-center gap-8 px-5 md:flex-row md:items-center md:justify-between md:gap-16 md:pb-[5vh]">
+      {/* 모바일: 원형 사진(112px) 위 + 위계 분리된 인사/이름 / 데스크탑(md+): 전체 높이 + 사각 사진 우측 */}
+      <section className="flex items-center justify-center border-b border-gray-200 bg-white py-10 sm:py-16 md:min-h-[calc(100vh-72px)] md:py-0 dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="mx-auto flex w-full max-w-[900px] flex-col items-center gap-7 px-5 md:flex-row md:items-center md:justify-between md:gap-16 md:pb-[5vh]">
+          {/* 모바일 전용 사진: 112px 원형 */}
+          <div className="md:hidden">
+            <Image
+              src="/profile.png"
+              alt="Profile"
+              width={112}
+              height={112}
+              priority
+              className="h-28 w-28 rounded-full border border-zinc-200 object-cover object-top dark:border-zinc-700"
+            />
+          </div>
+
           <div className="text-center md:text-left">
-            <h1 className="mb-4 text-3xl font-black leading-tight tracking-tight text-gray-900 dark:text-white sm:text-4xl md:text-5xl">
-              안녕하세요,<br />
-              개발자 하성민입니다.
-            </h1>
-            <p className="text-sm leading-relaxed text-gray-500 dark:text-gray-400 sm:text-base">
-              최근에는 <strong className="font-semibold text-gray-800 dark:text-gray-200">웹개발</strong>과{' '}
-              <strong className="font-semibold text-gray-800 dark:text-gray-200">시스템 개발</strong>에 필요한 기능을 구현하기 위해<br className="hidden sm:block" />
-              다양한 <strong className="font-semibold text-gray-800 dark:text-gray-200">CS 개념</strong>과 기술들에 관심을 가지고 학습하고 있습니다.
+            {/* 모바일 전용 인사 — 가벼운 무게로 위계 분리 */}
+            <p className="mb-1.5 text-sm font-medium text-gray-500 dark:text-gray-400 md:hidden">
+              안녕하세요,
             </p>
-            <p className="mt-3 text-sm leading-relaxed text-gray-500 dark:text-gray-400 sm:mt-4 sm:text-base">
-              또한, 효율적인 <strong className="font-semibold text-gray-800 dark:text-gray-200">협업</strong>을 위해 필요한 툴과 기술,<br className="hidden sm:block" />
-              그리고 <strong className="font-semibold text-gray-800 dark:text-gray-200">개발 프로세스 체계</strong>를 경험하며 성장하고 있습니다.
+            <h1 className="text-2xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white sm:text-[28px] md:mb-4 md:text-5xl md:font-black">
+              <span className="hidden md:inline">안녕하세요,<br /></span>
+              개발자 <span className="text-indigo-600 dark:text-indigo-400">하성민</span>입니다.
+            </h1>
+            <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-indigo-600/90 dark:text-indigo-400/90 sm:text-xs md:mt-3 md:mb-5 md:text-sm md:text-indigo-600 md:dark:text-indigo-400">
+              Web · Systems Developer
+            </p>
+            {/* 본문 한 줄 — 모바일에선 숨기고 데스크탑(md+)에서만 표시 */}
+            <p className="mt-4 hidden text-sm leading-relaxed text-gray-500 dark:text-gray-400 sm:text-base md:block">
+              <strong className="font-semibold text-gray-800 dark:text-gray-200">웹·시스템 개발</strong>에 필요한{' '}
+              <strong className="font-semibold text-gray-800 dark:text-gray-200">CS</strong>와{' '}
+              <strong className="font-semibold text-gray-800 dark:text-gray-200">협업 프로세스</strong>를{' '}
+              학습하며 성장하고 있습니다.
             </p>
             {/* CTA — 모바일 전용 (데스크탑은 네비바로 충분) */}
-            <div className="mt-6 flex items-center justify-center gap-4 md:hidden">
+            <div className="mt-7 flex items-center justify-center gap-4 md:hidden">
               <Link
                 href="/projects"
                 className="flex items-center gap-1.5 rounded-lg border border-gray-800 px-4 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-zinc-50 dark:border-gray-300 dark:text-gray-100 dark:hover:bg-zinc-800"
@@ -73,7 +91,8 @@ export default async function Home() {
               </Link>
             </div>
           </div>
-          {/* 사진: 모바일에서 숨김, md+ 데스크탑에서만 표시 */}
+
+          {/* 데스크탑 전용 사진: 240px 사각 + 그림자 */}
           <div className="hidden shrink-0 md:block">
             <img
               src="/profile.png"
