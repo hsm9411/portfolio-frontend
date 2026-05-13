@@ -11,7 +11,7 @@ export default function Education() {
           {educations.map((edu) => (
             <div
               key={edu.id}
-              className="rounded-lg border border-gray-200 border-l-[5px] border-l-gray-800 bg-transparent p-4 transition-colors duration-200 hover:border-gray-400 hover:border-l-indigo-500 dark:border-zinc-700 dark:border-l-gray-200 dark:hover:border-zinc-500 dark:hover:border-l-indigo-400 sm:p-6 md:p-8"
+              className="rounded-lg border border-zinc-200 bg-transparent p-4 transition-colors duration-200 hover:border-zinc-300 dark:border-zinc-700 dark:hover:border-zinc-500 sm:p-6 md:p-8"
             >
               <div className="mb-1 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                 <span className="text-base font-extrabold text-gray-900 dark:text-white sm:text-xl">{edu.course}</span>
